@@ -1,0 +1,12 @@
+{
+  "name": "Remix: Clinic AI Chatbot Panel",
+  "description": "لوحة تحكم متكاملة للأطباء لإدارة وتدريب شات بوت الذكاء الاصطناعي الخاص بالعيادة بشكل آمن ومحكم بدون استنتاج أو تزييف طبي، مع إمكانية استيراد البيانات وإدارة الاستفسارات اليومية وتخصيص الأزرار السريعة.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone",
+    "geolocation"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
