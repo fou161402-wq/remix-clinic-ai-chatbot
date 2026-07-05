@@ -1,6 +1,5 @@
 import express from "express";
 import path from "path";
-import { createServer as createViteServer } from "vite";
 import { GoogleGenAI } from "@google/genai";
 import dotenv from "dotenv";
 
@@ -96,7 +95,18 @@ function getLocalResponse(
   const hoursKeywords = ["ساعات", "اوقات", "عمل", "مفتوح", "دوام", "متى", "اليوم", "يوم", "hours", "open", "time"];
   if (hoursKeywords.some(k => normQuery.includes(normalizeArabic(k)))) {
     const status = dailyStatus || "العيادة تعمل بأوقاتها الاعتيادية ونستقبل حجوزاتكم يومياً.";
-    return `⏰ **ساعات عمل العيادة وحالتها اليوم:**\n\n${status}\n\nلأي استفسار طارئ، يمكنك الاتصال بنا مباشرة على الرقم: ${phone}`;
+    let response = `⏰ **ساعات عمل العيادة وحالتها اليوم:**\n\n${status}`;
+    if (clinicInfo?.notes) {
+      response += `\n\n📌 **عن العيادة وأوقات الدوام:**\n${clinicInfo.notes}`;
+    }
+    response += `\n\nلأي استفسار طارئ، يمكنك الاتصال بنا مباشرة على الرقم: ${phone}`;
+    return response;
+  }
+
+  // 6.5. About / Bio / Services Definition
+  const aboutKeywords = ["تعريف", "عن العيادة", "من انتم", "من أنتم", "سيرة", "ذاتية", "دكتور", "طبيب", "خبرة", "الخدمات", "ماذا تقدم", "ماذا تقدمون", "معلومات", "about", "bio", "doctor", "cv"];
+  if (aboutKeywords.some(k => normQuery.includes(normalizeArabic(k))) && clinicInfo?.notes) {
+    return `ℹ️ **عن العيادة والطبيب والخدمات:**\n\n${clinicInfo.notes}\n\nيسعدنا خدمتكم في أي وقت!`;
   }
 
   // 7. Services & Prices
@@ -136,11 +146,21 @@ function getLocalResponse(
   return `أهلاً بك في عيادة **${clinicName}**! 🌸\n\nلم أفهم استفسارك بدقة، ولكن يمكنني إجابتك عن:\n- خدماتنا المتنوعة وأسعارنا.\n- حجز المواعيد وأوقات العمل.\n- عنوان العيادة ورقم الهاتف.\n\nيمكنك كتابة كلمة مثل "أسعار" أو "موقع" أو "اتصال" للحصول على الإجابة الفورية، أو التواصل معنا مباشرة على الرقم: **${phone}**.`;
 }
 
-async function startServer() {
-  const app = express();
-  const PORT = 3000;
+const app = express();
+const PORT = 3000;
 
-  app.use(express.json({ limit: "50mb" }));
+// Middleware to disable caching for index.html, sw.js, and manifest.json to force instant updates on mobile
+app.use((req, res, next) => {
+  const url = req.url.split("?")[0];
+  if (url === "/" || url === "/index.html" || url === "/sw.js" || url === "/manifest.json") {
+    res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0");
+    res.setHeader("Pragma", "no-cache");
+    res.setHeader("Expires", "0");
+  }
+  next();
+});
+
+app.use(express.json({ limit: "50mb" }));
 
   // API endpoint for chatbot responses
   app.post("/api/chat", async (req, res) => {
@@ -199,6 +219,7 @@ async function startServer() {
 - التخصص: ${specialty}
 - رقم الهاتف للتواصل: ${phone}
 - عنوان العيادة: ${address} ${clinicInfo?.latitude && clinicInfo?.longitude ? `(رابط موقع الخريطة الجغرافي للملاحة المباشرة: https://www.google.com/maps/search/?api=1&query=${clinicInfo.latitude},${clinicInfo.longitude})` : ""}
+- تعريف العيادة، الخدمات، السيرة الذاتية وأوقات العمل والتواصل: ${clinicInfo?.notes || "لم يتم تحديد سيرة ذاتية أو أوقات عمل تفصيلية في ملف العيادة بعد."}
 
 الحالة اليومية المكتوبة من قبل الطبيب (مهمة جداً لليوم):
 "${dailyStatus || "لا توجد حالة استثنائية لليوم، العيادة تعمل بأوقاتها الاعتيادية."}"
@@ -278,24 +299,32 @@ ${quickActionsText}
     }
   });
 
-  // Serve client files
-  if (process.env.NODE_ENV !== "production") {
-    const vite = await createViteServer({
-      server: { middlewareMode: true },
-      appType: "spa",
-    });
-    app.use(vite.middlewares);
-  } else {
-    const distPath = path.join(process.cwd(), "dist");
-    app.use(express.static(distPath));
-    app.get("*", (req, res) => {
-      res.sendFile(path.join(distPath, "index.html"));
-    });
+  // Serve client files & optionally start server
+  async function startServer() {
+    if (process.env.NODE_ENV !== "production" && !process.env.VERCEL) {
+      const { createServer: createViteServer } = await import("vite");
+      const vite = await createViteServer({
+        server: { middlewareMode: true },
+        appType: "spa",
+      });
+      app.use(vite.middlewares);
+    } else {
+      const distPath = path.join(process.cwd(), "dist");
+      app.use(express.static(distPath));
+      app.get("*", (req, res) => {
+        res.sendFile(path.join(distPath, "index.html"));
+      });
+    }
+
+    // Only start listening if we're not running in a serverless environment like Vercel
+    if (!process.env.VERCEL) {
+      app.listen(PORT, "0.0.0.0", () => {
+        console.log(`Server running on port ${PORT} in ${process.env.NODE_ENV || "development"} mode`);
+      });
+    }
   }
 
-  app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Server running on port ${PORT} in ${process.env.NODE_ENV || "development"} mode`);
-  });
-}
-
+// Start setup
 startServer();
+
+export default app;
