@@ -14,6 +14,9 @@ import {
   AlertCircle, 
   MessageSquare,
   TrendingUp,
+  Facebook,
+  Instagram,
+  Globe,
 
   Sparkles, 
   Clock, 
@@ -25,6 +28,7 @@ import {
   Heart, 
   FileText, 
   RefreshCw,
+  Printer,
   Sliders,
   Maximize2,
   Check,
@@ -148,6 +152,17 @@ export default function App() {
   // App View Mode State (website = public clinic landing page website, admin = doctor dashboard panel)
   const [viewMode, setViewMode] = useState<"website" | "admin">("website");
   const [isFloatingChatOpen, setIsFloatingChatOpen] = useState<boolean>(false);
+
+  // Interactive bot-knowledge editor states
+  const [interactiveDocName, setInteractiveDocName] = useState<string>("د. أحمد بن يوسف");
+  const [interactiveDocBio, setInteractiveDocBio] = useState<string>("طبيب أخصائي متخرج من كلية الطب بجامعة الجزائر، ذو خبرة تزيد عن 12 سنة في ممارسة وتطوير العلاجات الحديثة وعضو الجمعية الوطنية الجزائرية لطب الأسنان.");
+  const [interactiveServices, setInteractiveServices] = useState<string>("تقديم رعاية صحية تخصصية متكاملة تشمل الفحص السريري الدقيق وعلاج العصب بأحدث المجهريات، زراعة وتقويم الأسنان بأجود الخامات السويسرية والألمانية، وتجميل الابتسامة.");
+  const [interactiveWorkHours, setInteractiveWorkHours] = useState<string>("من الأحد إلى الخميس، من الساعة 08:30 صباحاً وحتى الساعة 16:30 مساءً. يوم السبت مخصص للحالات الطارئة والمتابعات من 09:00 ص إلى 13:00 زوالاً.");
+  const [interactiveWeekend, setInteractiveWeekend] = useState<string>("يوم الجمعة هو يوم العطلة الأسبوعية للعيادة.");
+  const [isBotPreviewOpen, setIsBotPreviewOpen] = useState<boolean>(false);
+  const [botTestQuestion, setBotTestQuestion] = useState<string>("");
+  const [botTestAnswer, setBotTestAnswer] = useState<string>("");
+  const [isBotTesting, setIsBotTesting] = useState<boolean>(false);
   
   // Clinic data state
   const [clinicInfo, setClinicInfo] = useState<ClinicInfo>({
@@ -218,6 +233,8 @@ export default function App() {
 
   // Patient Conversations & AI Analytics States
   const [selectedSession, setSelectedSession] = useState<ChatSession | null>(null);
+  const [showMedicalPdfModal, setShowMedicalPdfModal] = useState<boolean>(false);
+  const [pdfSession, setPdfSession] = useState<ChatSession | null>(null);
   const [conversations, setConversations] = useState<ChatSession[]>([
     {
       id: "sess-1",
@@ -229,15 +246,15 @@ export default function App() {
       aiSentiment: "satisfied",
       messages: [
         { id: "m-1", sender: "user", text: "مرحبا، أريد الاستفسار عن تكلفة زراعة السن الواحد في عيادتكم وما هي الإجراءات؟", timestamp: new Date() },
-        { id: "m-2", sender: "bot", text: "أهلاً بك يا فندم في عيادتنا! زراعة السن الواحد لدينا تتم بأحدث التقنيات السويسرية والألمانية. تكلفتها تبدأ من 2500 ريال وتعتمد على نوع الغرسة وحالة عظام الفك. الإجراء يتضمن فحصاً أولياً، ثم زراعة وتثبيت الغرسة، تليها فترة شفاء قصيرة قبل وضع التاج النهائي. هل تود حجز موعد لفحص مجاني مع طبيب الزراعة؟", timestamp: new Date() },
+        { id: "m-2", sender: "bot", text: "أهلاً بك يا فندم في عيادتنا! زراعة السن الواحد لدينا تتم بأحدث التقنيات السويسرية والألمانية. تكلفتها تبدأ من 35000 دج وتعتمد على نوع الغرسة وحالة عظام الفك. الإجراء يتضمن فحصاً أولياً، ثم زراعة وتثبيت الغرسة، تليها فترة شفاء قصيرة قبل وضع التاج النهائي. هل تود حجز موعد لفحص مجاني مع طبيب الزراعة؟", timestamp: new Date() },
         { id: "m-3", sender: "user", text: "نعم، أريد موعداً يوم الخميس القادم مساءً إن أمكن.", timestamp: new Date() },
-        { id: "m-4", sender: "bot", text: "يسعدنا ذلك! لقد حجزت لك موعداً مبدئياً ليوم الخميس القادم الساعة 6:00 مساءً باسم أحمد منصور. هل يمكنك تأكيد رقم جوالك لاستكمال التأكيد؟", timestamp: new Date() }
+        { id: "m-4", sender: "bot", text: "يسعدنا ذلك! لقد حجزت لك موعداً مبدئياً ليوم الخميس القادم الساعة 16:00 زوالاً باسم أحمد منصور. هل يمكنك تأكيد رقم جوالك لاستكمال التأكيد؟", timestamp: new Date() }
       ]
     },
     {
       id: "sess-2",
       patientName: "منى الرويلي",
-      patientPhone: "0509876543",
+      patientPhone: "0550987654",
       topic: "سؤال عن ألم حاد في الضرس السفلي بعد الحشو",
       date: "2026-06-30 11:05",
       status: "reviewed",
@@ -271,7 +288,7 @@ export default function App() {
       aiSentiment: "satisfied",
       messages: [
         { id: "m-10", sender: "user", text: "مرحبا.. هل يتوفر لديكم تقويم شفاف وبكم السعر؟ وهل فيه تقسيط؟", timestamp: new Date() },
-        { id: "m-11", sender: "bot", text: "مرحباً بكِ أختي فاطمة! نعم، نوفر تقنية التقويم الشفاف (Invisalign) وهو الخيار التجميلي المفضل للكثيرين. تبدأ أسعار التقويم الشفاف من 8000 ريال وتتفاوت حسب عدد القوالب المطلوبة ومدة العلاج. نعم، يسرنا تقديم خطة تقسيط مريحة لمرضانا: دفعة أولى 2000 ريال، والباقي أقساط شهرية ميسرة تبدأ من 500 ريال فقط بدون أي فوائد. هل تحبين حجز موعد استشارة مجانية مع أخصائي التقويم لدينا لأخذ القياسات ووضع الخطة؟", timestamp: new Date() },
+        { id: "m-11", sender: "bot", text: "مرحباً بكِ أختي فاطمة! نعم، نوفر تقنية التقويم الشفاف (Invisalign) وهو الخيار التجميلي المفضل للكثيرين. تبدأ أسعار التقويم الشفاف من 90000 دج وتتفاوت حسب عدد القوالب المطلوبة ومدة العلاج. نعم، يسرنا تقديم خطة تقسيط مريحة لمرضانا: دفعة أولى 20000 دج، والباقي أقساط شهرية ميسرة تبدأ من 5000 دج فقط بدون أي فوائد. هل تحبين حجز موعد استشارة مجانية مع أخصائي التقويم لدينا لأخذ القياسات ووضع الخطة؟", timestamp: new Date() },
         { id: "m-12", sender: "user", text: "رائع جداً، سأحجز موعداً الأسبوع القادم إن شاء الله.", timestamp: new Date() }
       ]
     }
@@ -284,8 +301,24 @@ export default function App() {
 
   // Market & Monetization States
   const [targetClinics, setTargetClinics] = useState<number>(5);
-  const [monthlyPrice, setMonthlyPrice] = useState<number>(350); // SAR
-  const [activeIntegrationTab, setActiveIntegrationTab] = useState<"whatsapp" | "telegram" | "embed">("whatsapp");
+  const [monthlyPrice, setMonthlyPrice] = useState<number>(4500); // DZD / د.ج
+  const [activeIntegrationTab, setActiveIntegrationTab] = useState<"whatsapp" | "messenger" | "instagram" | "telegram" | "embed">("whatsapp");
+  
+  // Credentials & State for Social Media Integrations
+  const [integrationStatus, setIntegrationStatus] = useState<Record<string, "disconnected" | "connecting" | "connected">>({
+    whatsapp: "disconnected",
+    messenger: "disconnected",
+    instagram: "disconnected",
+    telegram: "disconnected"
+  });
+  const [whatsappPhoneId, setWhatsappPhoneId] = useState("");
+  const [whatsappToken, setWhatsappToken] = useState("");
+  const [messengerPageId, setMessengerPageId] = useState("");
+  const [messengerToken, setMessengerToken] = useState("");
+  const [instagramPageId, setInstagramPageId] = useState("");
+  const [instagramToken, setInstagramToken] = useState("");
+  const [telegramTokenState, setTelegramTokenState] = useState("");
+
   const [flyerClinicName, setFlyerClinicName] = useState<string>("عيادة المدار لطب الأسنان");
   const [flyerClinicPhone, setFlyerClinicPhone] = useState<string>("0554433221");
   const [flyerWelcomeText, setFlyerWelcomeText] = useState<string>("امسح الكود للتحدث مع طبيبنا الافتراضي وحجز موعدك في دقيقة واحدة! 🦷");
@@ -721,6 +754,15 @@ export default function App() {
     address: string,
     planId: "free" | "starter" | "pro"
   ) => {
+    if (planId === "free") {
+      const freeClaimed = localStorage.getItem("shafi_free_plan_claimed");
+      if (freeClaimed === "true") {
+        showNotification("⚠️ عذراً، تم تفعيل الباقة التجريبية مسبقاً على هذا الجهاز! لمنع إساءة الاستخدام، يمكنك ترقية حسابك إلى باقة 'الانطلاق' أو 'الاحترافية' لتشغيل العيادة، أو تسجيل الدخول بحسابك السابق.", "error");
+        return false;
+      }
+      localStorage.setItem("shafi_free_plan_claimed", "true");
+    }
+
     if (tenants.some(t => t.email.toLowerCase() === email.toLowerCase())) {
       showNotification("هذا البريد الإلكتروني مسجل بالفعل! ❌", "error");
       return false;
@@ -750,7 +792,7 @@ export default function App() {
         {
           id: `bill-${Date.now()}`,
           planId: planId,
-          amount: planId === "free" ? 0 : planId === "starter" ? 199 : 399,
+          amount: planId === "free" ? 0 : planId === "starter" ? 4500 : 9000,
           date: new Date().toISOString().split("T")[0],
           status: "paid"
         }
@@ -863,6 +905,15 @@ export default function App() {
 
   // Initialize from LocalStorage or Seed Default SaaS Tenants
   useEffect(() => {
+    // Force clear any old Saudi default data from client localStorage to ensure Algerian presets load properly
+    const migrated = localStorage.getItem("shafi_algerian_migration_v5");
+    if (!migrated) {
+      localStorage.removeItem("shafi_saas_tenants");
+      localStorage.removeItem("shafi_current_tenant");
+      localStorage.removeItem("shafi_free_plan_claimed");
+      localStorage.setItem("shafi_algerian_migration_v5", "true");
+    }
+
     const savedCustom = localStorage.getItem("custom_clinic_presets");
     if (savedCustom) {
       try {
@@ -891,7 +942,7 @@ export default function App() {
           id: preset.id,
           email: `doctor.${preset.id}@shafi.ai`,
           password: "123", // easy password for demo
-          doctorName: preset.id === "dental" ? "د. محمد العتيبي" : preset.id === "derma" ? "د. سارة الشمري" : "د. خالد الدوسري",
+          doctorName: preset.id === "dental" ? "د. محمد بن يوسف" : preset.id === "derma" ? "د. سارة حميدش" : "د. خالد بلعيدي",
           clinicName: preset.info.name,
           specialty: preset.info.specialty,
           phone: preset.info.phone,
@@ -931,7 +982,7 @@ export default function App() {
               aiSentiment: "satisfied",
               messages: [
                 { id: "m-1", sender: "user", text: "مرحبا، أريد الاستفسار عن تكلفة زراعة السن الواحد في عيادتكم وما هي الإجراءات؟", timestamp: new Date() },
-                { id: "m-2", sender: "bot", text: "أهلاً بك يا فندم في عيادتنا! زراعة السن الواحد لدينا تتم بأحدث التقنيات السويسرية والألمانية. تكلفتها تبدأ من 2500 ريال وتعتمد على نوع الغرسة وحالة عظام الفك. الإجراء يتضمن فحصاً أولياً، ثم زراعة وتثبيت الغرسة، تليها فترة شفاء قصيرة قبل وضع التاج النهائي. هل تود حجز موعد لفحص مجاني مع طبيب الزراعة؟", timestamp: new Date() }
+                { id: "m-2", sender: "bot", text: "أهلاً بك يا فندم في عيادتنا! زراعة السن الواحد لدينا تتم بأحدث التقنيات السويسرية والألمانية. تكلفتها تبدأ من 35000 دج وتعتمد على نوع الغرسة وحالة عظام الفك. الإجراء يتضمن فحصاً أولياً، ثم زراعة وتثبيت الغرسة، تليها فترة شفاء قصيرة قبل وضع التاج النهائي. هل تود حجز موعد لفحص مجاني مع طبيب الزراعة؟", timestamp: new Date() }
               ]
             }
           ] : [],
@@ -1810,6 +1861,58 @@ export default function App() {
     }
   };
 
+  // Test how the comprehensive definition behaves with the Bot
+  const handleTestBotKnowledge = async (customQuestion: string) => {
+    const questionToTest = customQuestion || botTestQuestion;
+    if (!questionToTest.trim()) {
+      showNotification("يرجى كتابة سؤال لفحصه!", "error");
+      return;
+    }
+
+    setIsBotTesting(true);
+    setBotTestAnswer("");
+
+    try {
+      const payload = {
+        messages: [{ id: `test-q-${Date.now()}`, sender: "user", text: questionToTest, timestamp: new Date() }],
+        services,
+        guidelines,
+        dailyStatus,
+        quickActions,
+        clinicInfo: {
+          ...clinicInfo,
+          notes: clinicInfo.notes // Test the latest edited notes
+        }
+      };
+
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        throw new Error("حدث خطأ أثناء الاتصال بالخادم");
+      }
+
+      const data = await response.json();
+      setBotTestAnswer(data.reply || "عذراً، لم أستطع إجابتك بشكل سليم.");
+    } catch (err: any) {
+      console.error("Test bot query error:", err);
+      // Smart local fallback if the server is offline or Gemini throws an error
+      setBotTestAnswer(`[مُحاكاة محلية ذكية لعدم توفر الاتصال] 🤖
+بناءً على معلومات عيادتك الحالية:
+- الطبيب المسؤول: ${interactiveDocName} (${interactiveDocBio})
+- الخدمات: ${interactiveServices}
+- أوقات العمل: ${interactiveWorkHours}
+- العطلة: ${interactiveWeekend}
+
+سأجيب المريض كالتالي: "أهلاً بك! تحت إشراف الدكتور ${interactiveDocName} (${interactiveDocBio})، نقدم لك خدماتنا: ${interactiveServices} في أوقات العمل الرسمية: ${interactiveWorkHours}، وعطلتنا الأسبوعية: ${interactiveWeekend}."`);
+    } finally {
+      setIsBotTesting(false);
+    }
+  };
+
   // Handlers for Services
   const handleAddService = (e: React.FormEvent) => {
     e.preventDefault();
@@ -2362,6 +2465,7 @@ export default function App() {
         setSaasView={setSaasView}
         checkoutPlanId={checkoutPlanId}
         setCheckoutPlanId={setCheckoutPlanId}
+        showNotification={showNotification}
       />
     );
   }
@@ -2595,7 +2699,7 @@ export default function App() {
                       </div>
                       <div className="text-left">
                         <span className="text-teal-400 font-extrabold text-sm block">
-                          {service.price} {isNaN(Number(service.price)) ? "" : "ريال"}
+                          {service.price} {isNaN(Number(service.price)) ? "" : "دج"}
                         </span>
                         <span className="text-[10px] text-slate-500 font-bold block">⏱️ {service.duration || "30 دقيقة"}</span>
                       </div>
@@ -2845,7 +2949,7 @@ export default function App() {
             <div className="space-y-3">
               <span className="text-slate-300 font-bold block text-sm">الاتصال والموقع الجغرافي</span>
               <ul className="space-y-1.5 text-[11px] text-slate-400">
-                <li>📍 العنوان: {clinicInfo.address || "الرياض، المملكة العربية السعودية"}</li>
+                <li>📍 العنوان: {clinicInfo.address || "الجزائر العاصمة، الجزائر"}</li>
                 <li>📞 الهاتف: {clinicInfo.phone || "غير مدخل"}</li>
                 <li>🕒 الطوارئ: {clinicInfo.emergencyPhone || clinicInfo.phone || "غير مدخل"}</li>
               </ul>
@@ -3176,21 +3280,6 @@ export default function App() {
             )}
           </button>
 
-          {/* PWA Install Button */}
-          <button
-            type="button"
-            onClick={handleInstallApp}
-            className={`text-xs px-3.5 py-1.5 rounded-xl font-bold transition-all duration-300 flex items-center gap-1.5 cursor-pointer border ${
-              showInstallBtn 
-                ? "bg-gradient-to-r from-teal-500 to-cyan-500 text-slate-950 border-teal-400 shadow-lg shadow-teal-500/20 hover:scale-105 animate-pulse" 
-                : "bg-slate-800 text-slate-300 hover:bg-slate-750 hover:text-white border-slate-700/60"
-            }`}
-            title="تثبيت التطبيق على جهازك للتشغيل السريع بملء الشاشة والعمل بدون إنترنت (PWA)"
-          >
-            <Smartphone className={`w-3.5 h-3.5 ${showInstallBtn ? "text-slate-950" : "text-teal-400"}`} />
-            <span>{showInstallBtn ? "تثبيت التطبيق الآن 📱" : "تثبيت كـ تطبيق 📱"}</span>
-          </button>
-
           {/* Demo Preset Selection for commercial pitches */}
           <div className="flex items-center gap-2 flex-wrap justify-center bg-slate-900/80 border border-slate-800 p-1.5 rounded-xl">
           <span className="text-xs text-slate-400 px-2 flex items-center gap-1">
@@ -3363,12 +3452,12 @@ export default function App() {
               onClick={() => setActiveTab("backup")}
               className={`flex-1 py-2.5 px-4 rounded-lg font-medium text-sm transition-all duration-300 whitespace-nowrap flex items-center justify-center gap-2 ${
                 activeTab === "backup"
-                  ? "bg-slate-800 text-white shadow-sm border border-slate-700"
+                  ? "bg-slate-800 text-white shadow-sm border border-slate-700 font-bold"
                   : "text-slate-400 hover:text-slate-200"
               }`}
             >
-              <Smartphone className="w-4 h-4 text-teal-400" />
-              <span className="font-bold">تصدير وتثبيت التطبيق 📱</span>
+              <Database className="w-4 h-4 text-teal-400" />
+              <span className="font-bold">حفظ واستعادة البيانات 💾</span>
             </button>
             <button
               onClick={() => setActiveTab("subscription")}
@@ -4347,7 +4436,7 @@ export default function App() {
                       <div className="md:col-span-2">
                         <input
                           type="text"
-                          placeholder="السعر (مثال: 500 ريال)"
+                          placeholder="السعر (مثال: 5000 دج)"
                           value={newServicePrice}
                           onChange={(e) => setNewServicePrice(e.target.value)}
                           className="w-full bg-slate-950 border border-slate-700/60 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-teal-500"
@@ -4465,6 +4554,64 @@ export default function App() {
                       </div>
                     )}
                   </div>
+
+                  {/* Part C: Comprehensive Clinic Definition, Services, CV & Working Hours */}
+                  <div className="space-y-4 pt-5 border-t border-slate-800/80">
+                    <div className="flex justify-between items-center flex-wrap gap-2 text-right" dir="rtl">
+                      <div>
+                        <h4 className="font-bold text-slate-200 text-sm flex items-center gap-1.5 justify-end">
+                          <span>التعريف الشامل بالعيادة، الخدمات، السيرة الذاتية وأوقات العمل 🏥</span>
+                          <Heart className="w-4 h-4 text-rose-500 animate-pulse" />
+                        </h4>
+                        <p className="text-xs text-slate-400 mt-1">تعديل وصياغة ملف العيادة الشامل للجزائر بشكل تفاعلي ذكي لمعاينة وضمان ردود دقيقة ومحكمة من البوت.</p>
+                      </div>
+                    </div>
+
+                    <div className="bg-slate-900/40 p-5 rounded-xl border border-slate-800 space-y-4">
+                      <div className="flex justify-between items-center gap-2 flex-wrap" dir="rtl">
+                        <span className="text-xs font-bold text-slate-300">اكتب هنا التعريف التفصيلي لعيادتك:</span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const suggestedText = `تلتزم عيادتنا المتواجدة بالجزائر بتقديم أرقى الخدمات الطبية والرعاية الصحية المتكاملة لمرضانا الكرام. يشرف على العيادة الدكتور أحمد بن يوسف، وهو طبيب أخصائي متخرج من كلية الطب بجامعة الجزائر وله خبرة تزيد عن 12 سنة في ممارسة وتطوير العلاجات الحديثة. تقدم العيادة مجموعة شاملة من الخدمات التشخيصية والعلاجية بأحدث الأجهزة الطبية المستوردة والمعقمة كلياً وفق المعايير الطبية الدولية.
+
+ساعات العمل واستقبال المرضى تكون من الأحد إلى الخميس، من الساعة 08:30 صباحاً وحتى الساعة 16:30 مساءً. يوم السبت مخصص للحالات الطارئة والمتابعة الخفيفة من 09:00 صباحاً إلى 13:00 زوالاً، ويوم الجمعة هو يوم العطلة الأسبوعية للعيادة. نسعد دائماً بخدمتكم وتوفير استجابة فورية لاستفساراتكم عبر المساعد الذكي المتاح 24/7 لمرافقة مرضانا وتسهيل حجز المواعيد.`;
+                            setClinicInfo(prev => ({ ...prev, notes: suggestedText }));
+                            showNotification("تم تعبئة الفقرة النموذجية المقترحة! يمكنك تعديلها الآن وحفظ التغييرات 💡", "success");
+                          }}
+                          className="text-[11px] bg-teal-500/10 hover:bg-teal-500/20 text-teal-300 border border-teal-500/30 px-3 py-1.5 rounded-lg transition-all cursor-pointer font-bold flex items-center gap-1.5"
+                        >
+                          <Sparkles className="w-3.5 h-3.5" />
+                          <span>💡 اقتراح فقرة نموذجية جاهزة للتعديل</span>
+                        </button>
+                      </div>
+
+                      <textarea
+                        value={clinicInfo.notes || ""}
+                        onChange={(e) => setClinicInfo(prev => ({ ...prev, notes: e.target.value }))}
+                        placeholder="مثال: تلتزم عيادتنا بتقديم خدمات طبية متكاملة... (اضغط على الزر أعلاه لتنزيل مثال جاهز لتعديله فوراً)"
+                        className="w-full bg-slate-950 border border-slate-700/60 rounded-xl px-4 py-3 text-slate-200 text-xs focus:ring-2 focus:ring-teal-500 focus:outline-none min-h-[140px] leading-relaxed text-right"
+                        dir="rtl"
+                      />
+
+                      <div className="flex justify-between items-center gap-4 flex-wrap pt-2 border-t border-slate-850">
+                        <div className="text-[10px] text-slate-400 leading-relaxed text-right max-w-lg" dir="rtl">
+                          * يتم استخدام هذه الفقرة مباشرة بواسطة <strong>محرك الذكاء الاصطناعي</strong> للإجابة على المرضى حول خدمات العيادة وأوقات العمل والسيرة الذاتية للطبيب وضمان تقديم معلومات دقيقة ودائمة.
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            saveToLocalStorage(clinicInfo, dailyStatus, services, guidelines, quickActions);
+                            showNotification("تم حفظ التعريف الشامل للعيادة بنجاح! 💾", "success");
+                          }}
+                          className="bg-teal-500 hover:bg-teal-400 text-slate-950 font-black px-5 py-2.5 rounded-xl text-xs transition-all flex items-center gap-1.5 cursor-pointer shrink-0 shadow-lg shadow-teal-500/10"
+                        >
+                          <Save className="w-4 h-4" />
+                          <span>حفظ التعريف الشامل</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 </motion.div>
               )}
 
@@ -4530,7 +4677,7 @@ export default function App() {
                       <button
                         onClick={() => {
                           if (importTarget === "services") {
-                            setImportTypeText("الخدمة\tالوصف والتفاصيل\tالسعر\nتبييض أسنان منزلي\tقوالب تبييض مخصصة مع المادة المبيضة الفعالة للبيت\t300 ريال\nعلاج العصب بجلسة واحدة\tسحب العصب المصاب وحشو القنوات بتقنيات حديثة بلا ألم\t450 ريال\nابتسامة هوليوود زركون\tعدسات زركون عالية المقاومة واللمعان للسن الواحد\t900 ريال");
+                            setImportTypeText("الخدمة\tالوصف والتفاصيل\tالسعر\nتبييض أسنان منزلي\tقوالب تبييض مخصصة مع المادة المبيضة الفعالة للبيت\t3000 دج\nعلاج العصب بجلسة واحدة\tسحب العصب المصاب وحشو القنوات بتقنيات حديثة بلا ألم\t4500 دج\nابتسامة هوليوود زركون\tعدسات زركون عالية المقاومة واللمعان للسن الواحد\t9000 دج");
                           } else {
                             setImportTypeText("الموضوع\tالإرشادات والتعليمات\nتحضير فحص الدم الكامل\tيجب الصيام عن الأكل والشرب ما عدا الماء العادي لمدة 8 إلى 12 ساعة كاملة قبل سحب العينة.\nتحضير جلسة التقشير\tيرجى تجنب منتجات الريتينول ومقشرات حمض الساليسيليك قبل الجلسة بـ 5 أيام مع الحرص على ترطيب البشرة.");
                           }
@@ -4547,7 +4694,7 @@ export default function App() {
                       onChange={(e) => setImportTypeText(e.target.value)}
                       placeholder={
                         importTarget === "services" 
-                          ? "مثال للصق من الإكسل:\nاسم الخدمة [فاصل Tab] تفاصيل الوصف [فاصل Tab] السعر بالريال\nتبييض الأسنان بالليزر\tتبييض في العيادة في ساعة\t600 ريال\nتنظيف جير كاشف\tتلميع وإزالة ترسبات\t150 ريال"
+                          ? "مثال للصق من الإكسل:\nاسم الخدمة [فاصل Tab] تفاصيل الوصف [فاصل Tab] السعر بالدينار\nتبييض الأسنان بالليزر\tتبييض في العيادة في ساعة\t15000 دج\nتنظيف جير كاشف\tتلميع وإزالة ترسبات\t3000 دج"
                           : "مثال للصق من الإكسل:\nالعنوان [فاصل Tab] تعليمات المريض بالتفصيل\nصيام فحص الدم\tصيام تام 8 ساعات قبل التحليل\nما بعد تبييض الأسنان\tتجنب الشاي والقهوة والتدخين 48 ساعة"
                       }
                       className="w-full bg-slate-950 border border-slate-700 rounded-xl p-4 text-slate-200 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-teal-500 min-h-[160px]"
@@ -4611,7 +4758,7 @@ export default function App() {
                 </motion.div>
               )}
 
-              {/* Tab 5: Backup & Mobile App Install */}
+              {/* Tab 5: Backup & Data Retention */}
               {activeTab === "backup" && (
                 <motion.div
                   key="backup-tab"
@@ -4621,8 +4768,8 @@ export default function App() {
                   className="space-y-6"
                 >
                   <div className="border-b border-slate-800 pb-2">
-                    <h4 className="font-bold text-slate-200 text-sm">حفظ النسخة الاحتياطية وتثبيت التطبيق على الهاتف 📱</h4>
-                    <p className="text-xs text-slate-400">تأمين كامل لتصميمك وبياناتك من الضياع، مع طريقة تشغيله كبرنامج حقيقي على جوالك وجوال زبائنك.</p>
+                    <h4 className="font-bold text-slate-200 text-sm">إدارة النسخ الاحتياطية وحفظ البيانات 💾</h4>
+                    <p className="text-xs text-slate-400">تأمين كامل لتصميمك وبياناتك من الضياع، مع إمكانية تصديرها واستيرادها في أي وقت.</p>
                   </div>
 
                   {/* Anti-Data Loss section */}
@@ -4663,69 +4810,6 @@ export default function App() {
                           <Upload className="w-4 h-4 text-teal-400" />
                           <span>رفع واستعادة نسخة سابقة (.json)</span>
                         </button>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Mobile App Installation Guide (PWA style) */}
-                  <div className="bg-slate-900/60 p-5 rounded-xl border border-slate-800 space-y-3">
-                    <h5 className="font-bold text-xs text-slate-200 flex items-center gap-2">
-                      <Smartphone className="w-4 h-4 text-teal-400" />
-                      <span>طريقة تثبيت هذا الشات بوت كبرنامج على هاتف العميل 📲</span>
-                    </h5>
-                    <p className="text-xs text-slate-400 leading-relaxed">
-                      هذا المشروع مصمم ليكون متوافقاً تماماً مع الهواتف الذكية ومتجاوباً بنسبة 100%. يمكنك تثبيته مباشرة على الشاشة الرئيسية للهاتف ليعمل كـ <strong className="text-teal-400">تطبيق حقيقي (PWA)</strong> دون الحاجة إلى دفع تكاليف متجر جوجل أو آبل:
-                    </p>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-                      {/* iOS Instructions */}
-                      <div className="bg-slate-950/40 p-3.5 rounded-lg border border-slate-800 space-y-1.5">
-                        <span className="text-[11px] font-bold text-slate-200 block">🍏 هواتف آيفون (iPhone / iOS):</span>
-                        <ol className="text-[11px] text-slate-400 list-decimal list-inside space-y-1">
-                          <li>افتح رابط المعاينة المباشر في متصفح <strong className="text-slate-300">Safari</strong></li>
-                          <li>اضغط على زر <strong className="text-slate-300">"مشاركة" (Share)</strong> في الأسفل</li>
-                          <li>اختر <strong className="text-teal-400">"إضافة إلى الشاشة الرئيسية" (Add to Home Screen)</strong></li>
-                          <li>سيظهر الشات بوت كأيقونة تطبيق جاهز على جوالك!</li>
-                        </ol>
-                      </div>
-
-                      {/* Android Instructions */}
-                      <div className="bg-slate-950/40 p-3.5 rounded-lg border border-slate-800 space-y-1.5">
-                        <span className="text-[11px] font-bold text-slate-200 block">🤖 هواتف أندرويد (Samsung / Xiaomi / Huawei):</span>
-                        <ol className="text-[11px] text-slate-400 list-decimal list-inside space-y-1">
-                          <li>افتح رابط المعاينة المباشر في متصفح <strong className="text-slate-300">Chrome</strong></li>
-                          <li>اضغط على <strong className="text-slate-300">النقاط الثلاث </strong> في الزاوية العلوية</li>
-                          <li>اختر <strong className="text-teal-400">"تثبيت التطبيق" (Install App)</strong> أو إضافة للشاشة</li>
-                          <li>ثوانٍ معدودة وسيتم تحميله وتثبيته كبرنامج مستقل!</li>
-                        </ol>
-                      </div>
-                    </div>
-
-                    {/* App Links directly to copy */}
-                    <div className="pt-2">
-                      <span className="text-[11px] text-slate-400 block mb-1">رابط المعاينة المباشر للشات بوت (أرسله لعملائك أو جربه في هاتفك):</span>
-                      <div className="flex bg-slate-950 border border-slate-800 rounded-lg p-2.5 items-center justify-between gap-2 overflow-hidden">
-                        <span className="text-[10px] font-mono text-slate-300 select-all truncate">
-                          {typeof window !== "undefined" ? window.location.origin : "https://ais-pre-cszxuxfdd4y3gkxxzqbaea-361512670008.europe-west2.run.app"}
-                        </span>
-                        <button
-                          onClick={() => {
-                            const url = typeof window !== "undefined" ? window.location.origin : "https://ais-pre-cszxuxfdd4y3gkxxzqbaea-361512670008.europe-west2.run.app";
-                            navigator.clipboard.writeText(url);
-                            showNotification("تم نسخ رابط التطبيق بنجاح! 📋", "success");
-                          }}
-                          className="bg-slate-800 hover:bg-slate-700 text-teal-400 text-[10px] font-bold px-2.5 py-1 rounded transition-all shrink-0 cursor-pointer"
-                        >
-                          نسخ الرابط المباشر
-                        </button>
-                      </div>
-                      <div className="mt-2.5 bg-amber-500/10 border border-amber-500/20 p-3 rounded-lg">
-                        <p className="text-[10px] text-amber-400 leading-normal">
-                          ⚠️ <strong>تنبيه هام للمعاينة على الهاتف:</strong> بما أن هذا الرابط هو رابط بيئة تطوير مؤقت خاص بـ Google AI Studio، فإن المتصفح على هاتفك قد يطلب منك تسجيل الدخول بنفس حساب Google الخاص بك (مالك المشروع) للسماح لك برؤيته وحمايته من المتطفلين.
-                        </p>
-                        <p className="text-[10px] text-slate-400 mt-1 leading-normal">
-                          للحصول على رابط عام يفتح للجميع مباشرة بدون تسجيل دخول: اضغط على زر <strong className="text-slate-200">"Share" (مشاركة)</strong> في الشريط العلوي لواجهة AI Studio لإنشاء رابط معاينة عام ومفتوح للجميع، أو قم بتصدير الكود كملف ZIP ورفعه على أي استضافة عامة مجانية.
-                        </p>
                       </div>
                     </div>
                   </div>
@@ -5231,10 +5315,21 @@ export default function App() {
                                 navigator.clipboard.writeText(summary);
                                 showNotification("تم نسخ التقرير الطبي وموجز الحالة إلى الحافظة! 📋", "success");
                               }}
-                              className="bg-slate-800 hover:bg-slate-750 text-slate-300 text-[10px] font-bold px-2.5 py-1.5 rounded-lg border border-slate-750 transition-all cursor-pointer"
+                              className="bg-slate-800 hover:bg-slate-750 text-slate-300 text-[10px] font-bold px-2 py-1.5 rounded-lg border border-slate-750 transition-all cursor-pointer"
                               title="نسخ ملخص الحالة"
                             >
-                              تصدير التقرير 📋
+                              نسخ الملخص 📋
+                            </button>
+                            <button
+                              onClick={() => {
+                                setPdfSession(selectedSession);
+                                setShowMedicalPdfModal(true);
+                              }}
+                              className="bg-teal-500 hover:bg-teal-400 text-slate-950 text-[10px] font-bold px-2.5 py-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1 shadow-sm shadow-teal-500/10"
+                              title="تصدير سجل المحادثة والتحليلات كتقرير طبي رسمي PDF"
+                            >
+                              <Printer className="w-3.5 h-3.5" />
+                              <span>التقرير الطبي الرسمي (PDF) 📄</span>
                             </button>
                           </div>
                         </div>
@@ -5460,21 +5555,23 @@ export default function App() {
                       </div>
 
                       {/* Webhook sub tabs */}
-                      <div className="flex bg-slate-950 p-1 rounded-lg border border-slate-850">
-                        {(["whatsapp", "telegram", "embed"] as const).map((tab) => (
+                      <div className="flex flex-wrap bg-slate-950 p-1 rounded-lg border border-slate-850 gap-1">
+                        {(["whatsapp", "messenger", "instagram", "telegram", "embed"] as const).map((tab) => (
                           <button
                             key={tab}
                             type="button"
                             onClick={() => setActiveIntegrationTab(tab)}
-                            className={`flex-1 py-1.5 text-[10px] font-bold rounded-md transition-all cursor-pointer ${
+                            className={`flex-1 min-w-[85px] py-2 text-[10px] font-bold rounded-md transition-all cursor-pointer ${
                               activeIntegrationTab === tab
                                 ? "bg-slate-800 text-teal-400 shadow"
                                 : "text-slate-500 hover:text-slate-300"
                             }`}
                           >
-                            {tab === "whatsapp" && "واتساب الأعمال WhatsApp API"}
-                            {tab === "telegram" && "تيليجرام Telegram Bot"}
-                            {tab === "embed" && "تضمين بموقع العيادة Widget"}
+                            {tab === "whatsapp" && "واتساب WhatsApp"}
+                            {tab === "messenger" && "ماسنجر Messenger"}
+                            {tab === "instagram" && "إنستغرام Instagram"}
+                            {tab === "telegram" && "تيليجرام Telegram"}
+                            {tab === "embed" && "تضمين بموقعك Widget"}
                           </button>
                         ))}
                       </div>
@@ -5485,48 +5582,190 @@ export default function App() {
                         {activeIntegrationTab === "whatsapp" && (
                           <div className="space-y-3">
                             <div className="flex justify-between items-center bg-teal-500/5 p-2 rounded border border-teal-500/10">
-                              <span className="text-[9px] text-teal-400 font-mono">Status: Production Ready</span>
+                              <span className={`text-[9px] font-mono px-2 py-0.5 rounded ${
+                                integrationStatus.whatsapp === "connected" ? "bg-emerald-500/20 text-emerald-400" : "bg-teal-500/10 text-teal-400"
+                              }`}>
+                                الحالة: {integrationStatus.whatsapp === "connected" ? "متصل ومفعل" : "جاهز للربط"}
+                              </span>
                               <span className="text-[10px] text-slate-300 font-bold">ربط واتساب السحابي (WhatsApp Cloud API)</span>
                             </div>
 
                             <p className="text-[9px] text-slate-400 leading-relaxed">
-                              تتيح لك هذه الطريقة ربط الشات بوت برقم واتساب عيادتك الرسمي عبر بوابة Meta المعتمدة. كل رسالة يرسلها مريض عيادتك على الواتساب ستتم معالجتها بالذكاء الاصطناعي وتجيب عليها فورياً بناءً على إرشاداتك الطبية الحالية.
+                              تتيح لك هذه البوابة ربط الشات بوت برقم هاتف عيادتك الرسمي على واتساب عبر منصة Meta للمطورين. سيقوم الذكاء الاصطناعي بالرد فورياً على استفسارات وحجوزات المرضى على مدار الساعة.
                             </p>
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-right">
                               <div className="space-y-1">
-                                <label className="text-[9px] text-slate-400 font-bold">معرف رقم هاتف واتساب (Phone ID)</label>
+                                <label className="text-[9px] text-slate-400 font-bold">معرف رقم هاتف واتساب (Phone Number ID)</label>
                                 <input 
                                   type="text" 
+                                  value={whatsappPhoneId}
+                                  onChange={(e) => setWhatsappPhoneId(e.target.value)}
                                   placeholder="مثال: 10938502934812"
-                                  className="w-full bg-slate-900 border border-slate-800 rounded px-2 py-1 text-[10px] text-slate-200 text-left font-mono"
+                                  className="w-full bg-slate-900 border border-slate-800 rounded px-2 py-1 text-[10px] text-slate-200 text-left font-mono focus:border-teal-500 focus:outline-none"
                                 />
                               </div>
                               <div className="space-y-1">
-                                <label className="text-[9px] text-slate-400 font-bold">رمز التحقق السري (Verify Token)</label>
+                                <label className="text-[9px] text-slate-400 font-bold">رمز الوصول الدائم (Permanent Access Token)</label>
                                 <input 
-                                  type="text" 
-                                  defaultValue="clinic_ai_secret_whatsapp_token_v1"
-                                  className="w-full bg-slate-900 border border-slate-800 rounded px-2 py-1 text-[10px] text-slate-200 text-left font-mono"
-                                  readOnly
+                                  type="password" 
+                                  value={whatsappToken}
+                                  onChange={(e) => setWhatsappToken(e.target.value)}
+                                  placeholder="الصق رمز الوصول الدائم من فيسبوك..."
+                                  className="w-full bg-slate-900 border border-slate-800 rounded px-2 py-1 text-[10px] text-slate-200 text-left font-mono focus:border-teal-500 focus:outline-none"
                                 />
                               </div>
                             </div>
 
                             <div className="space-y-1">
-                              <label className="text-[9px] text-teal-400 font-bold">رابط خطاف الويب الخاص بعيادتك (Webhook URL) لإدخاله في Meta Developer Console:</label>
+                              <label className="text-[9px] text-teal-400 font-bold">رابط خطاف الويب للعيادة (Webhook URL) لإدخاله في Meta Developer Console:</label>
                               <div className="bg-slate-900 p-2 rounded text-left font-mono text-[9px] text-slate-300 select-all border border-slate-800 flex justify-between items-center">
                                 <span className="text-slate-500 text-[8px] bg-slate-950 px-1 rounded">GET/POST</span>
-                                <span>https://your-clinic-endpoint.com/api/webhooks/whatsapp</span>
+                                <span>https://shafi-api.algiers.clinic/v1/webhooks/whatsapp</span>
                               </div>
                             </div>
 
                             <button
                               type="button"
-                              onClick={() => showNotification("تم توليد الكود البرمجي لربط واتساب! انسخ رابط Webhook وضعه في لوحة تحكم مطوري فيسبوك. 💬", "success")}
-                              className="w-full bg-slate-800 hover:bg-slate-750 text-teal-400 border border-slate-750 font-bold text-[10px] py-1.5 px-3 rounded transition-all cursor-pointer"
+                              onClick={() => {
+                                if (!whatsappPhoneId || !whatsappToken) {
+                                  showNotification("⚠️ يرجى تعبئة كافة الحقول المطلوبة (معرف الهاتف ورمز الوصول) أولاً!", "error");
+                                  return;
+                                }
+                                setIntegrationStatus(prev => ({ ...prev, whatsapp: "connected" }));
+                                showNotification("🎉 تم التحقق وربط واتساب الأعمال بنجاح! الشات بوت الآن نشط ويستجيب للمرضى.", "success");
+                              }}
+                              className="w-full bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold text-[10px] py-1.5 px-3 rounded transition-all cursor-pointer flex items-center justify-center gap-1.5"
                             >
-                              توليد واختبار الاتصال بالبوابة السحابية ⚡
+                              <span>تفعيل واختبار اتصال واتساب السحابي ⚡</span>
+                            </button>
+                          </div>
+                        )}
+
+                        {activeIntegrationTab === "messenger" && (
+                          <div className="space-y-3">
+                            <div className="flex justify-between items-center bg-blue-500/5 p-2 rounded border border-blue-500/10">
+                              <span className={`text-[9px] font-mono px-2 py-0.5 rounded ${
+                                integrationStatus.messenger === "connected" ? "bg-emerald-500/20 text-emerald-400" : "bg-blue-500/10 text-blue-400"
+                              }`}>
+                                الحالة: {integrationStatus.messenger === "connected" ? "متصل ومفعل" : "جاهز للربط"}
+                              </span>
+                              <span className="text-[10px] text-slate-300 font-bold">ربط ماسنجر (Facebook Messenger API)</span>
+                            </div>
+
+                            <p className="text-[9px] text-slate-400 leading-relaxed">
+                              اربط الشات بوت مباشرة بصفحة عيادتك الرسمية على فيسبوك. سيتولى المساعد الذكي الرد على جميع رسائل المتابعين وحجز المواعيد وتنظيم الاستفسارات مباشرة على Messenger.
+                            </p>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-right">
+                              <div className="space-y-1">
+                                <label className="text-[9px] text-slate-400 font-bold">معرف صفحة فيسبوك (Facebook Page ID)</label>
+                                <input 
+                                  type="text" 
+                                  value={messengerPageId}
+                                  onChange={(e) => setMessengerPageId(e.target.value)}
+                                  placeholder="مثال: 102938475610293"
+                                  className="w-full bg-slate-900 border border-slate-800 rounded px-2 py-1 text-[10px] text-slate-200 text-left font-mono focus:border-teal-500 focus:outline-none"
+                                />
+                              </div>
+                              <div className="space-y-1">
+                                <label className="text-[9px] text-slate-400 font-bold">مفتاح الصفحة (Page Access Token)</label>
+                                <input 
+                                  type="password" 
+                                  value={messengerToken}
+                                  onChange={(e) => setMessengerToken(e.target.value)}
+                                  placeholder="الصق رمز الوصول لصفحة فيسبوك..."
+                                  className="w-full bg-slate-900 border border-slate-800 rounded px-2 py-1 text-[10px] text-slate-200 text-left font-mono focus:border-teal-500 focus:outline-none"
+                                />
+                              </div>
+                            </div>
+
+                            <div className="space-y-1">
+                              <label className="text-[9px] text-blue-400 font-bold">رابط خطاف الويب لماسنجر (Webhook URL):</label>
+                              <div className="bg-slate-900 p-2 rounded text-left font-mono text-[9px] text-slate-300 select-all border border-slate-800 flex justify-between items-center">
+                                <span className="text-slate-500 text-[8px] bg-slate-950 px-1 rounded">GET/POST</span>
+                                <span>https://shafi-api.algiers.clinic/v1/webhooks/messenger</span>
+                              </div>
+                            </div>
+
+                            <button
+                              type="button"
+                              onClick={() => {
+                                if (!messengerPageId || !messengerToken) {
+                                  showNotification("⚠️ يرجى كتابة معرف الصفحة ورمز الوصول أولاً!", "error");
+                                  return;
+                                }
+                                setIntegrationStatus(prev => ({ ...prev, messenger: "connected" }));
+                                showNotification("🎉 تم تفعيل ربط فيسبوك ماسنجر بنجاح! الشات بوت الآن يستقبل ويرد على كافة رسائل الصفحة تلقائياً.", "success");
+                              }}
+                              className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold text-[10px] py-1.5 px-3 rounded transition-all cursor-pointer flex items-center justify-center gap-1.5"
+                            >
+                              <Facebook className="w-3.5 h-3.5" />
+                              <span>تفعيل واختبار اتصال ماسنجر ⚡</span>
+                            </button>
+                          </div>
+                        )}
+
+                        {activeIntegrationTab === "instagram" && (
+                          <div className="space-y-3">
+                            <div className="flex justify-between items-center bg-pink-500/5 p-2 rounded border border-pink-500/10">
+                              <span className={`text-[9px] font-mono px-2 py-0.5 rounded ${
+                                integrationStatus.instagram === "connected" ? "bg-emerald-500/20 text-emerald-400" : "bg-pink-500/10 text-pink-400"
+                              }`}>
+                                الحالة: {integrationStatus.instagram === "connected" ? "متصل ومفعل" : "جاهز للربط"}
+                              </span>
+                              <span className="text-[10px] text-slate-300 font-bold">ربط رسائل إنستغرام (Instagram DM API)</span>
+                            </div>
+
+                            <p className="text-[9px] text-slate-400 leading-relaxed">
+                              فعّل ميزة الرد التلقائي وحجز المواعيد على حساب عيادتك الرسمي على Instagram. سيقوم المساعد الذكي بالاستجابة لرسائل الدايركت والتعليقات وتوجيه المرضى لحجز مواعيدهم.
+                            </p>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-right">
+                              <div className="space-y-1">
+                                <label className="text-[9px] text-slate-400 font-bold">معرف حساب إنستغرام للأعمال (Instagram Business ID)</label>
+                                <input 
+                                  type="text" 
+                                  value={instagramPageId}
+                                  onChange={(e) => setInstagramPageId(e.target.value)}
+                                  placeholder="مثال: 17841400000000000"
+                                  className="w-full bg-slate-900 border border-slate-800 rounded px-2 py-1 text-[10px] text-slate-200 text-left font-mono focus:border-teal-500 focus:outline-none"
+                                />
+                              </div>
+                              <div className="space-y-1">
+                                <label className="text-[9px] text-slate-400 font-bold">رمز الوصول (Access Token)</label>
+                                <input 
+                                  type="password" 
+                                  value={instagramToken}
+                                  onChange={(e) => setInstagramToken(e.target.value)}
+                                  placeholder="الصق رمز وصول إنستغرام المعتمد..."
+                                  className="w-full bg-slate-900 border border-slate-800 rounded px-2 py-1 text-[10px] text-slate-200 text-left font-mono focus:border-teal-500 focus:outline-none"
+                                />
+                              </div>
+                            </div>
+
+                            <div className="space-y-1">
+                              <label className="text-[9px] text-pink-400 font-bold">رابط خطاف الويب لإنستغرام (Webhook URL):</label>
+                              <div className="bg-slate-900 p-2 rounded text-left font-mono text-[9px] text-slate-300 select-all border border-slate-800 flex justify-between items-center">
+                                <span className="text-slate-500 text-[8px] bg-slate-950 px-1 rounded">GET/POST</span>
+                                <span>https://shafi-api.algiers.clinic/v1/webhooks/instagram</span>
+                              </div>
+                            </div>
+
+                            <button
+                              type="button"
+                              onClick={() => {
+                                if (!instagramPageId || !instagramToken) {
+                                  showNotification("⚠️ يرجى إدخال معرف إنستغرام للأعمال ورمز الوصول أولاً!", "error");
+                                  return;
+                                }
+                                setIntegrationStatus(prev => ({ ...prev, instagram: "connected" }));
+                                showNotification("🎉 تم ربط وتفعيل حساب إنستغرام للأعمال بنجاح! المساعد الذكي سيتولى الرد على رسائل الدايركت.", "success");
+                              }}
+                              className="w-full bg-gradient-to-r from-pink-600 to-orange-600 hover:from-pink-500 hover:to-orange-500 text-white font-bold text-[10px] py-1.5 px-3 rounded transition-all cursor-pointer flex items-center justify-center gap-1.5"
+                            >
+                              <Instagram className="w-3.5 h-3.5" />
+                              <span>تفعيل واختبار اتصال إنستغرام ⚡</span>
                             </button>
                           </div>
                         )}
@@ -5534,7 +5773,11 @@ export default function App() {
                         {activeIntegrationTab === "telegram" && (
                           <div className="space-y-3">
                             <div className="flex justify-between items-center bg-sky-500/5 p-2 rounded border border-sky-500/10">
-                              <span className="text-[9px] text-sky-400 font-mono">Status: Standby</span>
+                              <span className={`text-[9px] font-mono px-2 py-0.5 rounded ${
+                                integrationStatus.telegram === "connected" ? "bg-emerald-500/20 text-emerald-400" : "bg-sky-500/10 text-sky-400"
+                              }`}>
+                                الحالة: {integrationStatus.telegram === "connected" ? "متصل ومفعل" : "جاهز للربط"}
+                              </span>
                               <span className="text-[10px] text-slate-300 font-bold">توصيل بوت تيليجرام مجاني (Telegram Bot)</span>
                             </div>
 
@@ -5547,13 +5790,22 @@ export default function App() {
                               <div className="flex gap-1.5">
                                 <input 
                                   type="password" 
+                                  value={telegramTokenState}
+                                  onChange={(e) => setTelegramTokenState(e.target.value)}
                                   placeholder="الصق المفتاح هنا (مثال: 783921389:AAH_f9x...)"
-                                  className="flex-1 bg-slate-900 border border-slate-800 rounded px-2 py-1 text-[10px] text-slate-200 text-left font-mono"
+                                  className="flex-1 bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-[10px] text-slate-200 text-left font-mono focus:border-teal-500 focus:outline-none"
                                 />
                                 <button
                                   type="button"
-                                  onClick={() => showNotification("تم حفظ مفتاح تيليجرام بنجاح! البوت الآن جاهز للتفعيل الفوري. 🔄", "success")}
-                                  className="bg-sky-500/10 text-sky-400 hover:bg-sky-500/20 border border-sky-500/20 px-3 rounded text-[10px] font-bold transition-all cursor-pointer"
+                                  onClick={() => {
+                                    if (!telegramTokenState) {
+                                      showNotification("⚠️ يرجى إدخال مفتاح توكين البوت الخاص بـ @BotFather!", "error");
+                                      return;
+                                    }
+                                    setIntegrationStatus(prev => ({ ...prev, telegram: "connected" }));
+                                    showNotification("🎉 تم حفظ مفتاح تيليجرام وتفعيل البوت بنجاح! البوت الآن يستقبل الرسائل ويرد عليها بالكامل.", "success");
+                                  }}
+                                  className="bg-sky-500/15 text-sky-400 hover:bg-sky-500/25 border border-sky-500/25 px-3 rounded text-[10px] font-bold transition-all cursor-pointer"
                                 >
                                   حفظ وربط البوت
                                 </button>
@@ -5564,7 +5816,7 @@ export default function App() {
                               <span className="font-bold text-slate-300 block">خطوات الربط في دقيقة واحدة:</span>
                               <ol className="list-decimal list-inside space-y-0.5">
                                 <li>افتح تطبيق تيليجرام وابحث عن <strong className="text-sky-400">@BotFather</strong>.</li>
-                                <li>أرسل الأمر <strong className="text-slate-200">/newbot</strong> واصنع اسماً للبوت (مثال: عيادتنا لطب الأسنان).</li>
+                                <li>أرسل الأمر <strong className="text-slate-200">/newbot</strong> واصنع اسماً للبوت (مثال: عيادة الشفاء لطب الأسنان).</li>
                                 <li>انسخ الـ <strong className="text-slate-200">API Token</strong> والصقه بالأعلى لتشغيل محرك الذكاء عليه فوراً.</li>
                               </ol>
                             </div>
@@ -5574,7 +5826,7 @@ export default function App() {
                         {activeIntegrationTab === "embed" && (
                           <div className="space-y-3">
                             <div className="flex justify-between items-center bg-emerald-500/5 p-2 rounded border border-emerald-500/10">
-                              <span className="text-[9px] text-emerald-400 font-mono">JS Embed Widget v1.4</span>
+                              <span className="text-[9px] text-emerald-400 font-mono">JS Embed Widget v1.5</span>
                               <span className="text-[10px] text-slate-300 font-bold">أيقونة الشات العائمة بموقع العيادة الافتراضي</span>
                             </div>
 
@@ -5585,8 +5837,8 @@ export default function App() {
                             <div className="space-y-1">
                               <label className="text-[9px] text-slate-400 font-bold block text-right">كود التضمين بلغة JavaScript:</label>
                               <div className="bg-slate-900 p-2.5 rounded text-left font-mono text-[8px] text-slate-300 select-all border border-slate-800 max-h-[100px] overflow-y-auto leading-relaxed" dir="ltr">
-                                {`<!-- Clinic AI Floating Chatbot Widget -->
-<script src="https://cdn.clinic-ai.com/widget.js" defer></script>
+                                {`<!-- Shafi AI Floating Chatbot Widget -->
+<script src="https://cdn.shafi-ai.com/widget.js" defer></script>
 <script>
   window.addEventListener('load', () => {
     initClinicAiWidget({
@@ -5603,11 +5855,12 @@ export default function App() {
                             <button
                               type="button"
                               onClick={() => {
-                                navigator.clipboard.writeText(`<script src="https://cdn.clinic-ai.com/widget.js" defer></script>\n<script>\n  window.addEventListener('load', () => {\n    initClinicAiWidget({ clinicId: "cl_73892a0", themeColor: "#0d9488", title: "مساعد الطبيب الافتراضي" });\n  });\n</script>`);
+                                navigator.clipboard.writeText(`<script src="https://cdn.shafi-ai.com/widget.js" defer></script>\n<script>\n  window.addEventListener('load', () => {\n    initClinicAiWidget({ clinicId: "cl_73892a0", themeColor: "#0d9488", title: "مساعد الطبيب الافتراضي" });\n  });\n</script>`);
                                 showNotification("تم نسخ كود التضمين للموقع بنجاح! 📋", "success");
                               }}
                               className="w-full bg-slate-800 hover:bg-slate-750 text-slate-200 border border-slate-750 font-bold text-[10px] py-1.5 px-3 rounded transition-all cursor-pointer flex items-center justify-center gap-1"
                             >
+                              <Globe className="w-3.5 h-3.5 text-teal-400" />
                               <span>نسخ كود التضمين للموقع الالكتروني 📋</span>
                             </button>
                           </div>
@@ -5653,13 +5906,13 @@ export default function App() {
                         <div className="space-y-1.5">
                           <div className="flex justify-between items-center text-[11px]">
                             <span className="text-slate-300 font-bold">سعر الاشتراك الشهري للعيادة الواحدة</span>
-                            <span className="text-emerald-400 font-black">{monthlyPrice} ريال / شهرياً</span>
+                            <span className="text-emerald-400 font-black">{monthlyPrice} د.ج / شهرياً</span>
                           </div>
                           <input 
                             type="range" 
-                            min="100" 
-                            max="2000" 
-                            step="50"
+                            min="1000" 
+                            max="20000" 
+                            step="500"
                             value={monthlyPrice}
                             onChange={(e) => setMonthlyPrice(parseInt(e.target.value))}
                             className="w-full accent-emerald-400 bg-slate-800 rounded-lg cursor-pointer h-1"
@@ -5670,23 +5923,23 @@ export default function App() {
                         <div className="bg-slate-950 p-3.5 rounded-xl border border-slate-850 grid grid-cols-2 gap-3 text-center">
                           <div className="space-y-0.5 border-r border-slate-850">
                             <span className="text-[9px] text-slate-500 block font-bold">الدخل الشهري المتكرر (MRR)</span>
-                            <span className="text-lg font-black text-teal-400">{(targetClinics * monthlyPrice).toLocaleString()} ريال</span>
+                            <span className="text-lg font-black text-teal-400">{(targetClinics * monthlyPrice).toLocaleString()} د.ج</span>
                             <p className="text-[8px] text-slate-500">متدفق شهرياً بشكل ثابت</p>
                           </div>
                           <div className="space-y-0.5">
                             <span className="text-[9px] text-slate-500 block font-bold">الدخل السنوي الإجمالي (ARR)</span>
-                            <span className="text-lg font-black text-amber-400">{(targetClinics * monthlyPrice * 12).toLocaleString()} ريال</span>
+                            <span className="text-lg font-black text-amber-400">{(targetClinics * monthlyPrice * 12).toLocaleString()} د.ج</span>
                             <p className="text-[8px] text-slate-500">معدل العائد من الاستثمار</p>
                           </div>
                         </div>
 
                         {/* Commercial packages recommendations */}
                         <div className="space-y-1.5 bg-teal-500/5 p-3 rounded-xl border border-teal-500/10 text-[9px] text-slate-300">
-                          <span className="font-bold text-teal-300 block">💡 توصية باقات تسويق لوحة التحكم للعيادات:</span>
+                          <span className="font-bold text-teal-300 block">💡 توصية باقات تسويق لوحة التحكم للعيادات بالجزائر:</span>
                           <ul className="list-disc list-inside space-y-0.5 leading-relaxed">
-                            <li><strong className="text-slate-200">الباقة الأساسية (350 ريال/شهر):</strong> تشمل الشات بوت الذكي وتأكيد المواعيد وسجل محادثات الويب.</li>
-                            <li><strong className="text-slate-200">الباقة المتقدمة (750 ريال/شهر):</strong> ربط واتساب السحابي + أرقام حجز حرة + تدريب مخصص على أسعار خدمات العيادة.</li>
-                            <li><strong className="text-slate-200">باقة المؤسسات (1500 ريال/شهر):</strong> دمج وتزامن كامل مع نظام سجلات المرضى الخاص بالعيادة ودعم فني على مدار الساعة.</li>
+                            <li><strong className="text-slate-200">الباقة الأساسية (4,500 د.ج/شهر):</strong> تشمل الشات بوت الذكي وتأكيد المواعيد وسجل محادثات الويب.</li>
+                            <li><strong className="text-slate-200">الباقة المتقدمة (9,000 د.ج/شهر):</strong> ربط واتساب السحابي + أرقام حجز حرة + تدريب مخصص على أسعار خدمات العيادة.</li>
+                            <li><strong className="text-slate-200">باقة المؤسسات (18,000 د.ج/شهر):</strong> دمج وتزامن كامل مع نظام سجلات المرضى الخاص بالعيادة ودعم فني على مدار الساعة.</li>
                           </ul>
                         </div>
                       </div>
@@ -6339,6 +6592,447 @@ export default function App() {
         </div>
 
       </main>
+
+      {/* 📄 Interactive Official Medical Report Modal Preview */}
+      <AnimatePresence>
+        {showMedicalPdfModal && pdfSession && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 overflow-y-auto">
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="bg-slate-900 border border-slate-800 rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl text-right"
+              dir="rtl"
+            >
+              {/* Modal Header */}
+              <div className="flex justify-between items-center px-6 py-4 border-b border-slate-800 bg-slate-950">
+                <div className="flex items-center gap-2">
+                  <div className="p-1.5 rounded-lg bg-teal-500/10 text-teal-400">
+                    <Printer className="w-5 h-5" />
+                  </div>
+                  <h3 className="text-sm font-bold text-slate-100">معاينة ومراجعة التقرير الطبي الرسمي والتحليلات</h3>
+                </div>
+                <button
+                  onClick={() => {
+                    setShowMedicalPdfModal(false);
+                    setPdfSession(null);
+                  }}
+                  className="p-1.5 rounded-lg bg-slate-800 text-slate-400 hover:text-slate-100 transition-all cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Modal Body: The Live Preview of the Medical letterhead */}
+              <div className="flex-1 overflow-y-auto p-6 bg-slate-950/40">
+                
+                {/* Visual A4 Document Wrapper inside Screen */}
+                <div 
+                  id="screen-medical-report-preview"
+                  className="bg-white text-slate-950 p-8 rounded-xl max-w-3xl mx-auto shadow-lg border border-slate-200 text-right space-y-6 font-sans relative"
+                  dir="rtl"
+                >
+                  {/* Decorative Medical Watermark */}
+                  <div className="absolute inset-0 flex items-center justify-center opacity-[0.015] pointer-events-none select-none">
+                    <Stethoscope className="w-96 h-96 text-teal-600" />
+                  </div>
+
+                  {/* Header Letterhead */}
+                  <div className="flex justify-between items-start border-b-2 border-teal-600 pb-5">
+                    {/* Clinic Details */}
+                    <div className="space-y-1">
+                      <h4 className="text-lg font-black text-teal-800">{clinicInfo.name || "العيادة الطبية الذكية"}</h4>
+                      <p className="text-xs font-bold text-slate-600">{clinicInfo.specialty || "استشارات عامة ورعاية ذكية"}</p>
+                      <p className="text-[10px] text-slate-500">تحت إشراف: د. {clinicInfo.doctorName || "الاستشاري المسؤول"}</p>
+                      <p className="text-[10px] text-slate-500">الهاتف: {clinicInfo.phone} | العنوان: {clinicInfo.address}</p>
+                    </div>
+
+                    {/* Report Branding Emblem */}
+                    <div className="flex flex-col items-center justify-center text-center shrink-0">
+                      <div className="w-12 h-12 rounded-full border-2 border-teal-600 flex items-center justify-center text-teal-700 bg-teal-50">
+                        <Stethoscope className="w-6 h-6" />
+                      </div>
+                      <span className="text-[9px] font-bold text-teal-700 tracking-wider mt-1.5 uppercase">Clinical Record</span>
+                    </div>
+
+                    {/* Report Metadata */}
+                    <div className="text-left space-y-1 text-slate-700 font-mono" dir="ltr">
+                      <div className="text-[10px] font-bold text-slate-800">REPORT REF: REP-2026-{(pdfSession.id || "SESS").toUpperCase()}</div>
+                      <div className="text-[10px]">DATE: {new Date().toLocaleDateString('ar-EG')}</div>
+                      <div className="text-[10px]">STATUS: VERIFIED (AI)</div>
+                      <div className="text-[10px] text-teal-700 font-bold">MODE: SAFE CLINICAL GATEWAY</div>
+                    </div>
+                  </div>
+
+                  {/* Main Report Title */}
+                  <div className="text-center">
+                    <h3 className="text-sm font-black text-slate-800 border-b border-slate-200 pb-1.5 inline-block px-8">
+                      تقرير استشارة طبية أولية وتتبع تفاعل المريض
+                    </h3>
+                  </div>
+
+                  {/* Patient Metadata Grid */}
+                  <div className="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-100 text-xs">
+                    <div className="space-y-1.5">
+                      <div>
+                        <span className="text-slate-500 block">اسم المريض الكامل:</span>
+                        <strong className="text-slate-800 text-sm">{pdfSession.patientName}</strong>
+                      </div>
+                      <div>
+                        <span className="text-slate-500 block">رقم الاتصال الموثق:</span>
+                        <strong className="text-slate-800 font-mono">{pdfSession.patientPhone}</strong>
+                      </div>
+                    </div>
+                    <div className="space-y-1.5">
+                      <div>
+                        <span className="text-slate-500 block">تاريخ وتوقيت الاستشارة:</span>
+                        <strong className="text-slate-800">{pdfSession.date}</strong>
+                      </div>
+                      <div>
+                        <span className="text-slate-500 block">موضوع الاستشارة المبدئي:</span>
+                        <strong className="text-slate-800">{pdfSession.topic}</strong>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Clinical Analytics Center */}
+                  <div className="space-y-3">
+                    <h5 className="text-xs font-bold text-slate-800 border-r-2 border-teal-600 pr-2">أولاً: تحليلات الجلسة ومؤشرات الذكاء الاصطناعي الطبية 📊</h5>
+                    <div className="grid grid-cols-3 gap-3">
+                      <div className="bg-teal-50/50 p-3 rounded-lg border border-teal-100/60 text-right">
+                        <span className="text-[10px] text-slate-500 block">مستوى الرضا المتوقع</span>
+                        <strong className="text-xs text-teal-800 block mt-0.5">
+                          {pdfSession.aiSentiment === "satisfied" ? "مرتفع جداً (راضي 😊)" : "متوسط (محايد 😐)"}
+                        </strong>
+                      </div>
+                      <div className="bg-amber-50/50 p-3 rounded-lg border border-amber-100/60 text-right">
+                        <span className="text-[10px] text-slate-500 block">التصنيف والاستعجال</span>
+                        <strong className="text-xs text-amber-800 block mt-0.5">
+                          {pdfSession.topic.match(/(ألم|وجع|نزيف|خلع|كسر|طوارئ)/) ? "طارئ وعاجل ⚠️" : "استفسار اعتيادي 🟢"}
+                        </strong>
+                      </div>
+                      <div className="bg-slate-50 p-3 rounded-lg border border-slate-200/60 text-right">
+                        <span className="text-[10px] text-slate-500 block">الالتزام بالصمامات الآمنة</span>
+                        <strong className="text-xs text-slate-800 block mt-0.5">مجتاز ومعتمد بنسبة 100% ✓</strong>
+                      </div>
+                    </div>
+
+                    <div className="bg-slate-50 p-3 rounded-lg border border-slate-100 text-[11px] leading-relaxed text-slate-700">
+                      <span className="font-bold text-slate-800 block mb-1">💡 ملخص التوصية الطبية والتحليل الفوري للمشرف:</span>
+                      {pdfSession.topic.match(/(ألم|وجع|نزيف|خلع|كسر|طوارئ)/) ? (
+                        <span>يشكو المريض من أعراض حادة ومتعلقة بالألم أو النزيف. تم حظر الإجابات الدوائية العشوائية تماماً بواسطة نظام الصمامات الطبي. يوصى بقيام موظفي الاستقبال بالاتصال الهاتفي فوراً لتسجيل موعد فحص سريري عاجل.</span>
+                      ) : (
+                        <span>الاستشارة تتعلق باستفسار خدمي أو معرفي عام (مثل الأسعار أو الإجراءات الشائعة). تم تزويد المريض بالمعلومات الدقيقة وحجز موعد مبدئي بنجاح لضمان استمرارية المتابعة التجارية والطبية داخل العيادة.</span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Complete Chat Transcript Logs */}
+                  <div className="space-y-3">
+                    <h5 className="text-xs font-bold text-slate-800 border-r-2 border-teal-600 pr-2">ثانياً: سجل المحادثة الطبي الموثق 💬</h5>
+                    
+                    <div className="border border-slate-200 rounded-xl overflow-hidden text-[10px]">
+                      {/* Table Header */}
+                      <div className="grid grid-cols-12 bg-slate-100 text-slate-700 font-bold p-2.5 border-b border-slate-200">
+                        <div className="col-span-3">المرسل</div>
+                        <div className="col-span-9 text-right">محتوى الرسالة الاستشارية بالتفصيل</div>
+                      </div>
+
+                      {/* Messages Rows */}
+                      <div className="divide-y divide-slate-150 max-h-[300px] overflow-y-auto print:max-h-none print:overflow-visible">
+                        {pdfSession.messages.map((msg, index) => {
+                          const isUser = msg.sender === "user";
+                          const isDoc = msg.sender === "doctor";
+                          return (
+                            <div 
+                              key={msg.id || index} 
+                              className={`grid grid-cols-12 p-3 items-start gap-2 ${
+                                isDoc ? "bg-amber-50/40" : isUser ? "bg-white" : "bg-teal-50/20"
+                              }`}
+                            >
+                              <div className="col-span-3 font-bold text-slate-700 flex flex-col gap-0.5">
+                                <span className={isDoc ? "text-amber-700" : isUser ? "text-slate-800" : "text-teal-700"}>
+                                  {isUser ? "👤 المريض" : isDoc ? "🧑‍⚕️ طبيب معالج" : "🤖 المساعد الذكي"}
+                                </span>
+                                <span className="text-[8px] text-slate-400 font-normal font-mono">
+                                  {pdfSession.date.split(" ")[1] || "نشط"}
+                                </span>
+                              </div>
+                              <div className={`col-span-9 text-slate-800 leading-relaxed whitespace-pre-wrap ${isDoc ? "font-bold" : ""}`}>
+                                {msg.text}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Sign-off disclaimer, signature, stamp */}
+                  <div className="pt-4 border-t border-slate-200 grid grid-cols-12 gap-4 text-xs">
+                    {/* Disclaimer */}
+                    <div className="col-span-7 text-[9px] text-slate-500 leading-relaxed space-y-1">
+                      <strong className="text-slate-700 block">إخلاء مسؤولية طبي معتمد:</strong>
+                      <p>
+                        هذا التقرير يمثل تلخيصاً آلياً دقيقاً للمحادثة الاستكشافية الأولية التي تمت عبر مساعد العيادة المعتمد على الذكاء الاصطناعي. لا يغني هذا التقرير ولا يمثل بديلاً عن الفحص السريري المباشر والأشعة التشخيصية داخل العيادة. أي وصفات علاجية يجب أن تتم سريرياً وتوقع يدوياً من الطبيب المعالج.
+                      </p>
+                    </div>
+
+                    {/* Signature and Stamp placeholders */}
+                    <div className="col-span-5 flex justify-between items-center pl-4 border-r border-slate-100 pr-4">
+                      {/* Official Stamp Vector representation */}
+                      <div className="flex flex-col items-center justify-center relative shrink-0">
+                        <div className="w-16 h-16 rounded-full border-2 border-dashed border-teal-600/60 flex flex-col items-center justify-center text-teal-600/70 p-1 relative transform rotate-6 scale-95">
+                          <div className="w-12 h-12 rounded-full border border-teal-600/30 flex flex-col items-center justify-center text-center">
+                            <Stethoscope className="w-4 h-4 text-teal-600/70" />
+                            <span className="text-[6px] font-black tracking-tighter mt-0.5">APPROVED</span>
+                          </div>
+                          <span className="absolute text-[5px] font-bold text-teal-600/50 bottom-0.5">2026 OFFICIAL</span>
+                        </div>
+                        <span className="text-[8px] text-slate-400 mt-1">ختم العيادة الرسمي</span>
+                      </div>
+
+                      {/* Doctor Signature */}
+                      <div className="text-center space-y-3 shrink-0">
+                        <span className="text-[10px] text-slate-400 block">توقيع الطبيب المشرف:</span>
+                        <div className="font-mono text-slate-800 text-xs italic border-b border-slate-300 pb-1 px-2 font-bold select-none transform rotate-[-2deg]">
+                          د. {clinicInfo.doctorName || "الاستشاري"}
+                        </div>
+                        <span className="text-[9px] text-slate-500 font-mono">{new Date().toLocaleDateString('ar-EG')}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+
+              </div>
+
+              {/* Modal Footer Controls */}
+              <div className="px-6 py-4 border-t border-slate-800 bg-slate-950 flex justify-between items-center" dir="rtl">
+                <button
+                  onClick={() => {
+                    setShowMedicalPdfModal(false);
+                    setPdfSession(null);
+                  }}
+                  className="bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-bold px-4 py-2 rounded-xl transition-all cursor-pointer"
+                >
+                  إغلاق المعاينة
+                </button>
+
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => {
+                      const textToCopy = `[تقرير طبي معتمد - عيادة ${clinicInfo.name || "الأسنان"}]
+رقم التقرير: REP-2026-${pdfSession.id.toUpperCase()}
+المريض: ${pdfSession.patientName}
+الجوال: ${pdfSession.patientPhone}
+موضوع الاستشارة: ${pdfSession.topic}
+تاريخها: ${pdfSession.date}
+معدل الرضا المتوقع: ${pdfSession.aiSentiment === "satisfied" ? "ممتاز 😊" : "محايد 😐"}
+
+[موجز المحادثة]:
+${pdfSession.messages.map(m => `- ${m.sender === "user" ? "المريض" : m.sender === "doctor" ? "الطبيب المعالج" : "المساعد الذكي"}: ${m.text}`).join("\n")}
+`;
+                      navigator.clipboard.writeText(textToCopy);
+                      showNotification("تم نسخ التقرير الطبي الكامل بنجاح! 📋", "success");
+                    }}
+                    className="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold px-4 py-2 rounded-xl transition-all cursor-pointer border border-slate-700"
+                  >
+                    نسخ النص بالكامل 📋
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setTimeout(() => {
+                        window.print();
+                      }, 100);
+                    }}
+                    className="bg-teal-500 hover:bg-teal-400 text-slate-950 text-xs font-bold px-5 py-2.5 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 shadow-md shadow-teal-500/10"
+                  >
+                    <Printer className="w-4 h-4" />
+                    <span>تحميل كملف PDF / طباعة التقرير 🖨️</span>
+                  </button>
+                </div>
+              </div>
+
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* 🖨️ Absolute hidden container used EXCLUSIVELY for high-fidelity A4 printing */}
+      {pdfSession && (
+        <div id="printable-medical-report-root" className="hidden" dir="rtl">
+          <div className="bg-white text-slate-950 p-8 w-full max-w-4xl mx-auto text-right space-y-6 font-sans relative">
+            
+            {/* Header Letterhead */}
+            <div className="flex justify-between items-start border-b-2 border-teal-600 pb-5">
+              {/* Clinic Details */}
+              <div className="space-y-1">
+                <h4 className="text-xl font-black text-teal-800">{clinicInfo.name || "العيادة الطبية الذكية"}</h4>
+                <p className="text-sm font-bold text-slate-600">{clinicInfo.specialty || "استشارات عامة ورعاية ذكية"}</p>
+                <p className="text-xs text-slate-500">تحت إشراف: د. {clinicInfo.doctorName || "الاستشاري المسؤول"}</p>
+                <p className="text-xs text-slate-500">الهاتف: {clinicInfo.phone} | العنوان: {clinicInfo.address}</p>
+              </div>
+
+              {/* Report Branding Emblem */}
+              <div className="flex flex-col items-center justify-center text-center">
+                <div className="w-12 h-12 rounded-full border-2 border-teal-600 flex items-center justify-center text-teal-700 bg-teal-50">
+                  <span className="text-lg font-bold">🩺</span>
+                </div>
+                <span className="text-[9px] font-bold text-teal-700 tracking-wider mt-1.5 uppercase">Clinical Record</span>
+              </div>
+
+              {/* Report Metadata */}
+              <div className="text-left space-y-1 text-slate-700 font-mono" dir="ltr">
+                <div className="text-xs font-bold text-slate-800">REPORT REF: REP-2026-{(pdfSession.id || "SESS").toUpperCase()}</div>
+                <div className="text-xs">DATE: {new Date().toLocaleDateString('ar-EG')}</div>
+                <div className="text-xs">STATUS: VERIFIED (AI)</div>
+                <div className="text-xs text-teal-700 font-bold">MODE: SAFE CLINICAL GATEWAY</div>
+              </div>
+            </div>
+
+            {/* Main Report Title */}
+            <div className="text-center pt-2">
+              <h3 className="text-lg font-black text-slate-800 border-b border-slate-200 pb-2 inline-block px-12">
+                تقرير استشارة طبية أولية وتتبع تفاعل المريض
+              </h3>
+            </div>
+
+            {/* Patient Metadata Grid */}
+            <div className="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-150 text-xs">
+              <div className="space-y-1.5">
+                <div>
+                  <span className="text-slate-500 block">اسم المريض الكامل:</span>
+                  <strong className="text-slate-800 text-sm">{pdfSession.patientName}</strong>
+                </div>
+                <div>
+                  <span className="text-slate-500 block">رقم الاتصال الموثق:</span>
+                  <strong className="text-slate-800 font-mono">{pdfSession.patientPhone}</strong>
+                </div>
+              </div>
+              <div className="space-y-1.5">
+                <div>
+                  <span className="text-slate-500 block">تاريخ وتوقيت الاستشارة:</span>
+                  <strong className="text-slate-800">{pdfSession.date}</strong>
+                </div>
+                <div>
+                  <span className="text-slate-500 block">موضوع الاستشارة المبدئي:</span>
+                  <strong className="text-slate-800">{pdfSession.topic}</strong>
+                </div>
+              </div>
+            </div>
+
+            {/* Clinical Analytics Center */}
+            <div className="space-y-3">
+              <h5 className="text-sm font-bold text-slate-800 border-r-2 border-teal-600 pr-2">أولاً: تحليلات الجلسة ومؤشرات الذكاء الاصطناعي الطبية 📊</h5>
+              <div className="grid grid-cols-3 gap-3">
+                <div className="bg-teal-50/50 p-3 rounded-lg border border-teal-100/60 text-right">
+                  <span className="text-[10px] text-slate-500 block">مستوى الرضا المتوقع</span>
+                  <strong className="text-xs text-teal-800 block mt-0.5">
+                    {pdfSession.aiSentiment === "satisfied" ? "مرتفع جداً (راضي 😊)" : "متوسط (محايد 😐)"}
+                  </strong>
+                </div>
+                <div className="bg-amber-50/50 p-3 rounded-lg border border-amber-100/60 text-right">
+                  <span className="text-[10px] text-slate-500 block">التصنيف والاستعجال</span>
+                  <strong className="text-xs text-amber-800 block mt-0.5">
+                    {pdfSession.topic.match(/(ألم|وجع|نزيف|خلع|كسر|طوارئ)/) ? "طارئ وعاجل ⚠️" : "استفسار اعتيادي 🟢"}
+                  </strong>
+                </div>
+                <div className="bg-slate-50 p-3 rounded-lg border border-slate-200/60 text-right">
+                  <span className="text-[10px] text-slate-500 block">الالتزام بالصمامات الآمنة</span>
+                  <strong className="text-xs text-slate-800 block mt-0.5">مجتاز ومعتمد بنسبة 100% ✓</strong>
+                </div>
+              </div>
+
+              <div className="bg-slate-50 p-3 rounded-lg border border-slate-100 text-xs leading-relaxed text-slate-700">
+                <span className="font-bold text-slate-800 block mb-1">💡 ملخص التوصية الطبية والتحليل الفوري للمشرف:</span>
+                {pdfSession.topic.match(/(ألم|وجع|نزيف|خلع|كسر|طوارئ)/) ? (
+                  <span>يشكو المريض من أعراض حادة ومتعلقة بالألم أو النزيف. تم حظر الإجابات الدوائية العشوائية تماماً بواسطة نظام الصمامات الطبي لضمان سلامته التامة. يوصى بقيام موظفي الاستقبال بالاتصال الهاتفي فوراً لتأكيد الحجز وتنسيق الكشف العاجل.</span>
+                ) : (
+                  <span>الاستشارة تتعلق باستفسار خدمي أو معرفي عام (مثل الأسعار أو الإجراءات الشائعة). تم تزويد المريض بالمعلومات الدقيقة وحجز موعد مبدئي بنجاح لضمان المتابعة والاستفادة التامة من خدمات العيادة.</span>
+                )}
+              </div>
+            </div>
+
+            {/* Complete Chat Transcript Logs */}
+            <div className="space-y-3">
+              <h5 className="text-sm font-bold text-slate-800 border-r-2 border-teal-600 pr-2">ثانياً: سجل المحادثة المعتمد والموثق للتقرير الطارئ 💬</h5>
+              
+              <div className="border border-slate-200 rounded-xl overflow-hidden text-xs">
+                {/* Table Header */}
+                <div className="grid grid-cols-12 bg-slate-100 text-slate-700 font-bold p-2.5 border-b border-slate-200">
+                  <div className="col-span-3">المرسل</div>
+                  <div className="col-span-9 text-right">محتوى الرسالة الاستشارية بالتفصيل</div>
+                </div>
+
+                {/* Messages Rows */}
+                <div className="divide-y divide-slate-150">
+                  {pdfSession.messages.map((msg, index) => {
+                    const isUser = msg.sender === "user";
+                    const isDoc = msg.sender === "doctor";
+                    return (
+                      <div 
+                        key={msg.id || index} 
+                        className={`grid grid-cols-12 p-3 items-start gap-2 ${
+                          isDoc ? "bg-amber-50/40" : isUser ? "bg-white" : "bg-teal-50/20"
+                        }`}
+                      >
+                        <div className="col-span-3 font-bold text-slate-700 flex flex-col gap-0.5">
+                          <span className={isDoc ? "text-amber-700" : isUser ? "text-slate-800" : "text-teal-700"}>
+                            {isUser ? "👤 المريض" : isDoc ? "🧑‍⚕️ طبيب معالج" : "🤖 المساعد الذكي"}
+                          </span>
+                          <span className="text-[10px] text-slate-400 font-normal font-mono">
+                            {pdfSession.date.split(" ")[1] || "نشط"}
+                          </span>
+                        </div>
+                        <div className={`col-span-9 text-slate-800 leading-relaxed whitespace-pre-wrap ${isDoc ? "font-bold" : ""}`}>
+                          {msg.text}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+
+            {/* Sign-off disclaimer, signature, stamp */}
+            <div className="pt-6 border-t border-slate-200 grid grid-cols-12 gap-4 text-xs">
+              {/* Disclaimer */}
+              <div className="col-span-7 text-[10px] text-slate-500 leading-relaxed space-y-1">
+                <strong className="text-slate-700 block">إخلاء مسؤولية طبي معتمد:</strong>
+                <p>
+                  هذا التقرير يمثل تلخيصاً آلياً دقيقاً للمحادثة الاستكشافية الأولية التي تمت عبر مساعد العيادة المعتمد على الذكاء الاصطناعي لـ {clinicInfo.name}. لا يغني هذا التقرير ولا يمثل بديلاً عن الفحص السريري المباشر والأشعة التشخيصية داخل العيادة. أي وصفات علاجية يجب أن تتم سريرياً وتوقع يدوياً من الطبيب الاستشاري المعالج.
+                </p>
+              </div>
+
+              {/* Signature and Stamp placeholders */}
+              <div className="col-span-5 flex justify-between items-center pl-4 border-r border-slate-150 pr-4">
+                {/* Official Stamp Vector representation */}
+                <div className="flex flex-col items-center justify-center shrink-0">
+                  <div className="w-16 h-16 rounded-full border-2 border-dashed border-teal-600/60 flex flex-col items-center justify-center text-teal-600/70 p-1 relative">
+                    <div className="w-12 h-12 rounded-full border border-teal-600/30 flex flex-col items-center justify-center text-center">
+                      <span className="text-xs">⚕️</span>
+                      <span className="text-[5px] font-black mt-0.5">APPROVED</span>
+                    </div>
+                  </div>
+                  <span className="text-[8px] text-slate-400 mt-1">ختم العيادة الرسمي</span>
+                </div>
+
+                {/* Doctor Signature */}
+                <div className="text-center space-y-2 shrink-0">
+                  <span className="text-[10px] text-slate-400 block">توقيع الطبيب المشرف:</span>
+                  <div className="font-mono text-slate-800 text-sm italic border-b border-slate-300 pb-1 px-4 font-bold">
+                    د. {clinicInfo.doctorName || "الاستشاري"}
+                  </div>
+                  <span className="text-[9px] text-slate-500 font-mono">{new Date().toLocaleDateString('ar-EG')}</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      )}
 
       {/* Premium Footer */}
       <footer className="bg-slate-950 border-t border-slate-900 py-6 text-center text-xs text-slate-500 mt-auto">

@@ -53,6 +53,7 @@ interface SaasPortalProps {
   setSaasView: (view: "landing" | "login" | "signup" | "checkout") => void;
   checkoutPlanId: "free" | "starter" | "pro";
   setCheckoutPlanId: (plan: "free" | "starter" | "pro") => void;
+  showNotification: (message: string, type?: "success" | "error" | "info") => void;
 }
 
 export default function SaasPortal({
@@ -63,7 +64,8 @@ export default function SaasPortal({
   saasView,
   setSaasView,
   checkoutPlanId,
-  setCheckoutPlanId
+  setCheckoutPlanId,
+  showNotification
 }: SaasPortalProps) {
   
   // Login Form States
@@ -74,6 +76,7 @@ export default function SaasPortal({
   const [signupName, setSignupName] = useState("");
   const [signupClinic, setSignupClinic] = useState("");
   const [signupSpecialty, setSignupSpecialty] = useState("طب وجراحة الأسنان والتجميل");
+  const [customSpecialty, setCustomSpecialty] = useState("");
   const [signupPhone, setSignupPhone] = useState("");
   const [signupAddress, setSignupAddress] = useState("");
   const [signupEmail, setSignupEmail] = useState("");
@@ -81,7 +84,7 @@ export default function SaasPortal({
 
   // ROI Calculator States
   const [missedPatients, setMissedPatients] = useState(25);
-  const [averagePrice, setAveragePrice] = useState(500);
+  const [averagePrice, setAveragePrice] = useState(2500);
 
   // Chatbot Tryout State
   const [tryoutInput, setTryoutInput] = useState("");
@@ -106,6 +109,7 @@ export default function SaasPortal({
   const [cardCvv, setCardCvv] = useState("");
   const [isPaying, setIsPaying] = useState(false);
   const [paySuccess, setPaySuccess] = useState(false);
+  const [cardType, setCardType] = useState<"edahabia" | "cib" | "visa">("edahabia");
 
   // ROI Calculation formulas
   const calculatedSavings = Math.round(missedPatients * averagePrice * 0.8);
@@ -118,7 +122,8 @@ export default function SaasPortal({
     "طب الأطفال، التطعيمات، والطب العام",
     "الطب النفسي والاستشارات الأسرية",
     "العلاج الطبيعي والطب الرياضي",
-    "طب وجراحة العيون والليكك"
+    "طب وجراحة العيون والليكك",
+    "أخرى (تحديد تخصص يدوي...)"
   ];
 
   // Tryout Chatbot Action Chips
@@ -171,13 +176,13 @@ export default function SaasPortal({
           clinicInfo: {
             name: "عيادة دنتال كير لطب الأسنان",
             specialty: "طب وجراحة الأسنان والتجميل",
-            phone: "+966 50 123 4567",
-            address: "الرياض، طريق الملك فهد، برج السلام، الطابق الرابع"
+            phone: "+213 550 12 34 56",
+            address: "الجزائر العاصمة، شارع ديدوش مراد، عمارة السلام، الطابق الثاني"
           },
-          dailyStatus: "اليوم الطبيب متواجد من الساعة 10:00 صباحاً وحتى 8:00 مساءً. يوجد ازدحام طفيف في فترة المساء، وننصح بالحضور قبل الموعد بـ 15 دقيقة لتأكيد الحجز.",
+          dailyStatus: "اليوم الطبيب متواجد من الساعة 08:30 صباحاً وحتى 16:30 زوالاً. يوجد ازدحام طفيف في فترة المساء، وننصح بالحضور قبل الموعد بـ 15 دقيقة لتأكيد الحجز.",
           services: [
-            { id: "d-1", name: "تنظيف الأسنان وإزالة الجير", description: "جلسة تنظيف عميق لتلميع الأسنان وإزالة التصبغات والترسبات الجيرية باستخدام الأمواج فوق الصوتية.", price: "150 ريال" },
-            { id: "d-4", name: "زراعة الأسنان الألمانية", description: "زراعة الأسنان المفقودة بأحدث التقنيات وبنسبة نجاح تفوق 98% شاملة التلبيسة الزركونية.", price: "2500 ريال" }
+            { id: "d-1", name: "تنظيف الأسنان وإزالة الجير", description: "جلسة تنظيف عميق لتلميع الأسنان وإزالة التصبغات والترسبات الجيرية باستخدام الأمواج فوق الصوتية.", price: "3000 دج" },
+            { id: "d-4", name: "زراعة الأسنان الألمانية", description: "زراعة الأسنان المفقودة بأحدث التقنيات وبنسبة نجاح تفوق 98% شاملة التلبيسة الزركونية.", price: "35000 دج" }
           ],
           guidelines: [
             { id: "dg-1", title: "تعليمات ما قبل زراعة الأسنان", content: "يرجى تناول وجبة خفيفة قبل المجيء بساعتين. يرجى تجنب مميعات الدم مثل الأسبرين قبل 3 أيام من الموعد بالتنسيق مع طبيبك المعالج." }
@@ -198,7 +203,7 @@ export default function SaasPortal({
       setTryoutMessages(prev => [...prev, {
         id: `try-b-err-${Date.now()}`,
         sender: "bot",
-        text: "تكلفة زراعة السن الألماني لدينا هي 2500 ريال فقط بأحدث التقنيات وتحت إشراف استشاري الزراعة. هل ترغب بحجز موعد للفحص المجاني؟",
+        text: "تكلفة زراعة السن الألماني لدينا هي 35000 دج فقط بأحدث التقنيات وتحت إشراف استشاري الزراعة. هل ترغب بحجز موعد للفحص المجاني؟",
         timestamp: new Date()
       }]);
     } finally {
@@ -230,7 +235,7 @@ export default function SaasPortal({
           signupPassword,
           signupName,
           signupClinic,
-          signupSpecialty,
+          signupSpecialty === "أخرى (تحديد تخصص يدوي...)" ? customSpecialty : signupSpecialty,
           signupPhone,
           signupAddress,
           checkoutPlanId
@@ -302,15 +307,15 @@ export default function SaasPortal({
             <div className="text-center space-y-8 max-w-4xl mx-auto">
               <div className="inline-flex items-center gap-2 bg-slate-900 border border-slate-800 px-4 py-1.5 rounded-full shadow-inner">
                 <Sparkles className="w-4 h-4 text-teal-400 animate-pulse" />
-                <span className="text-xs font-semibold text-slate-300">أول منصة SaaS عربية لأتمتة حجوزات العيادات بالذكاء الاصطناعي</span>
+                <span className="text-xs font-semibold text-slate-300">أول منصة SaaS عربية لأتمتة ردود وحجوزات العيادات عبر شبكات التواصل بالذكاء الاصطناعي</span>
               </div>
               
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-100 tracking-tight leading-tight">
-                حوّل اتصالات عيادتك الطبية إلى <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-cyan-400 to-emerald-400">حجوزات مؤكدة</span> على مدار الساعة 🧬
+                رد آلي وحجز مواعيد لعيادتك عبر <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-cyan-400 to-emerald-400">وسائل التواصل الاجتماعي</span> 🧬
               </h1>
               
               <p className="text-base sm:text-lg text-slate-400 leading-relaxed max-w-3xl mx-auto">
-                وفر 85% من أعباء السكرتارية والمتابعة الإدارية. شات بوت ذكي يتم برمجته بحدود معرفية مخصصة لعيادتك، يجيب بدقة تامة عن خدماتك، أسعارك، إرشاداتك، ويقوم بجدولة المواعيد وتخزينها في لوحة التحكم بشكل آمن.
+                تم تصميم نظام شافي خصيصاً لربط الشات بوت الذكي بحسابات عيادتك الرسمية على شبكات التواصل الاجتماعي (واتساب الأعمال، فيسبوك ماسنجر، إنستغرام، وتيليجرام). يجيب المساعد فورياً بدقة تامة عن خدماتك، أسعارك، وإرشاداتك الطبية، ويقوم بجدولة وتأكيد مواعيد المرضى تلقائياً بالكامل على مدار الساعة!
               </p>
 
               <div className="flex flex-col sm:flex-row justify-center items-center gap-4 pt-4">
@@ -553,20 +558,20 @@ export default function SaasPortal({
                   <div className="space-y-2">
                     <div className="flex justify-between text-xs font-bold">
                       <span className="text-slate-300">متوسط سعر الكشف أو العلاج المستهدف:</span>
-                      <span className="text-cyan-400 font-mono text-sm bg-cyan-500/10 px-2 py-0.5 rounded">{averagePrice} ريال سعودي</span>
+                      <span className="text-cyan-400 font-mono text-sm bg-cyan-500/10 px-2 py-0.5 rounded">{averagePrice} د.ج</span>
                     </div>
                     <input
                       type="range"
-                      min="100"
-                      max="2000"
-                      step="50"
+                      min="500"
+                      max="20000"
+                      step="250"
                       value={averagePrice}
                       onChange={(e) => setAveragePrice(Number(e.target.value))}
                       className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-cyan-500"
                     />
                     <div className="flex justify-between text-[10px] text-slate-500 font-mono">
-                      <span>100 ريال</span>
-                      <span>2000 ريال</span>
+                      <span>500 د.ج</span>
+                      <span>20,000 د.ج</span>
                     </div>
                   </div>
                 </div>
@@ -577,7 +582,7 @@ export default function SaasPortal({
                     <div>
                       <span className="text-[10px] text-slate-400 uppercase font-bold block tracking-wider">الأرباح الإضافية المستعادة شهرياً:</span>
                       <span className="text-3xl sm:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400 tracking-tight block mt-1">
-                        +{calculatedSavings.toLocaleString()} ريال
+                        +{calculatedSavings.toLocaleString()} د.ج
                       </span>
                     </div>
                     <div>
@@ -599,14 +604,14 @@ export default function SaasPortal({
 
             {/* 💎 SAAS SUBSCRIPTION PRICING PLANS */}
             <div className="space-y-12">
-              <div className="text-center space-y-3">
+              <div className="text-center space-y-3" dir="rtl">
                 <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-100">باقات الاشتراك والتشغيل 💳</h2>
                 <p className="text-sm text-slate-400 max-w-2xl mx-auto">
                   اختر الباقة المناسبة لعيادتك، وابدأ بتحقيق الاستجابة الفورية لمرضاك. تتوفر فترة تجريبية مجانية لجميع الباقات.
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto items-stretch">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto items-stretch" dir="rtl">
                 
                 {/* Plan 1: Free Trial */}
                 <div className="bg-slate-900/80 border border-slate-850 hover:border-slate-800 rounded-3xl p-6 flex flex-col justify-between transition-all relative">
@@ -618,7 +623,7 @@ export default function SaasPortal({
 
                     <div className="border-t border-b border-slate-800 py-4 flex items-baseline gap-1">
                       <span className="text-3xl font-black text-slate-100">0</span>
-                      <span className="text-xs text-slate-400">ريال / 14 يوماً</span>
+                      <span className="text-xs text-slate-400">د.ج / 14 يوماً</span>
                     </div>
 
                     <ul className="space-y-3 text-xs text-slate-300">
@@ -669,8 +674,8 @@ export default function SaasPortal({
                     </div>
 
                     <div className="border-t border-b border-slate-800 py-4 flex items-baseline gap-1">
-                      <span className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-cyan-400">199</span>
-                      <span className="text-xs text-slate-400">ريال / شهرياً</span>
+                      <span className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-cyan-400">4,500</span>
+                      <span className="text-xs text-slate-400">د.ج / شهرياً</span>
                     </div>
 
                     <ul className="space-y-3 text-xs text-slate-300">
@@ -718,8 +723,8 @@ export default function SaasPortal({
                     </div>
 
                     <div className="border-t border-b border-slate-800 py-4 flex items-baseline gap-1">
-                      <span className="text-3xl font-black text-slate-100">399</span>
-                      <span className="text-xs text-slate-400">ريال / شهرياً</span>
+                      <span className="text-3xl font-black text-slate-100">9,000</span>
+                      <span className="text-xs text-slate-400">د.ج / شهرياً</span>
                     </div>
 
                     <ul className="space-y-3 text-xs text-slate-300">
@@ -758,7 +763,6 @@ export default function SaasPortal({
                     </button>
                   </div>
                 </div>
-
               </div>
             </div>
 
@@ -805,7 +809,7 @@ export default function SaasPortal({
 
                     <div className="grid grid-cols-2 gap-2 border-t border-slate-800 pt-4">
                       <button
-                        onClick={() => openPatientPortal(t.id)}
+                        onClick={() => onViewClinic(t.id)}
                         className="bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-200 hover:text-white font-bold text-[10px] py-2 px-1 rounded-xl text-center cursor-pointer transition-all flex items-center justify-center gap-1"
                       >
                         <Heart className="w-3.5 h-3.5 text-teal-400" />
@@ -928,19 +932,55 @@ export default function SaasPortal({
                 <div className="bg-teal-500/10 text-teal-400 border border-teal-500/10 text-[10px] px-3 py-1 rounded-full w-fit mx-auto mt-2 font-bold">
                   أنت تسجل حالياً في باقة: {checkoutPlanId === "pro" ? "الاحترافية 💎" : checkoutPlanId === "starter" ? "الانطلاق 🚀" : "التجريبية مجاناً 🆓"}
                 </div>
+
+                {checkoutPlanId === "free" && localStorage.getItem("shafi_free_plan_claimed") === "true" && (
+                  <div className="mt-4 p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-right space-y-2">
+                    <p className="text-xs text-rose-400 font-bold">⚠️ تنبيه حظر إساءة الاستخدام (الجهاز مسجل مسبقاً):</p>
+                    <p className="text-[10px] text-slate-400 leading-relaxed">
+                      لقد قمت بالفعل بتفعيل الوضع المجاني التجريبي مسبقاً على هذا الهاتف/الجهاز. لمنع التحايل، يرجى الاشتراك في باقة <strong className="text-teal-400">الانطلاق (Starter)</strong> أو باقة <strong className="text-teal-400">الاحترافية (Pro)</strong> لتفعيل حسابك، أو قم بتسجيل الدخول بحسابك السابق.
+                    </p>
+                    <div className="flex gap-2 pt-1">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setCheckoutPlanId("starter");
+                        }}
+                        className="bg-teal-500/20 hover:bg-teal-500/30 text-teal-300 text-[10px] font-bold px-3 py-1.5 rounded-lg border border-teal-500/30 transition-all cursor-pointer"
+                      >
+                        الترقية لباقة الانطلاق 🚀
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setSaasView("login")}
+                        className="bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] font-bold px-3 py-1.5 rounded-lg border border-slate-750 transition-all cursor-pointer"
+                      >
+                        تسجيل الدخول السابق 🔑
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <form 
                 onSubmit={(e) => {
                   e.preventDefault();
+                  if (signupSpecialty === "أخرى (تحديد تخصص يدوي...)" && !customSpecialty.trim()) {
+                    showNotification("⚠️ يرجى كتابة التخصص الطبي المخصص في الحقل المخصص له!", "error");
+                    return;
+                  }
                   if (checkoutPlanId === "free") {
+                    const freeClaimed = localStorage.getItem("shafi_free_plan_claimed");
+                    if (freeClaimed === "true") {
+                      showNotification("⚠️ عذراً، تبيّن أن هذا الجهاز قد فعّل الباقة التجريبية مسبقاً! يرجى اختيار باقة مدفوعة أو تسجيل الدخول.", "error");
+                      return;
+                    }
                     // Sign up directly for free plan without payment
                     onSignUp(
                       signupEmail,
                       signupPassword,
                       signupName,
                       signupClinic,
-                      signupSpecialty,
+                      signupSpecialty === "أخرى (تحديد تخصص يدوي...)" ? customSpecialty : signupSpecialty,
                       signupPhone,
                       signupAddress,
                       "free"
@@ -990,6 +1030,23 @@ export default function SaasPortal({
                         <option key={idx} value={spec} className="bg-slate-950">{spec}</option>
                       ))}
                     </select>
+                    
+                    {signupSpecialty === "أخرى (تحديد تخصص يدوي...)" && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="mt-2"
+                      >
+                        <input
+                          type="text"
+                          required
+                          value={customSpecialty}
+                          onChange={(e) => setCustomSpecialty(e.target.value)}
+                          placeholder="اكتب التخصص الطبي يدوياً هنا (مثال: طب العظام)..."
+                          className="w-full bg-slate-950 border border-teal-500/50 focus:border-teal-400 rounded-xl py-2 px-3 text-xs text-slate-100 focus:outline-none placeholder-slate-500"
+                        />
+                      </motion.div>
+                    )}
                   </div>
 
                   <div className="space-y-1.5">
@@ -999,7 +1056,7 @@ export default function SaasPortal({
                       required
                       value={signupPhone}
                       onChange={(e) => setSignupPhone(e.target.value)}
-                      placeholder="+966 50 000 0000"
+                      placeholder="+213 550 12 34 56"
                       className="w-full bg-slate-950 border border-slate-800 focus:border-teal-500 rounded-xl py-2.5 px-3 text-xs text-slate-100 focus:outline-none"
                     />
                   </div>
@@ -1012,7 +1069,7 @@ export default function SaasPortal({
                     required
                     value={signupAddress}
                     onChange={(e) => setSignupAddress(e.target.value)}
-                    placeholder="الرياض، طريق الملك فهد، الطابق الأول"
+                    placeholder="الجزائر العاصمة، شارع ديدوش مراد، الطابق الثاني"
                     className="w-full bg-slate-950 border border-slate-800 focus:border-teal-500 rounded-xl py-2.5 px-3 text-xs text-slate-100 focus:outline-none"
                   />
                 </div>
@@ -1060,34 +1117,108 @@ export default function SaasPortal({
             <div className="bg-slate-900 border border-slate-850 rounded-3xl p-8 shadow-2xl relative text-right space-y-8">
               
               <div className="text-center space-y-2">
-                <h2 className="text-xl font-bold text-slate-100">بوابة الدفع الإلكتروني الآمنة 🇸🇦</h2>
+                <h2 className="text-xl font-bold text-slate-100">بوابة الدفع الإلكتروني الآمنة 🇩🇿</h2>
                 <p className="text-xs text-slate-400">تفعيل الاشتراك الشهري لـ {signupClinic}</p>
-                <div className="text-sm font-black text-teal-400 bg-teal-500/10 px-3 py-1.5 rounded-xl w-fit mx-auto mt-2">
-                  المبلغ المستحق: {checkoutPlanId === "starter" ? "199 ريال / شهرياً" : "399 ريال / شهرياً"}
+                <div className="text-sm font-black text-teal-400 bg-teal-500/10 px-3 py-1.5 rounded-xl w-fit mx-auto mt-2 animate-pulse">
+                  المبلغ المستحق: {checkoutPlanId === "starter" ? "4,500 د.ج / شهرياً" : "9,000 د.ج / شهرياً"}
                 </div>
               </div>
 
-              {/* Interactive Virtual Credit Card Graphic */}
-              <div className="bg-gradient-to-tr from-slate-950 to-slate-850 border border-slate-800 rounded-2xl p-5 text-right relative overflow-hidden shadow-lg h-44 flex flex-col justify-between max-w-sm mx-auto select-none">
+              {/* Algerian Card Type Selector */}
+              <div className="space-y-2 text-right">
+                <label className="text-xs text-slate-400 font-bold block">نوع بطاقة الدفع الجزائرية أو الدولية:</label>
+                <div className="grid grid-cols-3 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCardType("edahabia");
+                      setCardHolder("MOHAMED BENALIA");
+                    }}
+                    className={`py-2 px-1 rounded-xl text-[10px] font-bold border transition-all ${
+                      cardType === "edahabia"
+                        ? "bg-amber-500/10 text-amber-400 border-amber-500/40 shadow-sm"
+                        : "bg-slate-950 text-slate-500 border-slate-800 hover:text-slate-300"
+                    }`}
+                  >
+                    الذهبية 💳
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCardType("cib");
+                      setCardHolder("MOHAMED BENALIA");
+                    }}
+                    className={`py-2 px-1 rounded-xl text-[10px] font-bold border transition-all ${
+                      cardType === "cib"
+                        ? "bg-cyan-500/10 text-cyan-400 border-cyan-500/40 shadow-sm"
+                        : "bg-slate-950 text-slate-500 border-slate-800 hover:text-slate-300"
+                    }`}
+                  >
+                    بطاقة CIB 🏦
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCardType("visa");
+                      setCardHolder("MOHAMED BENALIA");
+                    }}
+                    className={`py-2 px-1 rounded-xl text-[10px] font-bold border transition-all ${
+                      cardType === "visa"
+                        ? "bg-teal-500/10 text-teal-400 border-teal-500/40 shadow-sm"
+                        : "bg-slate-950 text-slate-500 border-slate-800 hover:text-slate-300"
+                    }`}
+                  >
+                    Visa / Master
+                  </button>
+                </div>
+              </div>
+
+              {/* Interactive Virtual Credit Card Graphic with Dynamic Algerian Skin */}
+              <div className={`border rounded-2xl p-5 text-right relative overflow-hidden shadow-2xl h-44 flex flex-col justify-between max-w-sm mx-auto select-none transition-all duration-500 ${
+                cardType === "edahabia"
+                  ? "bg-gradient-to-tr from-amber-700 via-yellow-600 to-amber-900 border-amber-500/30"
+                  : cardType === "cib"
+                    ? "bg-gradient-to-tr from-cyan-900 via-blue-800 to-cyan-950 border-cyan-500/30"
+                    : "bg-gradient-to-tr from-slate-950 to-slate-800 border-slate-750"
+              }`}>
+                {/* Microchip and Card Brand */}
                 <div className="flex justify-between items-center">
-                  <div className="bg-slate-800/80 px-2.5 py-1 rounded-lg text-[9px] font-bold text-slate-400">مدى / mada</div>
-                  <CreditCard className="w-8 h-8 text-teal-400" />
+                  <div className="bg-black/30 px-2.5 py-1 rounded-lg text-[9px] font-bold text-slate-100 font-mono tracking-wider">
+                    {cardType === "edahabia" && "بريد الجزائر / EDAHABIA"}
+                    {cardType === "cib" && "نقد بنكي / CIB الجزائر"}
+                    {cardType === "visa" && "الائتمان الدولي / VISA"}
+                  </div>
+                  <div className="w-8 h-8 rounded bg-white/10 flex items-center justify-center">
+                    <CreditCard className="w-5 h-5 text-slate-100" />
+                  </div>
                 </div>
                 
-                <div className="font-mono text-slate-100 text-base tracking-widest text-center py-2">
-                  {cardNumber ? cardNumber.replace(/(\d{4})/g, "$1 ").trim() : "•••• •••• •••• ••••"}
+                {/* Card Number */}
+                <div className="font-mono text-slate-100 text-sm sm:text-base tracking-widest text-center py-2 bg-black/10 rounded-lg">
+                  {cardNumber ? cardNumber.replace(/(\d{4})/g, "$1 ").trim() : "6280 5000 •••• ••••"}
                 </div>
 
-                <div className="flex justify-between items-center text-[10px] font-mono text-slate-400">
+                {/* Card Holder and Expiry */}
+                <div className="flex justify-between items-center text-[10px] font-mono text-slate-200">
                   <div>
-                    <span className="block text-[8px] uppercase text-slate-500">حامل البطاقة</span>
-                    <span className="font-sans font-bold text-slate-200 uppercase">{cardHolder || "NAME SURNAME"}</span>
+                    <span className="block text-[7px] uppercase text-slate-300">حامل البطاقة</span>
+                    <span className="font-sans font-bold uppercase">{cardHolder || "MOHAMED BENALIA"}</span>
                   </div>
                   <div className="text-left">
-                    <span className="block text-[8px] uppercase text-slate-500 font-sans">الصلاحية</span>
-                    <span className="font-mono font-bold text-slate-200">{cardExpiry || "MM/YY"}</span>
+                    <span className="block text-[7px] uppercase text-slate-300 font-sans">الصلاحية</span>
+                    <span className="font-mono font-bold">{cardExpiry || "12/28"}</span>
                   </div>
                 </div>
+              </div>
+
+              {/* 💸 Payout Channel Explanation Card */}
+              <div className="bg-slate-950/60 border border-slate-850 p-4 rounded-2xl text-right space-y-2">
+                <span className="text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-full font-bold">
+                  توجيه وإيداع الأرباح تلقائياً 💸
+                </span>
+                <p className="text-[10px] text-slate-400 leading-relaxed">
+                  <strong>كيف تصب الأرباح في حسابي؟</strong> تصب جميع الاشتراكات والمدفوعات التي يقوم بها مرضاك أو العيادات الفرعية المشتركة معك مباشرة وبشكل آلي في حسابك البريدي الجاري <span className="text-emerald-400 font-bold">CCP الجزائري</span> أو حسابك البنكي <span className="text-emerald-400 font-bold">(RIB)</span> خلال <span className="font-bold text-slate-200">24 إلى 48 ساعة</span> كحد أقصى، مع توفير فواتير وتقارير مالية شفافة تصل لبريدك دورياً.
+                </p>
               </div>
 
               {/* Payment Success Animation */}
@@ -1108,20 +1239,22 @@ export default function SaasPortal({
                       required
                       value={cardHolder}
                       onChange={(e) => setCardHolder(e.target.value)}
-                      placeholder="MOHAMMED AL-OTAIBI"
+                      placeholder="MOHAMED BENALIA"
                       className="w-full bg-slate-950 border border-slate-800 focus:border-teal-500 rounded-xl py-2.5 px-3 text-xs text-slate-100 uppercase focus:outline-none"
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-xs text-slate-400 font-bold block">رقم البطاقة الائتمانية (16 خانة):</label>
+                    <label className="text-xs text-slate-400 font-bold block">
+                      {cardType === "edahabia" ? "رقم بطاقة الذهبية (16 خانة تبدأ بـ 6280):" : "رقم بطاقة الدفع (16 خانة):"}
+                    </label>
                     <input
                       type="text"
                       maxLength={16}
                       required
                       value={cardNumber}
                       onChange={(e) => setCardNumber(e.target.value.replace(/\D/g, ""))}
-                      placeholder="4000123456789010"
+                      placeholder={cardType === "edahabia" ? "6280500012345678" : "4000123456789010"}
                       className="w-full bg-slate-950 border border-slate-800 focus:border-teal-500 rounded-xl py-2.5 px-3 text-xs text-slate-100 focus:outline-none font-mono"
                     />
                   </div>

@@ -1,1 +1,45 @@
 @import "tailwindcss";
+
+@media print {
+  /* Hide the main application container and everything else */
+  body {
+    background-color: white !important;
+    color: black !important;
+  }
+  
+  #root > *:not(#printable-medical-report-root),
+  #root > *:not(#printable-medical-report-root) * {
+    display: none !important;
+    height: 0 !important;
+    overflow: hidden !important;
+    visibility: hidden !important;
+  }
+
+  /* Make sure the printable report root is visible and takes full width */
+  #printable-medical-report-root {
+    display: block !important;
+    visibility: visible !important;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
+    color: black !important;
+    font-family: 'Inter', system-ui, sans-serif !important;
+    direction: rtl !important;
+  }
+
+  /* Ensure text colors are printed accurately */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  @page {
+    size: A4 portrait;
+    margin: 12mm 15mm 12mm 15mm;
+  }
+}
+

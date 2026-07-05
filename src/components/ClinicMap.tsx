@@ -7,9 +7,9 @@ interface ClinicMapProps {
   onChange: (updated: ClinicInfo) => void;
 }
 
-// Default coordinates centered in Middle East/North Africa area (or general center)
-const DEFAULT_LAT = 24.7136; // Riyadh
-const DEFAULT_LNG = 46.6753;
+// Default coordinates centered in Middle East/North Africa area (or Algiers center)
+const DEFAULT_LAT = 36.7538; // Algiers
+const DEFAULT_LNG = 3.0588;
 
 const getPopupHTML = (info: ClinicInfo) => {
   return `
