@@ -123,6 +123,11 @@ export interface SaasTenant {
     trialEndsAt?: string;
   };
   billingHistory: SaaSBilling[];
+
+  // Outside platform message subscription info
+  msgSubPlan?: "trial" | "msg1500" | "msg4000" | "unlimited" | "custom";
+  msgLimit?: number;
+  msgUsed?: number;
   
   // Clinic private database states
   services: ClinicService[];

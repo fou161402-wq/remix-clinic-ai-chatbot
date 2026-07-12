@@ -13,6 +13,7 @@ import {
   CheckCircle, 
   AlertCircle, 
   MessageSquare,
+  Settings,
   TrendingUp,
   Facebook,
   Instagram,
@@ -61,6 +62,10 @@ import { motion, AnimatePresence } from "motion/react";
 import { 
   BarChart, 
   Bar, 
+  AreaChart,
+  Area,
+  LineChart,
+  Line,
   XAxis, 
   YAxis, 
   CartesianGrid, 
@@ -77,6 +82,467 @@ import { ClinicInfo, ClinicService, ClinicGuideline, QuickAction, ChatMessage, B
 import { parseExcelOrCsvToServices, parseExcelOrCsvToGuidelines } from "./utils/parser";
 import ClinicMap from "./components/ClinicMap";
 import SaasPortal from "./components/SaasPortal";
+import { I18nextProvider, useTranslation } from "react-i18next";
+import i18n, { translations } from "./i18n";
+
+const pdfTranslations: Record<string, any> = {
+  ar: {
+    previewTitle: "معاينة ومراجعة التقرير الطبي الرسمي والتحليلات",
+    reportTitle: "تقرير استشارة طبية أولية وتتبع تفاعل المريض",
+    patientNameLabel: "اسم المريض الكامل:",
+    contactPhoneLabel: "رقم الاتصال الموثق:",
+    consultationDateLabel: "تاريخ وتوقيت الاستشارة:",
+    consultationTopicLabel: "موضوع الاستشارة المبدئي:",
+    section1Title: "أولاً: تحليلات الجلسة ومؤشرات الذكاء الاصطناعي الطبية 📊",
+    satisfactionLevel: "مستوى الرضا المتوقع",
+    satisfiedStatus: "مرتفع جداً (راضي 😊)",
+    neutralStatus: "متوسط (محايد 😐)",
+    classificationUrgency: "التصنيف والاستعجال",
+    urgentStatus: "طارئ وعاجل ⚠️",
+    normalStatus: "استفسار اعتيادي 🟢",
+    safetyCommitment: "الالتحام بالصمامات الآمنة",
+    safetyPassed: "مجتاز ومعتمد بنسبة 100% ✓",
+    recommendationSummary: "💡 ملخص التوصية الطبية والتحليل الفوري للمشرف:",
+    urgentRecommendation: "يشكو المريض من أعراض حادة ومتعلقة بالألم أو النزيف. تم حظر الإجابات الدوائية العشوائية تماماً بواسطة نظام الصمامات الطبي لضمان سلامته التامة. يوصى بقيام موظفي الاستقبال بالاتصال الهاتفي فوراً لتأكيد الحجز وتنسيق الكشف العاجل.",
+    normalRecommendation: "الاستشارة تتعلق باستفسار خدمي أو معرفي عام (مثل الأسعار أو الإجراءات الشائعة). تم تزويد المريض بالمعلومات الدقيقة وحجز موعد مبدئي بنجاح لضمان المتابعة والاستفادة التامة من خدمات العيادة.",
+    section2Title: "ثانياً: سجل المحادثة الطبي الموثق 💬",
+    section2TitlePrint: "ثانياً: سجل المحادثة المعتمد والموثق للتقرير الطارئ 💬",
+    senderLabel: "المرسل",
+    messageContentLabel: "محتوى الرسالة الاستشارية بالتفصيل",
+    patient: "👤 المريض",
+    doctor: "🧑‍⚕️ طبيب معالج",
+    assistant: "🤖 المساعد الذكي",
+    disclaimerTitle: "إخلاء مسؤولية طبي معتمد:",
+    disclaimerText: "هذا التقرير يمثل تلخيصاً آلياً دقيقاً للمحادثة الاستكشافية الأولية التي تمت عبر مساعد العيادة المعتمد على الذكاء الاصطناعي. لا يغني هذا التقرير ولا يمثل بديلاً عن الفحص السريري المباشر والأشعة التشخيصية داخل العيادة. أي وصفات علاجية يجب أن تتم سريرياً وتوقع يدوياً من الطبيب المعالج.",
+    officialStamp: "ختم العيادة الرسمي",
+    doctorSignatureLabel: "توقيع الطبيب المشرف:",
+    closePreview: "إغلاق المعاينة",
+    copyFullText: "نسخ النص بالكامل 📋",
+    downloadPrintPdf: "تحميل كملف PDF / طباعة التقرير 🖨️",
+    defaultClinicName: "العيادة الطبية الذكية",
+    defaultSpecialty: "استشارات عامة ورعاية ذكية",
+    defaultDoctor: "الاستشاري المسؤول"
+  },
+  en: {
+    previewTitle: "Preview and Review of the Official Medical Report & Analysis",
+    reportTitle: "Preliminary Medical Consultation & Patient Interaction Report",
+    patientNameLabel: "Patient Full Name:",
+    contactPhoneLabel: "Verified Phone Number:",
+    consultationDateLabel: "Date & Time of Consultation:",
+    consultationTopicLabel: "Initial Consultation Topic:",
+    section1Title: "First: Session Analysis & Medical AI Indicators 📊",
+    satisfactionLevel: "Expected Satisfaction Level",
+    satisfiedStatus: "Very High (Satisfied 😊)",
+    neutralStatus: "Medium (Neutral 😐)",
+    classificationUrgency: "Classification & Urgency",
+    urgentStatus: "Urgent & Critical ⚠️",
+    normalStatus: "Standard Inquiry 🟢",
+    safetyCommitment: "Adherence to Safety Guards",
+    safetyPassed: "Passed and Verified 100% ✓",
+    recommendationSummary: "💡 Medical Recommendation Summary & Supervisor Analysis:",
+    urgentRecommendation: "The patient complains of acute symptoms related to pain or bleeding. Random drug advice has been strictly blocked by the medical safeguard system to guarantee safety. Reception staff are recommended to call immediately to confirm and coordinate urgent clinical checkup.",
+    normalRecommendation: "The consultation relates to general service or educational inquiry (e.g., prices or common procedures). The patient was provided with accurate details and has booked an initial appointment successfully to ensure continued care.",
+    section2Title: "Second: Documented Medical Chat Transcript 💬",
+    section2TitlePrint: "Second: Verified Chat Transcript for Emergency Report 💬",
+    senderLabel: "Sender",
+    messageContentLabel: "Detailed Consultation Message Content",
+    patient: "👤 Patient",
+    doctor: "🧑‍⚕️ Treating Doctor",
+    assistant: "🤖 Smart Assistant",
+    disclaimerTitle: "Certified Medical Disclaimer:",
+    disclaimerText: "This report represents a precise automated summary of the initial exploratory conversation conducted via the AI-powered clinic assistant. It does not replace or substitute for direct clinical examination or diagnostic radiology. Any prescriptions must be clinically issued and signed manually by the treating physician.",
+    officialStamp: "Official Clinic Stamp",
+    doctorSignatureLabel: "Supervisor Doctor Signature:",
+    closePreview: "Close Preview",
+    copyFullText: "Copy Full Text 📋",
+    downloadPrintPdf: "Download PDF / Print Report 🖨️",
+    defaultClinicName: "Smart Medical Clinic",
+    defaultSpecialty: "General Consultations & Smart Care",
+    defaultDoctor: "Chief Consultant"
+  },
+  fr: {
+    previewTitle: "Prévisualisation et Révision du Rapport Médical Officiel & Analyses",
+    reportTitle: "Rapport de Consultation Médicale Préliminaire & Interaction Patient",
+    patientNameLabel: "Nom complet du patient :",
+    contactPhoneLabel: "Numéro de téléphone vérifié :",
+    consultationDateLabel: "Date et heure de la consultation :",
+    consultationTopicLabel: "Sujet initial de consultation :",
+    section1Title: "Premièrement : Analyse de session & indicateurs IA médicaux 📊",
+    satisfactionLevel: "Niveau de satisfaction attendu",
+    satisfiedStatus: "Très élevé (Satisfait 😊)",
+    neutralStatus: "Moyen (Neutre 😐)",
+    classificationUrgency: "Classification & Urgence",
+    urgentStatus: "Urgent & Critique ⚠️",
+    normalStatus: "Enquête standard 🟢",
+    safetyCommitment: "Respect des valves de sécurité",
+    safetyPassed: "Réussi et vérifié à 100% ✓",
+    recommendationSummary: "💡 Synthèse de recommandation médicale & analyse du superviseur :",
+    urgentRecommendation: "Le patient se plaint de symptômes aigus liés à la douleur ou à un saignement. Les conseils de médication aléatoires ont été strictement bloqués par le système médical de sécurité. Il est recommandé à la réception d'appeler immédiatement pour coordonner un examen clinique urgent.",
+    normalRecommendation: "La consultation concerne une demande d'information générale ou administrative (tarifs, procédures). Le patient a reçu des détails précis et a réservé un rendez-vous initial avec succès pour garantir la continuité des soins.",
+    section2Title: "Deuxièmement : Transcription de la discussion médicale 💬",
+    section2TitlePrint: "Deuxièmement : Transcription validée pour rapport d'urgence 💬",
+    senderLabel: "Émetteur",
+    messageContentLabel: "Détail du contenu du message de consultation",
+    patient: "👤 Patient",
+    doctor: "🧑‍⚕️ Médecin traitant",
+    assistant: "🤖 Assistant virtuel",
+    disclaimerTitle: "Avis de non-responsabilité médicale certifié :",
+    disclaimerText: "Ce rapport représente un résumé automatisé précis de la conversation exploratoire initiale menée via l'assistant virtuel de la clinique. Il ne remplace ni ne dispense d'un examen clinique direct ou de radiologie diagnostique. Toute prescription médicale doit être émise cliniquement et signée manuellement par le médecin traitant.",
+    officialStamp: "Timbre officiel de la clinique",
+    doctorSignatureLabel: "Signature du médecin superviseur :",
+    closePreview: "Fermer la prévisualisation",
+    copyFullText: "Copier tout le texte 📋",
+    downloadPrintPdf: "Télécharger en PDF / Imprimer le rapport 🖨️",
+    defaultClinicName: "Clinique Médicale Intelligente",
+    defaultSpecialty: "Consultations Générales & Soins Intelligents",
+    defaultDoctor: "Consultant en Chef"
+  }
+};
+
+// translations loaded from ./i18n.ts
+
+const localizeDynamicText = (text: string, lang: "ar" | "en" | "fr"): string => {
+  if (!text) return text;
+  
+  const dict: Record<string, Record<"ar" | "en" | "fr", string>> = {
+    // Patient Names
+    "أحمد منصور": {
+      ar: "أحمد منصور",
+      en: "Ahmed Mansour",
+      fr: "Ahmed Mansour"
+    },
+    "منى الرويلي": {
+      ar: "منى الرويلي",
+      en: "Mona Al-Rowaili",
+      fr: "Mona Al-Rowaili"
+    },
+    "رائد الحربي": {
+      ar: "رائد الحربي",
+      en: "Raed Al-Harbi",
+      fr: "Raed Al-Harbi"
+    },
+    "فاطمة عسيري": {
+      ar: "فاطمة عسيري",
+      en: "Fatima Asiri",
+      fr: "Fatima Asiri"
+    },
+    "أحمد بن عبد الله العتيبي": {
+      ar: "أحمد بن عبد الله العتيبي",
+      en: "Ahmed Bin Abdullah Al-Otaibi",
+      fr: "Ahmed Bin Abdullah Al-Otaibi"
+    },
+    "سارة محمد الشمري": {
+      ar: "سارة محمد الشمري",
+      en: "Sara Mohammed Al-Shammari",
+      fr: "Sara Mohammed Al-Shammari"
+    },
+    "فيصل خالد الدوسري": {
+      ar: "فيصل خالد الدوسري",
+      en: "Faisal Khalid Al-Dossari",
+      fr: "Faisal Khalid Al-Dossari"
+    },
+    "د. أحمد بن يوسف": {
+      ar: "د. أحمد بن يوسف",
+      en: "Dr. Ahmed Ben Youssef",
+      fr: "Dr Ahmed Ben Youssef"
+    },
+    "د. محمد بن يوسف": {
+      ar: "د. محمد بن يوسف",
+      en: "Dr. Mohamed Ben Youssef",
+      fr: "Dr Mohamed Ben Youssef"
+    },
+    "د. سارة حميدش": {
+      ar: "د. سارة حميدش",
+      en: "Dr. Sara Hmaidich",
+      fr: "Dr Sara Hmaidich"
+    },
+    "د. خالد بلعيدي": {
+      ar: "د. خالد بلعيدي",
+      en: "Dr. Khaled Belaidi",
+      fr: "Dr Khaled Belaidi"
+    },
+    "عيادة دنتال كير لطب الأسنان": {
+      ar: "عيادة دنتال كير لطب الأسنان",
+      en: "Dental Care Clinic",
+      fr: "Clinique Dental Care"
+    },
+    "طب وجراحة الأسنان والتجميل": {
+      ar: "طب وجراحة الأسنان والتجميل",
+      en: "Dentistry, Oral Surgery & Cosmetics",
+      fr: "Chirurgie Dentaire et Esthétique"
+    },
+    "الجزائر العاصمة، شارع ديدوش مراد، عمارة السلام، الطابق الثاني": {
+      ar: "الجزائر العاصمة، شارع ديدوش مراد، عمارة السلام، الطابق الثاني",
+      en: "Algiers, Didouche Mourad Street, Peace Building, 2nd Floor",
+      fr: "Alger, Rue Didouche Mourad, Immeuble de la Paix, 2e Étage"
+    },
+    "عيادة الشفاء للطب العام والفحص الشامل": {
+      ar: "عيادة الشفاء للطب العام والفحص الشامل",
+      en: "Al-Shifa Clinic for General Medicine & Comprehensive Checkup",
+      fr: "Clinique Al-Shifa pour la médecine générale"
+    },
+    "الطب العام، التشخيص، والفحص السريري": {
+      ar: "الطب العام، التشخيص، والفحص السريري",
+      en: "General Medicine, Diagnosis & Clinical Exam",
+      fr: "Médecine Générale, Diagnostic et Examen Clinique"
+    },
+    "الجزائر العاصمة، حي باب الواد، شارع الاستقلال، الطابق الأول": {
+      ar: "الجزائر العاصمة، حي باب الواد، شارع الاستقلال، الطابق الأول",
+      en: "Algiers, Bab El Oued, Independence Street, 1st Floor",
+      fr: "Alger, Bab El Oued, Rue de l'Indépendance, 1er Étage"
+    },
+    "مكتب تنظيم وحجز المواعيد الطبي الموحد": {
+      ar: "مكتب تنظيم وحجز المواعيد الطبي الموحد",
+      en: "Unified Medical Appointment & Scheduling Office",
+      fr: "Bureau Unifié de Coordination des Rendez-vous Médicaux"
+    },
+    "تنسيق المواعيد وإدارة الاستشارات الطبية والدعم الإداري": {
+      ar: "تنسيق المواعيد وإدارة الاستشارات الطبية والدعم الإداري",
+      en: "Appointment Coordination & Consultation Management",
+      fr: "Coordination des rendez-vous et gestion des consultations"
+    },
+    "قسنطينة، حي سيدي مبروك، شارع المستشفى، مجمع الشفاء الطبي، الطابق الأرضي": {
+      ar: "قسنطينة، حي سيدي مبروك، شارع المستشفى، مجمع الشفاء الطبي، الطابق الأرضي",
+      en: "Constantine, Sidi Mabrouk, Hospital Street, Al-Shifa Medical Complex, Ground Floor",
+      fr: "Constantine, Sidi Mabrouk, Rue de l'Hôpital, Complexe Médical Al-Shifa, Rez-de-chaussée"
+    },
+    "تنظيف الأسنان وإزالة الجير": {
+      ar: "تنظيف الأسنان وإزالة الجير",
+      en: "Teeth Cleaning & Scaling",
+      fr: "Nettoyage des dents et détartrage"
+    },
+    "تبييض الأسنان بالليزر (زوم)": {
+      ar: "تبييض الأسنان بالليزر (زوم)",
+      en: "Laser Teeth Whitening (Zoom)",
+      fr: "Blanchiment des dents au laser (Zoom)"
+    },
+    "حشوة تجميلية ضوئية (كومبوزيت)": {
+      ar: "حشوة تجميلية ضوئية (كومبوزيت)",
+      en: "Cosmetic Composite Filling",
+      fr: "Obturation composite esthétique"
+    },
+    "زراعة الأسنان الألمانية": {
+      ar: "زراعة الأسنان الألمانية",
+      en: "German Dental Implant",
+      fr: "Implant dentaire allemand"
+    },
+    "تقويم الأسنان الشفاف": {
+      ar: "تقويم الأسنان الشفاف",
+      en: "Clear Aligners",
+      fr: "Alignement dentaire transparent"
+    },
+    "الفحص السريري العام والاستشارة الطبية": {
+      ar: "الفحص السريري العام والاستشارة الطبية",
+      en: "General Clinical Exam & Consultation",
+      fr: "Examen clinique général et consultation"
+    },
+    "فحص وتخطيط القلب الكهربائي (ECG)": {
+      ar: "فحص وتخطيط القلب الكهربائي (ECG)",
+      en: "Electrocardiogram (ECG) Exam",
+      fr: "Examen et électrocardiogramme (ECG)"
+    },
+    "الفحص الدوري والتحاليل الطبية الأساسية": {
+      ar: "الفحص الدوري والتحاليل الطبية الأساسية",
+      en: "Periodic Checkup & Basic Medical Analyses",
+      fr: "Bilan périodique et analyses médicales de base"
+    },
+    "استشارة التغذية وعلاج السمنة والنحافة": {
+      ar: "استشارة التغذية وعلاج السمنة والنحافة",
+      en: "Nutrition Consultation & Weight Management",
+      fr: "Consultation nutritionnelle et traitement de l'obésité"
+    },
+    "الكشف الطبي المنزلي للحالات الخاصة": {
+      ar: "الكشف الطبي المنزلي للحالات الخاصة",
+      en: "Home Medical Visit for Special Cases",
+      fr: "Visite médicale à domicile pour cas particuliers"
+    },
+
+    // Topics & Services
+    "تنظيف وتبييض الأسنان بالليزر": {
+      ar: "تنظيف وتبييض الأسنان بالليزر",
+      en: "Laser Teeth Cleaning & Whitening",
+      fr: "Nettoyage et blanchiment des dents au laser"
+    },
+    "علاج عصب وجلسة حشوة سنية": {
+      ar: "علاج عصب وجلسة حشوة سنية",
+      en: "Root Canal Treatment & Filling Session",
+      fr: "Traitement de canal et séance d'obturation"
+    },
+    "استشارة طبية وفحص دوري": {
+      ar: "استشارة طبية وفحص دوري",
+      en: "Medical Consultation & Routine Exam",
+      fr: "Consultation médicale et examen de routine"
+    },
+    "استشارة زراعة أسنان وتكلفة العلاج": {
+      ar: "استشارة زراعة أسنان وتكلفة العلاج",
+      en: "Dental Implant Consultation & Cost",
+      fr: "Consultation d'implant dentaire et coût"
+    },
+    "سؤال عن ألم حاد في الضرس السفلي بعد الحشو": {
+      ar: "سؤال عن ألم حاد في الضرس السفلي بعد الحشو",
+      en: "Question about acute pain in lower molar after filling",
+      fr: "Question sur une douleur aiguë de la molaire inférieure après plombage"
+    },
+    "قراءة أشعة سينية مرفقة وإفادة طبية": {
+      ar: "قراءة أشعة سينية مرفقة وإفادة طبية",
+      en: "Reading attached X-ray and medical report",
+      fr: "Lecture de la radiographie jointe et rapport médical"
+    },
+    "استفسار عن تقويم الأسنان الشفاف والأقساط": {
+      ar: "استفسار عن تقويم الأسنان الشفاف والأقساط",
+      en: "Inquiry about clear aligners & installments",
+      fr: "Demande d'aligneurs transparents et versements"
+    },
+    "استشارة الكشف الأولي": {
+      ar: "استشارة الكشف الأولي",
+      en: "Initial Checkup Consultation",
+      fr: "Consultation initiale"
+    },
+    "كشف مجاني": {
+      ar: "كشف مجاني",
+      en: "Free Consultation",
+      fr: "Consultation gratuite"
+    },
+    "إرشادات عامة للمرضى": {
+      ar: "إرشادات عامة للمرضى",
+      en: "General Patient Guidelines",
+      fr: "Directives générales pour les patients"
+    },
+    "يرجى الحضور قبل الموعد بـ 15 دقيقة وإحضار الهوية الوطنية.": {
+      ar: "يرجى الحضور قبل الموعد بـ 15 دقيقة وإحضار الهوية الوطنية.",
+      en: "Please arrive 15 minutes before the appointment and bring your national ID.",
+      fr: "Veuillez arriver 15 minutes avant le rendez-vous et apporter votre pièce d'identité."
+    },
+    "📅 حجز موعد جديد": {
+      ar: "📅 حجز موعد جديد",
+      en: "📅 Book a New Appointment",
+      fr: "📅 Réserver un nouveau rendez-vous"
+    },
+    "📍 موقع العيادة وأوقات العمل": {
+      ar: "📍 موقع العيادة وأوقات العمل",
+      en: "📍 Clinic Location & Working Hours",
+      fr: "📍 Emplacement et heures d'ouverture"
+    },
+
+    // Notes & Messages
+    "أرغب بزيارة عاجلة صباحاً لتنظيف الأسنان قبل السفر.": {
+      ar: "أرغب بزيارة عاجلة صباحاً لتنظيف الأسنان قبل السفر.",
+      en: "I would like an urgent morning visit for teeth cleaning before traveling.",
+      fr: "Je souhaite une visite matinale urgente pour un nettoyage des dents avant de voyager."
+    },
+    "ألم شديد في الضرس الأيمن العلوي منذ يومين.": {
+      ar: "ألم شديد في الضرس الأيمن العلوي منذ يومين.",
+      en: "Severe pain in the upper right molar for two days.",
+      fr: "Douleur intense au niveau de la molaire supérieure droite depuis deux jours."
+    },
+    "مراجعة دورية للتقويم من أجل الشد.": {
+      ar: "مراجعة دورية للتقويم من أجل الشد.",
+      en: "Routine checkup for braces tightening.",
+      fr: "Visite de routine pour le resserrement de l'appareil."
+    },
+    "مرحبا، أريد الاستفسار عن تكلفة زراعة السن الواحد في عيادتكم وما هي الإجراءات؟": {
+      ar: "مرحبا، أريد الاستفسار عن تكلفة زراعة السن الواحد في عيادتكم وما هي الإجراءات؟",
+      en: "Hello, I want to inquire about the cost of a single dental implant in your clinic and what are the procedures?",
+      fr: "Bonjour, je souhaite me renseigner sur le coût d'un implant dentaire unique dans votre clinique et quelles sont les procédures ?"
+    },
+    "أهلاً بك يا فندم في عيادتنا! زراعة السن الواحد لدينا تتم بأحدث التقنيات السويسرية والألمانية. تكلفتها تبدأ من 35000 دج وتعتمد على نوع الغرسة وحالة عظام الفك. الإجراء يتضمن فحصاً أولياً، ثم زراعة وتثبيت الغرسة، تليها فترة شفاء قصيرة قبل وضع التاج النهائي. هل تود حجز موعد لفحص مجاني مع طبيب الزراعة؟": {
+      ar: "أهلاً بك يا فندم في عيادتنا! زراعة السن الواحد لدينا تتم بأحدث التقنيات السويسرية والألمانية. تكلفتها تبدأ من 35000 دج وتعتمد على نوع الغرسة وحالة عظام الفك. الإجراء يتضمن فحصاً أولياً، ثم زراعة وتثبيت الغرسة، تليها فترة شفاء قصيرة قبل وضع التاج النهائي. هل تود حجز موعد لفحص مجاني مع طبيب الزراعة؟",
+      en: "Welcome to our clinic! A single dental implant is performed here using the latest Swiss and German technologies. The cost starts from 35,000 DZD depending on the implant type and jaw bone condition. The procedure includes initial examination, placing and securing the implant, followed by a short healing period before placing the final crown. Would you like to book a free checkup with the implantologist?",
+      fr: "Bienvenue dans notre clinique ! Un implant dentaire unique est réalisé ici à l'aide des dernières technologies suisses et allemandes. Le coût commence à partir de 35 000 DZD selon le type d'implant et l'état de l'os de la mâchoire. La procédure comprend un examen initial, la pose et la fixation de l'implant, suivies d'une courte période de guérison avant la pose de la couronne finale. Souhaitez-vous réserver un examen gratuit avec l'implantologue ?"
+    },
+    "نعم، أريد موعداً يوم الخميس القادم مساءً إن أمكن.": {
+      ar: "نعم، أريد موعداً يوم الخميس القادم مساءً إن أمكن.",
+      en: "Yes, I would like an appointment next Thursday evening if possible.",
+      fr: "Oui, je voudrais un rendez-vous jeudi soir prochain si possible."
+    },
+    "يسعدنا ذلك! لقد حجزت لك موعداً مبدئياً ليوم الخميس القادم الساعة 16:00 زوالاً باسم أحمد منصور. هل يمكنك تأكيد رقم جوالك لاستكمال التأكيد؟": {
+      ar: "يسعدنا ذلك! لقد حجزت لك موعداً مبدئياً ليوم الخميس القادم الساعة 16:00 زوالاً باسم أحمد منصور. هل يمكنك تأكيد رقم جوالك لاستكمال التأكيد؟",
+      en: "We are pleased to do so! I have booked a tentative appointment for next Thursday at 16:00 under the name Ahmed Mansour. Can you confirm your mobile number to complete the confirmation?",
+      fr: "Nous sommes ravis ! J'ai pris un rendez-vous provisoire pour jeudi prochain à 16:00 sous le nom d'Ahmed Mansour. Pouvez-vous confirmer votre numéro de mobile pour finaliser la confirmation ?"
+    },
+    "السلام عليكم، دكتور عملت حشوة لضرسي السفلي قبل يومين والآن أشعر بألم شديد لا يطاق عند شرب الماء البارد، هل هذا طبيعي؟": {
+      ar: "السلام عليكم، دكتور عملت حشوة لضرسي السفلي قبل يومين والآن أشعر بألم شديد لا يطاق عند شرب الماء البارد، هل هذا طبيعي؟",
+      en: "Hello doctor, I got a filling for my lower molar two days ago and now I feel severe, unbearable pain when drinking cold water, is this normal?",
+      fr: "Bonjour docteur, j'ai fait faire un plombage sur ma molaire inférieure il y a deux jours et maintenant je ressens une douleur intense et insupportable en buvant de l'eau froide, est-ce normal ?"
+    },
+    "وعليكم السلام ورحمة الله وبركاته. سلامتك ألف سلامة! بعد حشو العصب أو الحشو العميق، قد يحدث تحسس مؤقت للبارد والساخن يستمر لعدة أيام وهو أمر طبيعي نسبياً. ولكن، إذا كان الألم شديداً ومستمراً (نابضاً) ويمنعك من النوم، فقد يشير ذلك إلى حاجة السن لفحص إضافي أو تعديل في مستوى الحشوة. يرجى مراجعة طبيبك بالعيادة فوراً، ويمكنك تناول مسكن ألم معتدل مثل البروفين مؤقتاً لحين زيارتنا. هل تودين حجز موعد فحص طارئ اليوم؟": {
+      ar: "وعليكم السلام ورحمة الله وبركاته. سلامتك ألف سلامة! بعد حشو العصب أو الحشو العميق، قد يحدث تحسس مؤقت للبارد والساخن يستمر لعدة أيام وهو أمر طبيعي نسبياً. ولكن، إذا كان الألم شديداً ومستمراً (نابضاً) ويمنعك من النوم، فقد يشير ذلك إلى حاجة السن لفحص إضافي أو تعديل في مستوى الحشوة. يرجى مراجعة طبيبك بالعيادة فوراً، ويمكنك تناول مسكن ألم معتدل مثل البروفين مؤقتاً لحين زيارتنا. هل تودين حجز موعد فحص طارئ اليوم؟",
+      en: "Peace be upon you. Wishing you a speedy recovery! After root canal or deep filling, temporary sensitivity to hot and cold may occur and last for a few days, which is relatively normal. However, if the pain is severe, continuous (throbbing), and prevents you from sleeping, it may indicate that the tooth needs an additional exam or adjustment of the filling level. Please visit your doctor at the clinic immediately. You can take a mild pain reliever like Ibuprofen temporarily until your visit. Would you like to book an emergency exam today?",
+      fr: "Que la paix soit sur vous. Nous vous souhaitons un prompt rétablissement ! Après un traitement de canal ou un plombage profond, une sensibilité temporaire au chaud et au froid peut survenir et durer quelques jours, ce qui est relativement normal. Cependant, si la douleur est intense, continue (pulsatile) et vous empêche de dormir, cela peut indiquer que la dent nécessite un examen supplémentaire ou un ajustement du niveau de plombage. Veuillez consulter immédiatement votre médecin à la clinique. Vous pouvez prendre temporairement un analgésique doux comme l'Ibuprofène en attendant votre visite. Souhaitez-vous réserver un examen d'urgence aujourd'hui ?"
+    },
+    "شكراً جزيلاً، سأقوم بأخذ المسكن وإذا لم يتحسن سأتصل بكم غداً.": {
+      ar: "شكراً جزيلاً، سأقوم بأخذ المسكن وإذا لم يتحسن سأتصل بكم غداً.",
+      en: "Thank you very much, I will take the painkiller and if it doesn't improve, I will call you tomorrow.",
+      fr: "Merci beaucoup, je vais prendre l'analgésique et si cela ne s'améliore pas, je vous appellerai demain."
+    },
+    "أرفقت لكم صورة الأشعة لضرسي، هل يحتاج خلع أو علاج عصب فقط؟": {
+      ar: "أرفقت لكم صورة الأشعة لضرسي، هل يحتاج خلع أو علاج عصب فقط؟",
+      en: "I have attached the X-ray of my tooth, does it need extraction or just root canal?",
+      fr: "J'ai joint la radiographie de ma dent, a-t-elle besoin d'une extraction ou simplement d'un traitement de canal ?"
+    },
+    "أهلاً بك يا فندم. لقد اطلعت على صورة الأشعة المرفقة بكل دقة. يظهر من الصورة وجود تسوس عميق جداً يقترب كثيراً من حجرة العصب في الضرس المعني، مع وجود ظلال طفيفة حول جذر السن قد تشير إلى التهاب بسيط. الاحتمال الأكبر هو حاجتك لعلاج عصب (سحب عصب) مع حشوة وتلبيسة للمحافظة على السن وتجنب الخلع. ومع ذلك، لا يمكن إعطاء قرار نهائي إلا بالفحص السريري المباشر واختبار حيوية العصب بالعيادة. ننصح بزيارتنا بأقرب وقت لتجنب تفاقم الالتهاب. هل ترغب بحجز موعد لعلاج العصب؟": {
+      ar: "أهلاً بك يا فندم. لقد اطلعت على صورة الأشعة المرفقة بكل دقة. يظهر من الصورة وجود تسوس عميق جداً يقترب كثيراً من حجرة العصب في الضرس المعني، مع وجود ظلال طفيفة حول جذر السن قد تشير إلى التهاب بسيط. الاحتمال الأكبر هو حاجتك لعلاج عصب (سحب عصب) مع حشوة وتلبيسة للمحافظة على السن وتجنب الخلع. ومع ذلك، لا يمكن إعطاء قرار نهائي إلا بالفحص السريري المباشر واختبار حيوية العصب بالعيادة. ننصح بزيارتنا بأقرب وقت لتجنب تفاقم الالتهاب. هل ترغب بحجز موعد لعلاج العصب؟",
+      en: "Welcome, sir. I have reviewed the attached X-ray carefully. It shows very deep decay approaching the nerve chamber of the affected tooth, with slight shadowing around the root indicating minor inflammation. Most likely, you will need a root canal treatment with a filling and crown to preserve the tooth and avoid extraction. However, a final decision can only be made through a direct clinical examination and pulp vitality test at the clinic. We recommend visiting us as soon as possible. Would you like to book an appointment for root canal?",
+      fr: "Bienvenue, monsieur. J'ai examiné attentivement la radiographie jointe. Elle montre une carie très profonde qui s'approche de la chambre pulpaire de la dent concernée, avec une légère ombre autour de la racine indiquant une inflammation mineure. Selon toute vraisemblance, vous aurez besoin d'un traitement de canal avec plombage et couronne pour préserver la dent et éviter l'extraction. Cependant, une décision finale ne peut être prise que par un examen clinique direct et un test de vitalité pulpaire à la clinique. Nous vous recommandons de nous rendre visite dès que possible. Souhaitez-vous réserver un rendez-vous pour un traitement de canal ?"
+    },
+    "مرحبا.. هل يتوفر لديكم تقويم شفاف وبكم السعر؟ وهل فيه تقسيط؟": {
+      ar: "مرحبا.. هل يتوفر لديكم تقويم شفاف وبكم السعر؟ وهل فيه تقسيط؟",
+      en: "Hello.. do you have clear aligners and what is the price? And is there an installment plan?",
+      fr: "Bonjour.. proposez-vous des aligneurs transparents et quel est le prix ? Et y a-t-il un plan de versement ?"
+    },
+    "مرحباً بكِ أختي فاطمة! نعم، نوفر تقنية التقويم الشفاف (Invisalign) وهو الخيار التجميلي المفضل للكثيرين. تبدأ أسعار التقويم الشفاف من 90000 دج وتتفاوت حسب عدد القوالب المطلوبة ومدة العلاج. نعم، يسرنا تقديم خطة تقسيط مريحة لمرضانا: دفعة أولى 20000 دج، والباقي أقساط شهرية ميسرة تبدأ من 5000 دج فقط بدون أي فوائد. هل تحبين حجز موعد استشارة مجانية مع أخصائي التقويم لدينا لأخذ القياسات ووضع الخطة؟": {
+      ar: "مرحباً بكِ أختي فاطمة! نعم، نوفر تقنية التقويم الشفاف (Invisalign) وهو الخيار التجميلي المفضل للكثيرين. تبدأ أسعار التقويم الشفاف من 90000 دج وتتفاوت حسب عدد القوالب المطلوبة ومدة العلاج. نعم، يسرنا تقديم خطة تقسيط مريحة لمرضانا: دفعة أولى 20000 دج، والباقي أقساط شهرية ميسرة تبدأ من 5000 دج فقط بدون أي فوائد. هل تحبين حجز موعد استشارة مجانية مع أخصائي التقويم لدينا لأخذ القياسات ووضع الخطة؟",
+      en: "Welcome sister Fatima! Yes, we offer Invisalign technology, which is the preferred cosmetic choice for many. Prices for clear aligners start from 90,000 DZD and vary according to the number of molds required and treatment duration. Yes, we are pleased to offer a convenient installment plan: down payment of 20,000 DZD, and the rest in monthly installments starting from 5,000 DZD only without any interest. Would you like to book a free consultation with our orthodontist to take measurements and make the plan?",
+      fr: "Bienvenue sœur Fatima ! Oui, nous proposons la technologie Invisalign, qui est le choix esthétique préféré de beaucoup. Les prix des aligneurs transparents commencent à partir de 90 000 DZD et varient en fonction du nombre de moules requis et de la durée du traitement. Oui, nous sommes ravis de proposer un plan de versement pratique : un acompte de 20 000 DZD, et le reste en mensualités à partir de 5 000 DZD seulement sans aucun intérêt. Souhaitez-vous réserver une consultation gratuite avec notre orthodontiste pour prendre les mesures et établir le plan ?"
+    },
+    "رائع جداً، سأحجز موعداً الأسبوع القادم إن شاء الله.": {
+      ar: "رائع جداً، سأحجز موعداً الأسبوع القادم إن شاء الله.",
+      en: "That's wonderful, I will book an appointment next week, God willing.",
+      fr: "C'est merveilleux, je prendrai rendez-vous la semaine prochaine, si Dieu le veut."
+    },
+    "مستعد للرد 🤖": {
+      ar: "مستعد للرد 🤖",
+      en: "Ready to respond 🤖",
+      fr: "Prêt à répondre 🤖"
+    },
+    "تحديث اليوم من العيادة:": {
+      ar: "تحديث اليوم من العيادة:",
+      en: "Today's clinic update:",
+      fr: "Mise à jour d'aujourd'hui :"
+    },
+    "العيادة تعمل بمواعيدها الرسمية ونرحب بكم في أي وقت!": {
+      ar: "العيادة تعمل بمواعيدها الرسمية ونرحب بكم في أي وقت!",
+      en: "The clinic is operating on official hours, we welcome you anytime!",
+      fr: "La clinique fonctionne aux heures officielles, bienvenue à tout moment !"
+    },
+    "قبل الموعد بـ 15 دقيقة": {
+      ar: "قبل الموعد بـ 15 دقيقة",
+      en: "15 minutes before the appointment",
+      fr: "15 minutes avant le rendez-vous"
+    },
+    "قبل الموعد بـ 1 ساعة": {
+      ar: "قبل الموعد بـ 1 ساعة",
+      en: "1 hour before the appointment",
+      fr: "1 heure avant le rendez-vous"
+    },
+    "قبل الموعد بـ 2 ساعة": {
+      ar: "قبل الموعد بـ 2 ساعة",
+      en: "2 hours before the appointment",
+      fr: "2 heures avant le rendez-vous"
+    },
+    "قبل الموعد بـ 24 ساعة": {
+      ar: "قبل الموعد بـ 24 ساعة",
+      en: "24 hours before the appointment",
+      fr: "24 heures avant le rendez-vous"
+    }
+  };
+
+  const entry = dict[text.trim()];
+  if (entry && entry[lang]) {
+    return entry[lang];
+  }
+  return text;
+};
 
 const DEFAULT_BOOKINGS: Booking[] = [
   {
@@ -129,7 +595,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   return null;
 };
 
-export default function App() {
+function InnerApp() {
   // Load initial preset or saved state
   const [selectedPresetId, setSelectedPresetId] = useState<string>("dental");
   
@@ -192,7 +658,48 @@ export default function App() {
   const [isBotTyping, setIsBotTyping] = useState<boolean>(false);
   
   // UI states
-  const [activeTab, setActiveTab] = useState<"profile" | "bookings" | "buttons" | "database" | "import" | "backup" | "presets" | "conversations" | "market" | "subscription">("profile");
+  const [activeTab, setActiveTab] = useState<"profile" | "bookings" | "buttons" | "database" | "import" | "backup" | "presets" | "conversations" | "market" | "subscription" | "settings">("profile");
+  
+  // Multi-lingual translation states
+  const [currentLanguage, setCurrentLanguage] = useState<"ar" | "en" | "fr">(() => {
+    if (typeof window !== "undefined") {
+      return (localStorage.getItem("shafi_current_language") as "ar" | "en" | "fr") || "ar";
+    }
+    return "ar";
+  });
+  const isRtl = currentLanguage === "ar";
+
+  const { t: translate } = useTranslation();
+
+  // Keep i18n language in sync with currentLanguage state
+  useEffect(() => {
+    i18n.changeLanguage(currentLanguage);
+  }, [currentLanguage]);
+
+  // 🌐 Comprehensive translation update function that listens to currentLanguage state
+  const t = (key: string, defaultArabic?: string): string => {
+    const result = translate(key);
+    if (result !== key) return result;
+    return defaultArabic !== undefined ? defaultArabic : key;
+  };
+
+  // Message plan and limits outside platform (SaaS requirements)
+  const [msgSubPlan, setMsgSubPlan] = useState<"trial" | "msg1500" | "msg4000" | "unlimited" | "custom">("trial");
+  const [msgLimit, setMsgLimit] = useState<number>(999999); // Unlimited for trial by default or custom
+  const [msgUsed, setMsgUsed] = useState<number>(250); // messages consumed
+  const [customPaymentAmount, setCustomPaymentAmount] = useState<number>(10); // Default $10
+  
+  // Daily Messages Analytics Chart Data
+  const [dailyMessagesData, setDailyMessagesData] = useState<{ date: string; count: number }[]>([
+    { date: "07/04", count: 180 },
+    { date: "07/05", count: 210 },
+    { date: "07/06", count: 165 },
+    { date: "07/07", count: 245 },
+    { date: "07/08", count: 190 },
+    { date: "07/09", count: 280 },
+    { date: "07/10", count: 152 } // Today
+  ]);
+
   const [importTypeText, setImportTypeText] = useState<string>("");
   const [importTarget, setImportTarget] = useState<"services" | "guidelines">("services");
   const [importPreview, setImportPreview] = useState<any[]>([]);
@@ -710,6 +1217,11 @@ export default function App() {
     setCurrentTenant(tenant);
     localStorage.setItem("shafi_current_tenant", JSON.stringify(tenant));
     
+    // Restore message subscription states
+    setMsgSubPlan(tenant.msgSubPlan || "trial");
+    setMsgLimit(tenant.msgLimit !== undefined ? tenant.msgLimit : 999999);
+    setMsgUsed(tenant.msgUsed !== undefined ? tenant.msgUsed : 250);
+
     // Populate active state variables
     setClinicInfo({
       name: tenant.clinicName,
@@ -942,17 +1454,17 @@ export default function App() {
           id: preset.id,
           email: `doctor.${preset.id}@shafi.ai`,
           password: "123", // easy password for demo
-          doctorName: preset.id === "dental" ? "د. محمد بن يوسف" : preset.id === "derma" ? "د. سارة حميدش" : "د. خالد بلعيدي",
+          doctorName: preset.id === "dental" ? "د. محمد بن يوسف" : preset.id === "general" ? "د. سارة حميدش" : "د. خالد بلعيدي",
           clinicName: preset.info.name,
           specialty: preset.info.specialty,
           phone: preset.info.phone,
           address: preset.info.address,
-          workHours: preset.id === "dental" ? "من 9:00 ص إلى 9:00 م" : preset.id === "derma" ? "من 2:00 ظ إلى 9:30 م" : "من 8:00 ص إلى 9:00 م",
+          workHours: preset.id === "dental" ? "من 9:00 ص إلى 9:00 م" : preset.id === "general" ? "من 2:00 ظ إلى 9:30 م" : "من 8:00 ص إلى 9:00 م",
           dailyStatus: preset.dailyStatus,
           notes: "عيادة معتمدة تقدم خدمات راقية لمرضاها بأحدث التقنيات.",
           
           subscription: {
-            planId: preset.id === "dental" ? "pro" : preset.id === "derma" ? "starter" : "free",
+            planId: preset.id === "dental" ? "pro" : preset.id === "general" ? "starter" : "free",
             status: "active",
             createdAt: new Date().toISOString(),
             expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
@@ -960,8 +1472,8 @@ export default function App() {
           billingHistory: [
             {
               id: `bill-${preset.id}-1`,
-              planId: preset.id === "dental" ? "pro" : preset.id === "derma" ? "starter" : "free",
-              amount: preset.id === "dental" ? 399 : preset.id === "derma" ? 199 : 0,
+              planId: preset.id === "dental" ? "pro" : preset.id === "general" ? "starter" : "free",
+              amount: preset.id === "dental" ? 399 : preset.id === "general" ? 199 : 0,
               date: new Date().toISOString().split("T")[0],
               status: "paid"
             }
@@ -1005,6 +1517,11 @@ export default function App() {
         const latestTenant = activeTenants.find(t => t.id === tenant.id) || tenant;
         setCurrentTenant(latestTenant);
         
+        // Restore message subscription states
+        setMsgSubPlan(latestTenant.msgSubPlan || "trial");
+        setMsgLimit(latestTenant.msgLimit !== undefined ? latestTenant.msgLimit : 999999);
+        setMsgUsed(latestTenant.msgUsed !== undefined ? latestTenant.msgUsed : 250);
+
         // Populate active state variables
         setClinicInfo({
           name: latestTenant.clinicName,
@@ -1377,6 +1894,31 @@ export default function App() {
     }, 4000);
   };
 
+  const saveMsgSubscriptionData = (
+    newPlan: "trial" | "msg1500" | "msg4000" | "unlimited" | "custom",
+    newLimit: number,
+    newUsed: number
+  ) => {
+    setMsgSubPlan(newPlan);
+    setMsgLimit(newLimit);
+    setMsgUsed(newUsed);
+
+    if (currentTenant) {
+      const updatedTenant: SaasTenant = {
+        ...currentTenant,
+        msgSubPlan: newPlan,
+        msgLimit: newLimit,
+        msgUsed: newUsed
+      };
+
+      const updatedTenants = tenants.map(t => t.id === currentTenant.id ? updatedTenant : t);
+      setTenants(updatedTenants);
+      localStorage.setItem("shafi_saas_tenants", JSON.stringify(updatedTenants));
+      localStorage.setItem("shafi_current_tenant", JSON.stringify(updatedTenant));
+      setCurrentTenant(updatedTenant);
+    }
+  };
+
   const loadPreset = (preset: ClinicPreset) => {
     setClinicInfo(preset.info);
     setDailyStatus(preset.dailyStatus);
@@ -1405,16 +1947,21 @@ export default function App() {
   };
 
   const resetWelcomeMessages = (info: ClinicInfo, buttons: QuickAction[]) => {
+    const fallbackClinic = currentLanguage === "ar" ? "عيادتنا" : currentLanguage === "fr" ? "notre clinique" : "our clinic";
     const welcomeMsgs: ChatMessage[] = [
       {
         id: "w-1",
         sender: "bot",
-        text: `مرحباً بك في شات بوت "${info.name || "عيادتنا"}"! 🌸\nأنا مساعدك الذكي المبرمج للإجابة بدقة وحصرية تامة عن خدمات العيادة وأسعارها وإرشاداتها.\nكيف يمكنني مساعدتك اليوم؟`,
+        text: t('welcomeMessage').replace("{clinicName}", localizeDynamicText(info.name, currentLanguage) || fallbackClinic),
         timestamp: new Date()
       }
     ];
     setChatMessages(welcomeMsgs);
   };
+
+  useEffect(() => {
+    resetWelcomeMessages(clinicInfo, quickActions);
+  }, [currentLanguage]);
 
   // Export all current settings as JSON backup file
   const handleExportBackup = () => {
@@ -1498,7 +2045,7 @@ export default function App() {
     const userMsg: ChatMessage = {
       id: `u-${Date.now()}`,
       sender: "user",
-      text: action.label,
+      text: localizeDynamicText(action.label, currentLanguage),
       timestamp: new Date(),
       isQuickAction: true
     };
@@ -1516,7 +2063,7 @@ export default function App() {
           const outsideHoursMsg: ChatMessage = {
             id: `b-${Date.now()}`,
             sender: "bot",
-            text: "عذراً، نحن حالياً خارج أوقات العمل الرسمية للعيادة. 🕒\n\nتفضل بترك تفاصيل طلبك أو رقم هاتفك وسيقوم فريق العيادة بالتواصل معك فور بدء ساعات العمل الرسمية القادمة لتنسيق وحجز موعدك!",
+            text: t('botOutsideHours'),
             timestamp: new Date()
           };
           setChatMessages(prev => [...prev, outsideHoursMsg]);
@@ -1528,7 +2075,7 @@ export default function App() {
           const limitReachedMsg: ChatMessage = {
             id: `b-${Date.now()}`,
             sender: "bot",
-            text: `نعتذر منك بشدة، لقد اكتمل الحد الأقصى للحجوزات المتاحة لليوم في العيادة (${maxBookingsCount} حجز). 🔴\n\nتفضل بالاتصال بنا مباشرة عبر الهاتف لتسجيل اسمك في قائمة الانتظار، أو يرجى المحاولة غداً لحجز موعد جديد. شكراً لتفهمك!`,
+            text: t('botLimitReached').replace("{max}", String(maxBookingsCount)),
             timestamp: new Date()
           };
           setChatMessages(prev => [...prev, limitReachedMsg]);
@@ -1539,7 +2086,7 @@ export default function App() {
         const bookingBotMsg: ChatMessage = {
           id: `b-${Date.now()}`,
           sender: "bot",
-          text: "مرحباً بك في نظام الحجز الذكي المباشر! 📅\nالرجاء ملء استمارة الحجز أدناه لتسجيل موعدك فوراً في لوحة تحكم الطبيب وسنتصل بك للتأكيد.",
+          text: t('botBookingSystemReady'),
           timestamp: new Date(),
           isBookingCard: true
         };
@@ -1554,7 +2101,7 @@ export default function App() {
       const botMsg: ChatMessage = {
         id: `b-${Date.now()}`,
         sender: "bot",
-        text: action.response,
+        text: localizeDynamicText(action.response, currentLanguage),
         timestamp: new Date()
       };
       setChatMessages(prev => [...prev, botMsg]);
@@ -1737,6 +2284,56 @@ export default function App() {
     const hasAudio = !!attachedAudio;
     if ((!userText.trim() && !hasImage && !hasAudio) || isBotTyping) return;
 
+    // SaaS Outside Platform Subscription Check
+    // In-Platform live chat & assistant is 100% FREE and UNLIMITED for doctors and patients on the platform!
+    // Paid limits only apply to actual WhatsApp/Telegram API integrations simulated off-platform.
+    const isExpired = false; // In-platform chat is never blocked
+    if (isExpired) {
+      setInputValue("");
+      setAttachedImage(null);
+      setAttachedAudio(null);
+
+      const userMsg: ChatMessage = {
+        id: `u-${Date.now()}`,
+        sender: "user",
+        text: userText || "مرفقات",
+        timestamp: new Date()
+      };
+      setChatMessages(prev => [...prev, userMsg]);
+      setIsBotTyping(true);
+
+      setTimeout(() => {
+        const expiredMsg: ChatMessage = {
+          id: `b-expired-${Date.now()}`,
+          sender: "bot",
+          text: currentLanguage === "ar"
+            ? "عذراً، لقد انتهى اشتراك المساعد الذكي خارج المنصة لهذه العيادة. يرجى من الطبيب تجديد الاشتراك عبر لوحة التحكم 💳."
+            : currentLanguage === "fr"
+            ? "Désolé, l'abonnement de l'assistant intelligent hors plateforme a expiré pour cette clinique. Veuillez le renouveler depuis le panneau de contrôle 💳."
+            : "Sorry, the smart assistant's off-platform subscription has expired for this clinic. Please renew via the control panel 💳.",
+          timestamp: new Date()
+        };
+        setChatMessages(prev => [...prev, expiredMsg]);
+        setIsBotTyping(false);
+      }, 700);
+      return;
+    }
+
+    // In-platform chat is 100% free and unlimited, so we do NOT increment msgUsed.
+    // msgUsed is reserved for simulated WhatsApp/Telegram/SMS off-platform notifications.
+
+    // Increment today's messages count in dailyMessagesData
+    setDailyMessagesData(prev => {
+      const copy = [...prev];
+      if (copy.length > 0) {
+        copy[copy.length - 1] = {
+          ...copy[copy.length - 1],
+          count: copy[copy.length - 1].count + 1
+        };
+      }
+      return copy;
+    });
+
     setInputValue("");
     const imgToSend = attachedImage;
     const audioToSend = attachedAudio;
@@ -1783,7 +2380,7 @@ export default function App() {
           const outsideHoursMsg: ChatMessage = {
             id: `b-${Date.now()}`,
             sender: "bot",
-            text: "عذراً، نحن حالياً خارج أوقات العمل الرسمية للعيادة. 🕒\n\nتفضل بترك تفاصيل طلبك أو رقم هاتفك وسيقوم فريق العيادة بالتواصل معك فور بدء ساعات العمل الرسمية القادمة لتنسيق وحجز موعدك!",
+            text: t('botOutsideHours'),
             timestamp: new Date()
           };
           setChatMessages(prev => [...prev, outsideHoursMsg]);
@@ -1795,7 +2392,7 @@ export default function App() {
           const limitReachedMsg: ChatMessage = {
             id: `b-${Date.now()}`,
             sender: "bot",
-            text: `نعتذر منك بشدة، لقد اكتمل الحد الأقصى للحجوزات المتاحة لليوم في العيادة (${maxBookingsCount} حجز). 🔴\n\nتفضل بالاتصال بنا مباشرة عبر الهاتف لتسجيل اسمك في قائمة الانتظار، أو يرجى المحاولة غداً لحجز موعد جديد. شكراً لتفهمك!`,
+            text: t('botLimitReached').replace("{max}", String(maxBookingsCount)),
             timestamp: new Date()
           };
           setChatMessages(prev => [...prev, limitReachedMsg]);
@@ -1806,7 +2403,7 @@ export default function App() {
         const bookingBotMsg: ChatMessage = {
           id: `b-${Date.now()}`,
           sender: "bot",
-          text: "مرحباً بك في نظام الحجز الذكي المباشر! 📅\nالرجاء ملء استمارة الحجز أدناه لتسجيل موعدك فوراً في لوحة تحكم الطبيب وسنتصل بك للتأكيد.",
+          text: t('botBookingSystemReady'),
           timestamp: new Date(),
           isBookingCard: true
         };
@@ -1823,7 +2420,8 @@ export default function App() {
         guidelines,
         dailyStatus,
         quickActions,
-        clinicInfo
+        clinicInfo,
+        language: currentLanguage
       };
 
       const response = await fetch("/api/chat", {
@@ -1841,7 +2439,7 @@ export default function App() {
       const botMsg: ChatMessage = {
         id: `b-${Date.now()}`,
         sender: "bot",
-        text: data.reply || "عذراً، لم أستطع إجابتك بشكل سليم.",
+        text: data.reply || (currentLanguage === "ar" ? "عذراً، لم أستطع إجابتك بشكل سليم." : currentLanguage === "fr" ? "Désolé, je n'ai pas pu vous répondre correctement." : "Sorry, I could not answer you properly."),
         timestamp: new Date()
       };
 
@@ -1852,7 +2450,11 @@ export default function App() {
       const errorMsg: ChatMessage = {
         id: `b-err-${Date.now()}`,
         sender: "bot",
-        text: `عذراً، حدث خطأ أثناء محاولة الاتصال بالذكاء الاصطناعي. يرجى التحقق من تفعيل مفتاح الـ API الخاص بـ Gemini في إعدادات العيادة هاتفياً عبر الرقم (${clinicInfo.phone}).`,
+        text: currentLanguage === "ar"
+          ? `عذراً، حدث خطأ أثناء محاولة الاتصال بالذكاء الاصطناعي. يرجى التحقق من تفعيل مفتاح الـ API الخاص بـ Gemini في إعدادات العيادة هاتفياً عبر الرقم (${clinicInfo.phone}).`
+          : currentLanguage === "fr"
+          ? `Désolé, une erreur s'est produite lors de la tentative de connexion à l'IA. Veuillez vérifier l'activation de la clé API Gemini de la clinique en appelant le (${clinicInfo.phone}).`
+          : `Sorry, an error occurred while trying to connect to the AI. Please verify the Gemini API key activation in the clinic settings by calling (${clinicInfo.phone}).`,
         timestamp: new Date()
       };
       setChatMessages(prev => [...prev, errorMsg]);
@@ -2055,7 +2657,7 @@ export default function App() {
   // 🤖 Dynamic Reusable Chatbot Component (Renders the high-end smartphone simulator)
   const renderChatbot = (isFloating: boolean = false) => {
     return (
-      <div className={`w-full ${isFloating ? "max-w-[360px] h-[600px] rounded-[30px]" : "max-w-[400px] h-[720px] rounded-[40px]"} bg-slate-950 border-[10px] border-slate-800/90 shadow-2xl shadow-teal-500/5 flex flex-col overflow-hidden relative text-right`} dir="rtl">
+      <div className={`w-full ${isFloating ? "max-w-[360px] h-[600px] rounded-[30px]" : "max-w-[400px] h-[720px] rounded-[40px]"} bg-slate-950 border-[10px] border-slate-800/90 shadow-2xl shadow-teal-500/5 flex flex-col overflow-hidden relative ${isRtl ? "text-right" : "text-left"}`} dir={isRtl ? "rtl" : "ltr"}>
         
         {/* Phone Ear Speaker & Sensor bar */}
         <div className="h-6 bg-slate-950 flex items-center justify-center relative shrink-0">
@@ -2073,8 +2675,8 @@ export default function App() {
               <div className="w-3 h-3 bg-emerald-500 border-2 border-slate-900 rounded-full absolute -bottom-0.5 -right-0.5 animate-pulse" />
             </div>
             <div>
-              <h4 className="font-bold text-xs text-slate-100 line-clamp-1">{clinicInfo.name || "مساعد العيادة الذكي"}</h4>
-              <p className="text-[10px] text-slate-400 line-clamp-1">{clinicInfo.specialty || "شات بوت الاستفسارات والحجوزات"}</p>
+              <h4 className="font-bold text-xs text-slate-100 line-clamp-1">{localizeDynamicText(clinicInfo.name, currentLanguage) || t('botSmartAssistant')}</h4>
+              <p className="text-[10px] text-slate-400 line-clamp-1">{localizeDynamicText(clinicInfo.specialty, currentLanguage) || t('botSubtitle')}</p>
             </div>
           </div>
           <div className="text-left flex items-center gap-2">
@@ -2087,18 +2689,18 @@ export default function App() {
               </button>
             )}
             <span className="text-[9px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-full font-bold whitespace-nowrap">
-              مستعد للرد 🤖
+              {t('botStatusReady')}
             </span>
           </div>
         </div>
 
         {/* Micro daily banner inside chatbot directly for patient context */}
-        <div className="bg-teal-500/5 border-b border-teal-500/10 px-3.5 py-2 shrink-0 flex items-start gap-2 text-right">
+        <div className={`bg-teal-500/5 border-b border-teal-500/10 px-3.5 py-2 shrink-0 flex items-start gap-2 ${isRtl ? "text-right" : "text-left"}`}>
           <Clock className="w-3.5 h-3.5 text-teal-400 mt-0.5 shrink-0" />
           <div className="space-y-0.5 text-[10px] text-slate-300 leading-normal">
-            <span className="font-bold text-teal-400">تحديث اليوم من العيادة:</span>
-            <p className="line-clamp-2" title={dailyStatus || "لا توجد تحديثات خاصة لليوم"}>
-              {dailyStatus || "العيادة تعمل بمواعيدها الرسمية ونرحب بكم في أي وقت!"}
+            <span className="font-bold text-teal-400">{t('botDailyUpdateBanner')}</span>
+            <p className="line-clamp-2" title={dailyStatus || t('botDefaultUpdateText')}>
+              {dailyStatus || t('botDefaultUpdateText')}
             </p>
           </div>
         </div>
@@ -2121,7 +2723,7 @@ export default function App() {
               </div>
 
               {/* Message Bubble */}
-              <div className="space-y-1.5 text-right">
+              <div className={`space-y-1.5 ${isRtl ? "text-right" : "text-left"}`}>
                 {msg.image && (
                   <div className="rounded-xl overflow-hidden border border-slate-800 bg-slate-950 max-w-[180px] md:max-w-[220px]">
                     <img
@@ -2133,7 +2735,7 @@ export default function App() {
                 )}
 
                 {msg.audio && (
-                  <div className="rounded-xl p-2 border border-slate-800 bg-slate-900 flex items-center gap-2 max-w-[180px] md:max-w-[220px]" dir="rtl">
+                  <div className="rounded-xl p-2 border border-slate-800 bg-slate-900 flex items-center gap-2 max-w-[180px] md:max-w-[220px]" dir={isRtl ? "rtl" : "ltr"}>
                     <div className="bg-teal-500/15 p-1.5 rounded-lg text-teal-400 shrink-0">
                       <Volume2 className="w-3.5 h-3.5" />
                     </div>
@@ -2148,16 +2750,16 @@ export default function App() {
                 {msg.text && (
                   <div className={`rounded-2xl px-3.5 py-2 text-xs leading-relaxed whitespace-pre-wrap ${
                     msg.sender === "user"
-                      ? "bg-teal-500 text-slate-950 rounded-tr-none font-medium text-right"
-                      : "bg-slate-900 border border-slate-800 text-slate-100 rounded-tl-none text-right"
+                      ? `bg-teal-500 text-slate-950 rounded-tr-none font-medium ${isRtl ? "text-right" : "text-left"}`
+                      : `bg-slate-900 border border-slate-800 text-slate-100 rounded-tl-none ${isRtl ? "text-right" : "text-left"}`
                   }`}>
-                    {msg.text}
+                    {localizeDynamicText(msg.text, currentLanguage)}
                   </div>
                 )}
 
                 {/* Smart Interactive Booking Card Widget inside the Bot Bubble */}
                 {msg.isBookingCard && (
-                  <div className="mt-2 bg-slate-950/95 rounded-2xl p-4 border border-slate-800/85 space-y-3.5 w-64 md:w-72 shadow-xl" dir="rtl">
+                  <div className="mt-2 bg-slate-950/95 rounded-2xl p-4 border border-slate-800/85 space-y-3.5 w-64 md:w-72 shadow-xl" dir={isRtl ? "rtl" : "ltr"}>
                     {submittedBookingId === msg.id ? (
                       <div className="text-center py-5 space-y-2.5">
                         <motion.div
@@ -2167,29 +2769,29 @@ export default function App() {
                         >
                           <CheckCircle className="w-12 h-12 text-emerald-400 mx-auto animate-bounce" />
                         </motion.div>
-                        <p className="font-bold text-white text-xs">تم إرسال طلب الحجز بنجاح! 🎉</p>
+                        <p className="font-bold text-white text-xs">{t('botBookingSuccessTitle')}</p>
                         <p className="text-[10px] text-slate-400 leading-relaxed">
-                          لقد تم تدوين طلبك فورياً في لوحة تحكم الطبيب. شات بوت العيادة استقبل الحجز بنجاح وسنتصل بك للتأكيد.
+                          {t('botBookingSuccessDesc')}
                         </p>
                       </div>
                     ) : (
-                      <form onSubmit={(e) => handleChatBookingSubmit(e, msg.id)} className="space-y-3 text-right">
+                      <form onSubmit={(e) => handleChatBookingSubmit(e, msg.id)} className={`space-y-3 ${isRtl ? "text-right" : "text-left"}`}>
                         <div className="flex items-center justify-between border-b border-slate-800 pb-2">
                           <div className="flex items-center gap-1.5">
                             <Calendar className="w-3.5 h-3.5 text-teal-400" />
-                            <h5 className="font-bold text-teal-400 text-xs">استمارة الحجز الفوري الذكي</h5>
+                            <h5 className="font-bold text-teal-400 text-xs">{t('botSmartBookingTitle')}</h5>
                           </div>
                           <span className="text-[9px] bg-slate-900 border border-slate-800 text-slate-400 px-1.5 py-0.5 rounded-md font-mono">
-                            خطوة {getChatBookingProgress().filled}/{getChatBookingProgress().total}
+                            {t('stepLabel')} {getChatBookingProgress().filled}/{getChatBookingProgress().total}
                           </span>
                         </div>
 
                         {/* Dynamic Booking Progress Bar */}
                         <div className="bg-slate-900/40 p-2 rounded-xl border border-slate-800/60 space-y-1.5">
                           <div className="flex items-center justify-between text-[10px]">
-                            <span className="text-slate-400 font-medium">مستوى اكتمال البيانات:</span>
+                            <span className="text-slate-400 font-medium">{t('botBookingProgressLabel')}</span>
                             <span className={`font-bold transition-all duration-300 ${getChatBookingProgress().percentage === 100 ? 'text-emerald-400' : 'text-teal-400'}`}>
-                              {getChatBookingProgress().percentage}% {getChatBookingProgress().percentage === 100 && "جاهز! ✨"}
+                              {getChatBookingProgress().percentage}% {getChatBookingProgress().percentage === 100 && t('botBookingProgressReady')}
                             </span>
                           </div>
                           <div className="w-full h-1.5 bg-slate-850 rounded-full overflow-hidden relative">
@@ -2203,76 +2805,76 @@ export default function App() {
                         </div>
                         
                         <div className="space-y-1">
-                          <label className="block text-[10px] text-slate-400 font-medium">اسم المريض بالكامل</label>
+                          <label className="block text-[10px] text-slate-400 font-medium">{t('botPatientNameLabel')}</label>
                           <input
                             type="text"
                             value={chatBookingName}
                             onChange={(e) => setChatBookingName(e.target.value)}
-                            placeholder="مثال: أحمد عبد الله"
-                            className="w-full bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-slate-200 text-xs focus:ring-1 focus:ring-teal-500 focus:outline-none"
+                            placeholder={t('botPatientNamePlaceholder')}
+                            className={`w-full bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-slate-200 text-xs focus:ring-1 focus:ring-teal-500 focus:outline-none ${isRtl ? "text-right" : "text-left"}`}
                             required
                           />
                         </div>
 
                         <div className="space-y-1">
-                          <label className="block text-[10px] text-slate-400 font-medium">رقم الجوال للتأكيد</label>
+                          <label className="block text-[10px] text-slate-400 font-medium">{t('botPatientPhoneLabel')}</label>
                           <input
                             type="tel"
                             value={chatBookingPhone}
                             onChange={(e) => setChatBookingPhone(e.target.value)}
-                            placeholder="05xxxxxxxx"
-                            className="w-full bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-slate-200 text-xs text-right focus:ring-1 focus:ring-teal-500 focus:outline-none"
+                            placeholder={t('botPatientPhonePlaceholder')}
+                            className={`w-full bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-slate-200 text-xs focus:ring-1 focus:ring-teal-500 focus:outline-none ${isRtl ? "text-right" : "text-left"}`}
                             required
                           />
                         </div>
 
                         <div className="space-y-1">
-                          <label className="block text-[10px] text-slate-400 font-medium">الخدمة المرغوبة</label>
+                          <label className="block text-[10px] text-slate-400 font-medium">{t('botPatientServiceLabel')}</label>
                           <select
                             value={chatBookingService}
                             onChange={(e) => setChatBookingService(e.target.value)}
-                            className="w-full bg-slate-900 border border-slate-800 rounded-lg px-2 py-1.5 text-slate-200 text-xs focus:ring-1 focus:ring-teal-500 focus:outline-none cursor-pointer"
+                            className={`w-full bg-slate-900 border border-slate-800 rounded-lg px-2 py-1.5 text-slate-200 text-xs focus:ring-1 focus:ring-teal-500 focus:outline-none cursor-pointer ${isRtl ? "text-right" : "text-left"}`}
                             required
                           >
-                            <option value="">-- اختر الخدمة المطلوبة --</option>
+                            <option value="">{t('botPatientServicePlaceholder')}</option>
                             {services.map(s => (
-                              <option key={s.id} value={s.name}>{s.name} ({s.price})</option>
+                              <option key={s.id} value={s.name}>{localizeDynamicText(s.name, currentLanguage)} ({s.price})</option>
                             ))}
                             {services.length === 0 && (
-                              <option value="استشارة وفحص طبي">استشارة وفحص طبي</option>
+                              <option value="استشارة وفحص طبي">{currentLanguage === "ar" ? "استشارة وفحص طبي" : currentLanguage === "fr" ? "Consultation & Examen médical" : "Medical Consultation & Examination"}</option>
                             )}
                           </select>
                         </div>
 
                         <div className="grid grid-cols-2 gap-2">
                           <div className="space-y-1">
-                            <label className="block text-[10px] text-slate-400 font-medium">تاريخ الموعد</label>
+                            <label className="block text-[10px] text-slate-400 font-medium">{t('botPatientDateLabel')}</label>
                             <input
                               type="date"
                               value={chatBookingDate}
                               onChange={(e) => setChatBookingDate(e.target.value)}
-                              className="w-full bg-slate-900 border border-slate-800 rounded-lg px-2 py-1 text-slate-200 text-[10px] focus:ring-1 focus:ring-teal-500 focus:outline-none cursor-pointer"
+                              className={`w-full bg-slate-900 border border-slate-800 rounded-lg px-2 py-1 text-slate-200 text-[10px] focus:ring-1 focus:ring-teal-500 focus:outline-none cursor-pointer ${isRtl ? "text-right" : "text-left"}`}
                             />
                           </div>
                           <div className="space-y-1">
-                            <label className="block text-[10px] text-slate-400 font-medium">الوقت</label>
+                            <label className="block text-[10px] text-slate-400 font-medium">{t('botPatientTimeLabel')}</label>
                             <input
                               type="time"
                               value={chatBookingTime}
                               onChange={(e) => setChatBookingTime(e.target.value)}
-                              className="w-full bg-slate-900 border border-slate-800 rounded-lg px-2 py-1 text-slate-200 text-[10px] focus:ring-1 focus:ring-teal-500 focus:outline-none cursor-pointer"
+                              className={`w-full bg-slate-900 border border-slate-800 rounded-lg px-2 py-1 text-slate-200 text-[10px] focus:ring-1 focus:ring-teal-500 focus:outline-none cursor-pointer ${isRtl ? "text-right" : "text-left"}`}
                             />
                           </div>
                         </div>
 
                         <div className="space-y-1">
-                          <label className="block text-[10px] text-slate-400 font-medium">الأعراض أو ملاحظات إضافية</label>
+                          <label className="block text-[10px] text-slate-400 font-medium">{t('botPatientSymptomsLabel')}</label>
                           <input
                             type="text"
                             value={chatBookingNotes}
                             onChange={(e) => setChatBookingNotes(e.target.value)}
-                            placeholder="ملاحظات اختيارية..."
-                            className="w-full bg-slate-900 border border-slate-800 rounded-lg px-2 py-1.5 text-slate-200 text-xs focus:ring-1 focus:ring-teal-500 focus:outline-none"
+                            placeholder={t('botPatientSymptomsPlaceholder')}
+                            className={`w-full bg-slate-900 border border-slate-800 rounded-lg px-2 py-1.5 text-slate-200 text-xs focus:ring-1 focus:ring-teal-500 focus:outline-none ${isRtl ? "text-right" : "text-left"}`}
                           />
                         </div>
 
@@ -2281,7 +2883,7 @@ export default function App() {
                           className="w-full bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold text-xs py-2 rounded-lg transition-all flex items-center justify-center gap-1 cursor-pointer mt-2.5 border border-teal-400"
                         >
                           <CheckCircle className="w-3.5 h-3.5" />
-                          <span>تأكيد طلب حجز الموعد 📅</span>
+                          <span>{t('botBookingConfirmBtn')}</span>
                         </button>
                       </form>
                     )}
@@ -2314,18 +2916,18 @@ export default function App() {
         {/* Custom Quick Actions Panel - Patient can tap them instantly! */}
         <div className="bg-slate-950/90 border-t border-slate-800/50 p-2.5 shrink-0 space-y-1.5">
           <p className="text-[9px] text-slate-400 px-1.5 font-bold flex items-center gap-1 justify-start">
-            <Sparkles className="w-3 h-3 text-teal-400" /> خيارات سريعة متاحة:
+            <Sparkles className="w-3 h-3 text-teal-400" /> {t('botQuickActionsLabel')}
           </p>
-          <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-thin scrollbar-thumb-slate-800" dir="rtl">
+          <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-thin scrollbar-thumb-slate-800" dir={isRtl ? "rtl" : "ltr"}>
             <button
               onClick={() => handleQuickActionClick({
                 id: "booking-trigger",
-                label: "📅 حجز موعد ذكي",
-                response: "أهلاً بك! يرجى ملء نموذج حجز الموعد أدناه."
+                label: t('botBookingTriggerBtn'),
+                response: t('botBookingTriggerResponse')
               })}
               className="text-[10px] bg-teal-500 hover:bg-teal-400 border border-teal-600/30 text-slate-950 px-3 py-1.5 rounded-full font-bold transition-all shrink-0 cursor-pointer flex items-center gap-1 shadow-sm shadow-teal-500/20 whitespace-nowrap"
             >
-              <span>📅 حجز موعد فوري</span>
+              <span>{t('botBookingTriggerBtnLabel')}</span>
             </button>
             {quickActions.map(action => (
               <button
@@ -2333,7 +2935,7 @@ export default function App() {
                 onClick={() => handleQuickActionClick(action)}
                 className="text-[10px] bg-slate-900 hover:bg-slate-850 border border-slate-800 text-slate-300 hover:text-white px-3 py-1.5 rounded-full transition-all shrink-0 cursor-pointer whitespace-nowrap"
               >
-                {action.label}
+                {localizeDynamicText(action.label, currentLanguage)}
               </button>
             ))}
           </div>
@@ -2359,7 +2961,7 @@ export default function App() {
               onClick={() => document.getElementById(`chat-image-input-${isFloating ? 'floating' : 'embedded'}`)?.click()}
               disabled={isBotTyping || isRecording}
               className="p-2.5 rounded-xl bg-slate-950 text-slate-400 hover:text-teal-400 border border-slate-800 hover:bg-slate-900 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-              title="إرفاق صورة"
+              title={t('botTitleImageUpload')}
             >
               <Image className="w-4 h-4 text-teal-400" />
             </button>
@@ -2373,7 +2975,7 @@ export default function App() {
                   ? "bg-rose-500/10 text-rose-400 border-rose-500/30" 
                   : "bg-slate-950 text-slate-400 hover:text-teal-400 border-slate-800 hover:bg-slate-900"
               }`}
-              title="التقاط بالكاميرا"
+              title={t('botTitleCameraShot')}
             >
               <Camera className="w-4 h-4 text-teal-400" />
             </button>
@@ -2387,20 +2989,20 @@ export default function App() {
                   ? "bg-rose-500/20 text-rose-400 border-rose-500/40 animate-pulse" 
                   : "bg-slate-950 text-slate-400 hover:text-teal-400 border-slate-800 hover:bg-slate-900"
               }`}
-              title="تسجيل صوتي"
+              title={t('botTitleAudioRecording')}
             >
               <Mic className="w-4 h-4 text-teal-400" />
             </button>
           </div>
 
           {isRecording ? (
-            <div className="flex-1 bg-slate-950 border border-rose-500/30 rounded-xl px-3 py-2.5 flex items-center justify-between gap-3" dir="rtl">
+            <div className="flex-1 bg-slate-950 border border-rose-500/30 rounded-xl px-3 py-2.5 flex items-center justify-between gap-3" dir={isRtl ? "rtl" : "ltr"}>
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping shrink-0" />
                 <span className="text-[10px] text-rose-400 font-bold font-mono">
                   {String(Math.floor(recordingSeconds / 60)).padStart(2, "0")}:{String(recordingSeconds % 60).padStart(2, "0")}
                 </span>
-                <span className="text-[9px] text-slate-400">جاري التسجيل...</span>
+                <span className="text-[9px] text-slate-400">{t('botRecordingStatusText')}</span>
               </div>
               
               <div className="flex items-center gap-1.5">
@@ -2423,11 +3025,11 @@ export default function App() {
           ) : (
             <input
               type="text"
-              placeholder="اسأل الشات بوت أو اكتب سؤالك هنا..."
+              placeholder={t('botInputPlaceholder')}
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               disabled={isBotTyping}
-              className="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-teal-500 placeholder-slate-500 text-right"
+              className={`flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-teal-500 placeholder-slate-500 ${isRtl ? "text-right" : "text-left"}`}
             />
           )}
 
@@ -2440,7 +3042,7 @@ export default function App() {
                 : "bg-slate-800 text-slate-600 cursor-not-allowed"
             }`}
           >
-            <Send className="w-4 h-4" />
+            <Send className="w-4 h-4 text-slate-950" />
           </button>
         </form>
 
@@ -2466,6 +3068,16 @@ export default function App() {
         checkoutPlanId={checkoutPlanId}
         setCheckoutPlanId={setCheckoutPlanId}
         showNotification={showNotification}
+        currentLanguage={currentLanguage}
+        onLanguageChange={(lang) => {
+          setCurrentLanguage(lang);
+          localStorage.setItem("shafi_current_language", lang);
+          const localizedMsg = 
+            lang === "ar" ? "تم تغيير لغة المنصة والتحكم إلى العربية بنجاح! 🇸🇦" :
+            lang === "fr" ? "Langue de la plateforme changée en français avec succès ! 🇫🇷" :
+            "Platform language successfully changed to English! 🇺🇸";
+          showNotification(localizedMsg, "success");
+        }}
       />
     );
   }
@@ -2473,7 +3085,7 @@ export default function App() {
   // 🌐 PUBLIC WEBSITE VIEW MODE
   if (viewMode === "website") {
     return (
-      <div className="min-h-screen bg-slate-950 text-slate-100 font-sans antialiased flex flex-col relative overflow-hidden" dir="rtl">
+      <div className="min-h-screen bg-slate-950 text-slate-100 font-sans antialiased flex flex-col relative overflow-hidden" dir={isRtl ? "rtl" : "ltr"}>
         {/* Floating SaaS Return Bar */}
         {portalTenantId && (
           <div className="bg-slate-900 border-b border-slate-800 px-4 py-2.5 flex items-center justify-between text-[11px] font-medium text-slate-400 select-none shrink-0 relative z-50 shadow-md">
@@ -2482,18 +3094,18 @@ export default function App() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-teal-500"></span>
               </span>
-              <span>أنت الآن في وضع معاينة موقع العيادة المباشر لمرضى <strong className="text-teal-400">{clinicInfo.name}</strong></span>
+              <span>{t('previewBarLabel')}<strong className="text-teal-400">{localizeDynamicText(clinicInfo.name, currentLanguage) || "Clinic"}</strong></span>
             </div>
             <button
               onClick={() => {
                 setPortalTenantId(null);
                 setViewMode("website"); // go back to SaaS landing
-                showNotification("تمت العودة لمنصة شافي SaaS بنجاح!", "info");
+                showNotification(t('returnedToSaaSNotif'), "info");
               }}
               className="bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold px-3 py-1 rounded-lg transition-all cursor-pointer flex items-center gap-1 shadow-sm"
             >
               <ChevronLeft className="w-3.5 h-3.5" />
-              <span>العودة لمنصة شافي SaaS</span>
+              <span>{t('returnToSaaSHoriz')}</span>
             </button>
           </div>
         )}
@@ -2540,10 +3152,10 @@ export default function App() {
                 transition={{ type: "spring", damping: 25, stiffness: 220 }}
                 className="relative w-full max-w-[420px] h-full bg-slate-950 shadow-2xl border-r border-slate-800 p-4 flex flex-col pointer-events-auto z-10"
               >
-                <div className="flex items-center justify-between mb-4 border-b border-slate-800 pb-3" dir="rtl">
+                <div className="flex items-center justify-between mb-4 border-b border-slate-800 pb-3" dir={isRtl ? "rtl" : "ltr"}>
                   <div className="flex items-center gap-2">
                     <Bot className="w-5 h-5 text-teal-400 animate-pulse" />
-                    <span className="font-extrabold text-sm text-slate-100">المساعد الطبي الإلكتروني للعيادة 🤖</span>
+                    <span className="font-extrabold text-sm text-slate-100">{t('botWelcomeTitle')}</span>
                   </div>
                   <button
                     onClick={() => setIsFloatingChatOpen(false)}
@@ -2566,21 +3178,21 @@ export default function App() {
             <div className="bg-gradient-to-tr from-teal-500 to-cyan-400 p-2.5 rounded-xl shadow-lg shadow-teal-500/20 text-slate-950">
               <Stethoscope className="w-5 h-5" />
             </div>
-            <div className="text-right">
+            <div className={isRtl ? "text-right" : "text-left"}>
               <h1 className="text-base font-extrabold bg-gradient-to-l from-white via-slate-100 to-teal-400 bg-clip-text text-transparent">
-                {clinicInfo.name || "عيادتي الذكية"}
+                {localizeDynamicText(clinicInfo.name, currentLanguage) || (currentLanguage === "ar" ? "عيادتي الذكية" : currentLanguage === "fr" ? "Ma Clinique" : "My Clinic")}
               </h1>
-              <p className="text-[10px] text-teal-400 font-bold">{clinicInfo.specialty || "رعاية صحية واستشارات متميزة"}</p>
+              <p className="text-[10px] text-teal-400 font-bold">{localizeDynamicText(clinicInfo.specialty, currentLanguage) || (currentLanguage === "ar" ? "رعاية صحية واستشارات متميزة" : currentLanguage === "fr" ? "Soins et conseils d'excellence" : "Premium care and consultations")}</p>
             </div>
           </div>
 
           <nav className="hidden lg:flex items-center gap-6 text-xs font-bold text-slate-400">
-            <a href="#" className="hover:text-teal-400 transition-colors text-slate-200">الرئيسية</a>
-            <a href="#services" className="hover:text-teal-400 transition-colors">خدماتنا الطبية</a>
-            <a href="#e-clinic" className="hover:text-teal-400 transition-colors">العيادة الإلكترونية 🤖</a>
-            <a href="#about" className="hover:text-teal-400 transition-colors">مواعيد العمل وحول العيادة</a>
+            <a href="#" className="hover:text-teal-400 transition-colors text-slate-200">{t('navHome')}</a>
+            <a href="#services" className="hover:text-teal-400 transition-colors">{t('navServices')}</a>
+            <a href="#e-clinic" className="hover:text-teal-400 transition-colors">{t('navEClinic')}</a>
+            <a href="#about" className="hover:text-teal-400 transition-colors">{t('navAbout')}</a>
             {guidelines.length > 0 && (
-              <a href="#faq" className="hover:text-teal-400 transition-colors">الأسئلة الشائعة</a>
+              <a href="#faq" className="hover:text-teal-400 transition-colors">{t('navFaq')}</a>
             )}
           </nav>
 
@@ -2588,23 +3200,23 @@ export default function App() {
             <button
               onClick={() => {
                 setIsFloatingChatOpen(true);
-                showNotification("أهلاً بك! يمكنك الاستفسار أو حجز موعد فورياً مع مساعدنا الذكي الآن.", "info");
+                showNotification(currentLanguage === "ar" ? "أهلاً بك! يمكنك الاستفسار أو حجز موعد فورياً مع مساعدنا الذكي الآن." : currentLanguage === "fr" ? "Bienvenue ! Vous pouvez poser des questions ou prendre rendez-vous instantanément avec notre assistant intelligent." : "Welcome! You can inquire or book an appointment instantly with our smart assistant now.", "info");
               }}
               className="bg-teal-500/10 hover:bg-teal-500/20 text-teal-400 border border-teal-500/30 text-xs font-bold px-3 py-2 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 shadow-md shadow-teal-500/5"
             >
               <Bot className="w-3.5 h-3.5 animate-bounce text-teal-400" />
-              <span>استشارة فورية 🤖</span>
+              <span>{t('btnInstantConsult')}</span>
             </button>
             <button
               onClick={() => {
                 setViewMode("admin");
-                showNotification("أهلاً بك يا دكتور! تم الدخول للوحة التحكم الطبية بنجاح 🔑", "success");
+                showNotification(currentLanguage === "ar" ? "أهلاً بك يا دكتور! تم الدخول للوحة التحكم الطبية بنجاح 🔑" : currentLanguage === "fr" ? "Bienvenue Docteur ! Vous êtes connecté avec succès au panneau d'administration médicale 🔑" : "Welcome Doctor! You have successfully logged in to the medical control panel 🔑", "success");
               }}
               className="bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 text-xs font-bold px-3 py-2 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 shadow-inner"
-              title="لوحة الإدارة وتدريب الشات بوت"
+              title={currentLanguage === "ar" ? "لوحة الإدارة وتدريب الشات بوت" : currentLanguage === "fr" ? "Panneau d'administration et formation du chatbot" : "Admin Panel & Chatbot Training"}
             >
               <Sliders className="w-3.5 h-3.5 text-teal-400" />
-              <span>بوابة الطبيب الإدارية 🔐</span>
+              <span>{t('btnDocPortal')}</span>
             </button>
           </div>
         </header>
@@ -2617,24 +3229,23 @@ export default function App() {
               <span className={`relative inline-flex rounded-full h-2 w-2 ${bookingSystemStatus === "open" ? "bg-emerald-500" : "bg-rose-500"}`}></span>
             </span>
             {bookingSystemStatus === "open" ? (
-              <span>مستعدون لاستقبال حجوزاتكم الطبية اليوم 🟢</span>
+              <span>{t('statusReady')}</span>
             ) : bookingSystemStatus === "outside_hours" ? (
-              <span>العيادة مغلقة حالياً خارج أوقات العمل 🕒</span>
+              <span>{t('statusClosed')}</span>
             ) : (
-              <span>عذراً، الحجوزات مكتملة اليوم بالكامل 🔴</span>
+              <span>{t('statusFull')}</span>
             )}
           </div>
 
           <h2 className="text-3xl md:text-5xl lg:text-6xl font-black tracking-tight leading-tight bg-gradient-to-b from-white via-slate-100 to-slate-400 bg-clip-text text-transparent">
-            {clinicInfo.name || "عيادتنا الذكية المتطورة"} <br />
+            {localizeDynamicText(clinicInfo.name, currentLanguage) || (currentLanguage === "ar" ? "عيادتنا الذكية المتطورة" : currentLanguage === "fr" ? "Notre Clinique Intelligente" : "Our Smart Clinic")} <br />
             <span className="bg-gradient-to-r from-teal-400 to-cyan-300 bg-clip-text text-transparent text-xl md:text-3xl lg:text-4xl mt-3.5 block">
-              رعايتكم الصحية هي شغفنا ومسؤوليتنا الأولى
+              {t('clinicMotto')}
             </span>
           </h2>
 
           <p className="text-xs md:text-sm text-slate-400 max-w-2xl mx-auto leading-relaxed">
-            مرحباً بكم في عيادتنا المتميزة تحت إشراف <strong className="text-slate-200">د. {clinicInfo.doctorName || "الاستشاري المتخصص"}</strong>.
-            نسعى لتقديم أعلى درجات الجودة الطبية والراحة لمرضانا الكرام، ونوفر لكم شات بوت طبي فريد لتسهيل حجز مواعيدكم والإجابة الفورية الموثوقة على تساؤلاتكم على مدار الساعة.
+            {t('clinicSubDesc').replace("{doctor}", localizeDynamicText(clinicInfo.doctorName || (currentLanguage === "ar" ? "الاستشاري المتخصص" : currentLanguage === "fr" ? "le médecin spécialiste" : "the specialist physician"), currentLanguage))}
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 pt-4">
@@ -2643,33 +3254,33 @@ export default function App() {
               className="w-full sm:w-auto bg-gradient-to-r from-teal-500 to-cyan-500 text-slate-950 text-xs font-extrabold px-6 py-3.5 rounded-xl hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-teal-500/20 flex items-center justify-center gap-2 border border-teal-400 cursor-pointer"
             >
               <Bot className="w-4 h-4 text-slate-950" />
-              <span>ابدأ استشارة واحجز موعداً بالذكاء الاصطناعي 🤖</span>
+              <span>{t('heroBtnAI')}</span>
             </a>
             <a
               href="#services"
               className="w-full sm:w-auto bg-slate-900 hover:bg-slate-850 text-slate-300 hover:text-white border border-slate-800 text-xs font-bold px-6 py-3.5 rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
               <Stethoscope className="w-4 h-4 text-teal-400" />
-              <span>تصفح الخدمات الطبية والأسعار 🩺</span>
+              <span>{t('heroBtnServices')}</span>
             </a>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-10 max-w-4xl mx-auto text-right">
             <div className="bg-slate-900/40 border border-slate-800/60 p-4.5 rounded-2xl space-y-1">
-              <span className="text-slate-500 text-[10px] font-bold block">التخصص الطبي للعيادة:</span>
-              <span className="text-xs font-bold text-teal-400 line-clamp-1">{clinicInfo.specialty || "تخصص متميز وعلاج حديث"}</span>
+              <span className="text-slate-500 text-[10px] font-bold block">{t('labelSpecialty')}</span>
+              <span className="text-xs font-bold text-teal-400 line-clamp-1">{localizeDynamicText(clinicInfo.specialty, currentLanguage) || (currentLanguage === "ar" ? "تخصص متميز وعلاج حديث" : currentLanguage === "fr" ? "Spécialité d'excellence" : "Premium Specialty")}</span>
             </div>
             <div className="bg-slate-900/40 border border-slate-800/60 p-4.5 rounded-2xl space-y-1">
-              <span className="text-slate-500 text-[10px] font-bold block">هاتف للتواصل السريع:</span>
-              <span className="text-xs font-bold text-slate-200" dir="ltr">{clinicInfo.phone || "متوفر بالداخل"}</span>
+              <span className="text-slate-500 text-[10px] font-bold block">{t('labelPhone')}</span>
+              <span className="text-xs font-bold text-slate-200" dir="ltr">{clinicInfo.phone || (currentLanguage === "ar" ? "متوفر بالداخل" : currentLanguage === "fr" ? "Disponible" : "Available")}</span>
             </div>
             <div className="bg-slate-900/40 border border-slate-800/60 p-4.5 rounded-2xl space-y-1">
-              <span className="text-slate-500 text-[10px] font-bold block">عنوان العيادة بالتفصيل:</span>
-              <span className="text-xs font-bold text-slate-200 line-clamp-1">{clinicInfo.address || "العنوان المعتمد"}</span>
+              <span className="text-slate-500 text-[10px] font-bold block">{t('labelAddress')}</span>
+              <span className="text-xs font-bold text-slate-200 line-clamp-1">{localizeDynamicText(clinicInfo.address, currentLanguage) || (currentLanguage === "ar" ? "العنوان المعتمد" : currentLanguage === "fr" ? "Adresse agréée" : "Approved Address")}</span>
             </div>
             <div className="bg-slate-900/40 border border-slate-800/60 p-4.5 rounded-2xl space-y-1">
-              <span className="text-slate-500 text-[10px] font-bold block">أوقات العمل الرسمية:</span>
-              <span className="text-xs font-bold text-slate-200 line-clamp-1">{clinicInfo.workHours || "من السبت للخميس"}</span>
+              <span className="text-slate-500 text-[10px] font-bold block">{t('labelHours')}</span>
+              <span className="text-xs font-bold text-slate-200 line-clamp-1">{localizeDynamicText(clinicInfo.workHours, currentLanguage) || (currentLanguage === "ar" ? "من السبت للخميس" : currentLanguage === "fr" ? "Du samedi au jeudi" : "Saturday to Thursday")}</span>
             </div>
           </div>
         </section>
@@ -2678,9 +3289,9 @@ export default function App() {
         <section id="services" className="py-16 bg-slate-900/20 border-y border-slate-900 px-4">
           <div className="max-w-6xl mx-auto space-y-10">
             <div className="text-center space-y-2">
-              <h3 className="text-2xl md:text-3xl font-extrabold text-white">الخدمات العلاجية المتاحة بالعيادة 🩺</h3>
+              <h3 className="text-2xl md:text-3xl font-extrabold text-white">{t('titleServices')}</h3>
               <p className="text-slate-400 text-xs md:text-sm max-w-xl mx-auto leading-relaxed">
-                نقدم باقة متكاملة من الخدمات والرعاية الصحية بأعلى مقاييس الجودة والشفافية الطبية مع توضيح شامل للأسعار والمدة.
+                {t('descServices')}
               </p>
             </div>
 
@@ -2699,16 +3310,16 @@ export default function App() {
                       </div>
                       <div className="text-left">
                         <span className="text-teal-400 font-extrabold text-sm block">
-                          {service.price} {isNaN(Number(service.price)) ? "" : "دج"}
+                          {service.price} {isNaN(Number(service.price)) ? "" : (currentLanguage === "ar" ? "دج" : "DA")}
                         </span>
-                        <span className="text-[10px] text-slate-500 font-bold block">⏱️ {service.duration || "30 دقيقة"}</span>
+                        <span className="text-[10px] text-slate-500 font-bold block">{t('durationLabel').replace("{duration}", String(service.duration || 30))}</span>
                       </div>
                     </div>
 
                     <div className="space-y-1.5">
-                      <h4 className="font-extrabold text-slate-100 text-sm group-hover:text-teal-400 transition-colors">{service.name}</h4>
+                      <h4 className="font-extrabold text-slate-100 text-sm group-hover:text-teal-400 transition-colors">{localizeDynamicText(service.name, currentLanguage)}</h4>
                       <p className="text-xs text-slate-400 leading-relaxed line-clamp-3 min-h-[50px]">
-                        {service.description || "وصف الخدمة العلاجية المتاحة لمرضى العيادة. يرجى مراجعة الطبيب المعالج للحصول على خطتك المخصصة."}
+                        {localizeDynamicText(service.description, currentLanguage) || (currentLanguage === "ar" ? "وصف الخدمة العلاجية المتاحة لمرضى العيادة. يرجى مراجعة الطبيب المعالج للحصول على خطتك المخصصة." : currentLanguage === "fr" ? "Description du service thérapeutique disponible pour les patients. Veuillez consulter le médecin traitant pour obtenir votre plan personnalisé." : "Description of the therapeutic service available to the clinic's patients. Please consult your treating physician for your customized plan.")}
                       </p>
                     </div>
 
@@ -2718,23 +3329,34 @@ export default function App() {
                         setIsFloatingChatOpen(true);
                         handleQuickActionClick({
                           id: "booking-trigger",
-                          label: `📅 حجز: ${service.name}`,
-                          response: `أهلاً بك! لقد اخترت خدمة (${service.name}). يرجى إكمال نموذج الحجز أدناه للحصول على موعدك.`
+                          label: currentLanguage === "ar" ? `📅 حجز: ${localizeDynamicText(service.name, currentLanguage)}` : currentLanguage === "fr" ? `📅 Réserver : ${localizeDynamicText(service.name, currentLanguage)}` : `📅 Book: ${localizeDynamicText(service.name, currentLanguage)}`,
+                          response: currentLanguage === "ar" 
+                            ? `أهلاً بك! لقد اخترت خدمة (${localizeDynamicText(service.name, currentLanguage)}). يرجى إكمال نموذج الحجز أدناه للحصول على موعدك.` 
+                            : currentLanguage === "fr" 
+                            ? `Bienvenue ! Vous avez choisi le service (${localizeDynamicText(service.name, currentLanguage)}). Veuillez remplir le formulaire de réservation ci-dessous pour obtenir votre rendez-vous.` 
+                            : `Welcome! You have chosen the service (${localizeDynamicText(service.name, currentLanguage)}). Please fill out the booking form below to get your appointment.`
                         });
-                        showNotification(`تم تحديد خدمة (${service.name}) وتنشيط استمارة الحجز في الشات بوت! 📅`, "info");
+                        showNotification(
+                          currentLanguage === "ar" 
+                            ? `تم تحديد خدمة (${localizeDynamicText(service.name, currentLanguage)}) وتنشيط استمارة الحجز في الشات بوت! 📅` 
+                            : currentLanguage === "fr" 
+                            ? `Service (${localizeDynamicText(service.name, currentLanguage)}) sélectionné et formulaire de réservation activé dans le chatbot ! 📅` 
+                            : `Service (${localizeDynamicText(service.name, currentLanguage)}) selected and booking form activated in the chatbot! 📅`, 
+                          "info"
+                        );
                       }}
                       className="w-full bg-slate-900 hover:bg-teal-500 hover:text-slate-950 text-slate-300 hover:border-teal-400 text-xs font-bold py-2.5 px-4 rounded-xl border border-slate-800 transition-all cursor-pointer flex items-center justify-center gap-1.5 mt-auto"
                     >
                       <Calendar className="w-3.5 h-3.5" />
-                      <span>حجز موعد فوري لهذه الخدمة 📅</span>
+                      <span>{t('bookServiceBtn')}</span>
                     </button>
                   </div>
                 ))
               ) : (
                 <div className="col-span-full bg-slate-900/40 p-10 rounded-2xl text-center border border-slate-800/80">
                   <Stethoscope className="w-10 h-10 text-slate-500 mx-auto mb-3 animate-pulse" />
-                  <p className="text-slate-400 text-xs font-bold">الخدمات الطبية جاري تحميلها من العيادة...</p>
-                  <p className="text-slate-500 text-[10px] mt-1">يرجى من الطبيب الدخول للوحة التحكم الطبية (بوابة الطبيب) لاختيار قالب العيادة.</p>
+                  <p className="text-slate-400 text-xs font-bold">{t('loadingServices')}</p>
+                  <p className="text-slate-500 text-[10px] mt-1">{t('loadingServicesDesc')}</p>
                 </div>
               )}
             </div>
@@ -2743,18 +3365,17 @@ export default function App() {
 
         {/* PUBLIC CHATBOT INTERFACE */}
         <section id="e-clinic" className="py-16 max-w-6xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-          <div className="lg:col-span-7 space-y-6 text-right">
+          <div className={`lg:col-span-7 space-y-6 ${isRtl ? "text-right" : "text-left"}`}>
             <div className="space-y-2">
-              <span className="text-teal-400 font-extrabold text-xs tracking-wider bg-teal-500/10 px-3 py-1 rounded-full">استشارة طبية ذكية وتنسيق مواعيد فوري ⚡</span>
+              <span className="text-teal-400 font-extrabold text-xs tracking-wider bg-teal-500/10 px-3 py-1 rounded-full">{t('chatBannerBadge')}</span>
               <h3 className="text-2xl md:text-4xl font-extrabold text-white leading-tight">
-                المساعد الافتراضي الطبي للعيادة <br />
-                <span className="bg-gradient-to-r from-teal-400 to-cyan-300 bg-clip-text text-transparent">متصل للرد على استفساراتك وحجز موعدك فوراً</span>
+                {t('chatBannerTitle')} <br />
+                <span className="bg-gradient-to-r from-teal-400 to-cyan-300 bg-clip-text text-transparent">{t('chatBannerSub')}</span>
               </h3>
             </div>
 
             <p className="text-xs md:text-sm text-slate-400 leading-relaxed">
-              تحدث مباشرة مع شات بوت العيادة الذكي في أي وقت! الشات بوت مبرمج بـ
-              <strong className="text-teal-400 font-bold"> نظام الحصر المعرفي الحاسم </strong>، مما يعني أنه سيجيبك بدقة مطلقة حول الأسعار والإجراءات والتعليمات المحددة من د. {clinicInfo.doctorName || "الطبيب الاستشاري"}، ويضمن لك حجز موعد سريع وآمن في ثوانٍ معدودة.
+              {t('chatDesc').replace("{doctor}", localizeDynamicText(clinicInfo.doctorName || "", currentLanguage) || (currentLanguage === "ar" ? "الطبيب الاستشاري" : currentLanguage === "fr" ? "le médecin spécialiste" : "the specialist physician"))}
             </p>
 
             <div className="space-y-3.5 pt-2">
@@ -2763,8 +3384,8 @@ export default function App() {
                   <Check className="w-4 h-4" />
                 </div>
                 <div>
-                  <span className="text-xs font-bold text-slate-200 block">إجابات طبية موثوقة ومحددة</span>
-                  <span className="text-[11px] text-slate-400">لن يجتهد الشات بوت طبيًا، بل يلتزم ببروتوكولات العيادة المعتمدة والأسعار المدخلة بالكامل.</span>
+                  <span className="text-xs font-bold text-slate-200 block">{t('feat1Title')}</span>
+                  <span className="text-[11px] text-slate-400">{t('feat1Desc')}</span>
                 </div>
               </div>
               <div className="flex items-start gap-3 bg-slate-900/40 p-3.5 rounded-xl border border-slate-900">
@@ -2772,8 +3393,8 @@ export default function App() {
                   <Check className="w-4 h-4" />
                 </div>
                 <div>
-                  <span className="text-xs font-bold text-slate-200 block">تنسيق الحجوزات وإدارة السعة الاستيعابية</span>
-                  <span className="text-[11px] text-slate-400">يتحقق تلقائياً من الحد الأقصى للمواعيد اليومية ويرفض الحجز في حال الامتلاء لحماية تنظيم العيادة.</span>
+                  <span className="text-xs font-bold text-slate-200 block">{t('feat2Title')}</span>
+                  <span className="text-[11px] text-slate-400">{t('feat2Desc')}</span>
                 </div>
               </div>
               <div className="flex items-start gap-3 bg-slate-900/40 p-3.5 rounded-xl border border-slate-900">
@@ -2781,8 +3402,8 @@ export default function App() {
                   <Check className="w-4 h-4" />
                 </div>
                 <div>
-                  <span className="text-xs font-bold text-slate-200 block">إرفاق كود الحجز وتذكير المرضى</span>
-                  <span className="text-[11px] text-slate-400">يسجل طلباتك ويرسل تفاصيل الموعد فورا للوحة التحكم ليتسنى لنا الاتصال وتأكيد حجزك.</span>
+                  <span className="text-xs font-bold text-slate-200 block">{t('feat3Title')}</span>
+                  <span className="text-[11px] text-slate-400">{t('feat3Desc')}</span>
                 </div>
               </div>
             </div>
@@ -2795,24 +3416,24 @@ export default function App() {
 
         {/* CLINIC BIO / WORKING HOURS */}
         <section id="about" className="py-16 bg-slate-900/20 border-t border-slate-900 px-4">
-          <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-8 items-start text-right">
+          <div className={`max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-8 items-start ${isRtl ? "text-right" : "text-left"}`}>
             
             <div className="md:col-span-7 bg-slate-950/60 border border-slate-900 p-6 rounded-2xl space-y-5">
-              <h3 className="text-xl font-extrabold text-white flex items-center gap-2 justify-end">
-                <span>حول العيادة والخبرة الطبية 🔬</span>
+              <h3 className={`text-xl font-extrabold text-white flex items-center gap-2 ${isRtl ? "justify-end" : "justify-start"}`}>
+                <span>{t('aboutTitle')}</span>
                 <Heart className="w-5 h-5 text-teal-400" />
               </h3>
 
               <div className="space-y-4 text-xs md:text-sm text-slate-300 leading-relaxed">
                 <p>
-                  نعمل بكل فخر في <strong className="text-teal-400 font-extrabold">{clinicInfo.name || "عيادتنا الذكية"}</strong> على تقديم أرقى مستويات الرعاية والعلاجات الطبية المتكاملة، ونحرص تماماً على توفير بيئة معقمة، صحية ومريحة لمرضانا وعائلاتهم.
+                  {t('aboutClinicText').replace("{clinic}", localizeDynamicText(clinicInfo.name, currentLanguage) || (currentLanguage === "ar" ? "عيادتنا الذكية" : currentLanguage === "fr" ? "notre clinique" : "our clinic"))}
                 </p>
                 <p>
-                  تحت إشراف دائم من <strong className="text-slate-100">د. {clinicInfo.doctorName || "الاستشاري المتخصص"}</strong>، نضمن لكم تطبيق أفضل البروتوكولات الطبية العالمية مع توظيف أحدث التقنيات لخدمتكم بشكل آمن ومحكم تماماً.
+                  {t('aboutDoctorText').replace("{doctor}", localizeDynamicText(clinicInfo.doctorName, currentLanguage) || (currentLanguage === "ar" ? "الاستشاري المتخصص" : currentLanguage === "fr" ? "le médecin spécialiste" : "the specialist physician"))}
                 </p>
                 {clinicInfo.notes && (
                   <div className="bg-slate-900/40 p-4 rounded-xl border border-slate-800 text-xs text-slate-400 italic">
-                    💡 " {clinicInfo.notes} "
+                    💡 " {localizeDynamicText(clinicInfo.notes, currentLanguage)} "
                   </div>
                 )}
               </div>
@@ -2821,15 +3442,15 @@ export default function App() {
                 <div className="flex items-center gap-3 bg-slate-900/50 p-3.5 rounded-xl border border-slate-900/80">
                   <MapPin className="w-5 h-5 text-teal-400 shrink-0" />
                   <div>
-                    <span className="text-slate-500 block">موقع العيادة الجغرافي:</span>
-                    <span className="font-bold text-slate-200">{clinicInfo.address || "غير مدخل"}</span>
+                    <span className="text-slate-500 block">{t('aboutLocationLabel')}</span>
+                    <span className="font-bold text-slate-200">{localizeDynamicText(clinicInfo.address, currentLanguage) || (currentLanguage === "ar" ? "غير مدخل" : currentLanguage === "fr" ? "Non renseigné" : "Not entered")}</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-3 bg-slate-900/50 p-3.5 rounded-xl border border-slate-900/80">
                   <Phone className="w-5 h-5 text-teal-400 shrink-0" />
                   <div>
-                    <span className="text-slate-500 block">هاتف العيادة والاتصال:</span>
-                    <span className="font-bold text-slate-200" dir="ltr">{clinicInfo.phone || "غير مدخل"}</span>
+                    <span className="text-slate-500 block">{t('aboutPhoneLabel')}</span>
+                    <span className="font-bold text-slate-200" dir="ltr">{clinicInfo.phone || (currentLanguage === "ar" ? "غير مدخل" : currentLanguage === "fr" ? "Non renseigné" : "Not entered")}</span>
                   </div>
                 </div>
               </div>
@@ -2841,37 +3462,39 @@ export default function App() {
             </div>
 
             <div className="md:col-span-5 bg-slate-950/60 border border-slate-900 p-6 rounded-2xl space-y-5">
-              <h3 className="text-xl font-extrabold text-white flex items-center gap-2 justify-end">
-                <span>مواعيد وساعات العمل الرسمية 🕒</span>
+              <h3 className={`text-xl font-extrabold text-white flex items-center gap-2 ${isRtl ? "justify-end" : "justify-start"}`}>
+                <span>{t('hoursTitle')}</span>
                 <Clock className="w-5 h-5 text-teal-400" />
               </h3>
 
               <div className="space-y-4">
                 <div className="bg-slate-900/50 p-4.5 rounded-xl border border-slate-900/80 space-y-2 text-center">
-                  <span className="text-xs text-slate-400 font-bold block">ساعات استقبال المرضى الرسمية:</span>
-                  <span className="text-base font-black text-teal-400 block">{clinicInfo.workHours || "من 9:00 صباحاً إلى 9:00 مساءً"}</span>
-                  <span className="text-[10px] text-slate-500 block">من السبت إلى الخميس (يوم الجمعة العطلة الأسبوعية)</span>
+                  <span className="text-xs text-slate-400 font-bold block">{t('hoursSubTitle')}</span>
+                  <span className="text-base font-black text-teal-400 block">{localizeDynamicText(clinicInfo.workHours, currentLanguage) || (currentLanguage === "ar" ? "من 9:00 صباحاً إلى 9:00 مساءً" : currentLanguage === "fr" ? "De 9h00 à 21h00" : "From 9:00 AM to 9:00 PM")}</span>
+                  <span className="text-[10px] text-slate-500 block">{t('hoursDays')}</span>
                 </div>
 
                 <div className="space-y-3 text-xs text-slate-300">
                   <div className="flex justify-between items-center border-b border-slate-900 pb-2">
-                    <span className="text-slate-400">السبت - الخميس</span>
-                    <span className="font-bold text-slate-200">{clinicInfo.workHours || "09:00 ص - 09:00 م"}</span>
+                    <span className="text-slate-400">{t('hoursSatThu')}</span>
+                    <span className="font-bold text-slate-200">{localizeDynamicText(clinicInfo.workHours, currentLanguage) || "09:00 - 21:00"}</span>
                   </div>
                   <div className="flex justify-between items-center border-b border-slate-900 pb-2">
-                    <span className="text-slate-400">الجمعة (العطلة الأسبوعية)</span>
-                    <span className="text-rose-500 font-bold">عطلة رسمية مغلقة 🔒</span>
+                    <span className="text-slate-400">{t('hoursFriday')}</span>
+                    <span className="text-rose-500 font-bold">{t('hoursFridayClosed')}</span>
                   </div>
                   <div className="flex justify-between items-center border-b border-slate-900 pb-2">
-                    <span className="text-slate-400">الخط الطبي الساخن والحالات الطارئة</span>
-                    <span className="font-bold text-teal-400" dir="ltr">{clinicInfo.emergencyPhone || clinicInfo.phone || "متوفر بالداخل"}</span>
+                    <span className="text-slate-400">{t('hoursHotline')}</span>
+                    <span className="font-bold text-teal-400" dir="ltr">{clinicInfo.emergencyPhone || clinicInfo.phone || (currentLanguage === "ar" ? "متوفر بالداخل" : currentLanguage === "fr" ? "Disponible" : "Available")}</span>
                   </div>
                 </div>
 
                 <div className="bg-teal-500/5 border border-teal-500/10 p-3.5 rounded-xl text-center space-y-1">
-                  <span className="text-[10px] text-slate-500 block">معدل الامتلاء الفعلي اليوم:</span>
+                  <span className="text-[10px] text-slate-500 block">{t('occupancyLabel')}</span>
                   <span className="text-xs font-bold text-white block">
-                    {bookings.filter(b => b.status === "pending" || b.status === "confirmed").length} / {maxBookingsCount} حجز نشط ومكتمل
+                    {t('occupancyCount')
+                      .replace("{active}", String(bookings.filter(b => b.status === "pending" || b.status === "confirmed").length))
+                      .replace("{max}", String(maxBookingsCount))}
                   </span>
                 </div>
               </div>
@@ -2882,11 +3505,11 @@ export default function App() {
 
         {/* CLINIC FAQ / GUIDELINES */}
         {guidelines.length > 0 && (
-          <section id="faq" className="py-16 max-w-4xl mx-auto px-4 text-right">
+          <section id="faq" className={`py-16 max-w-4xl mx-auto px-4 ${isRtl ? "text-right" : "text-left"}`}>
             <div className="text-center space-y-2 mb-10">
-              <h3 className="text-2xl md:text-3xl font-extrabold text-white">الأسئلة الطبية الشائعة وإرشادات العلاج ❓</h3>
+              <h3 className="text-2xl md:text-3xl font-extrabold text-white">{t('faqTitle')}</h3>
               <p className="text-slate-400 text-xs md:text-sm">
-                احصل على إجابات مباشرة وسريعة ومعتمدة من الأطباء للأسئلة والإرشادات العلاجية الهامة قبل زيارتك.
+                {t('faqDesc')}
               </p>
             </div>
 
@@ -2899,12 +3522,12 @@ export default function App() {
                   <div className="p-4 flex items-center justify-between font-bold text-slate-200 text-xs md:text-sm cursor-pointer hover:bg-slate-900/60 transition-colors select-none">
                     <div className="flex items-center gap-2.5">
                       <span className="text-teal-400 font-mono text-xs bg-teal-500/10 px-2 py-0.5 rounded-md">Q{index + 1}</span>
-                      <span>{faq.question}</span>
+                      <span>{localizeDynamicText(faq.title, currentLanguage)}</span>
                     </div>
                     <HelpCircle className="w-4 h-4 text-slate-500" />
                   </div>
-                  <div className="p-4 pt-1.5 border-t border-slate-950/60 bg-slate-950/10 text-xs leading-relaxed text-slate-400 whitespace-pre-wrap text-right">
-                    {faq.answer}
+                  <div className={`p-4 pt-1.5 border-t border-slate-950/60 bg-slate-950/10 text-xs leading-relaxed text-slate-400 whitespace-pre-wrap ${isRtl ? "text-right" : "text-left"}`}>
+                    {localizeDynamicText(faq.content, currentLanguage)}
                   </div>
                 </div>
               ))}
@@ -2919,47 +3542,58 @@ export default function App() {
               setIsFloatingChatOpen(!isFloatingChatOpen);
             }}
             className="h-14 w-14 bg-gradient-to-tr from-teal-500 to-cyan-400 text-slate-950 rounded-full shadow-2xl shadow-teal-500/30 flex items-center justify-center cursor-pointer hover:scale-105 active:scale-95 transition-all relative group border border-teal-400"
-            title="افتح المساعد الطبي الذكي"
+            title={currentLanguage === "ar" ? "افتح المساعد الطبي الذكي" : currentLanguage === "fr" ? "Ouvrir l'assistant médical intelligent" : "Open smart medical assistant"}
           >
             <Bot className="w-6 h-6 animate-pulse text-slate-950" />
-            <span className="absolute right-16 bg-slate-900 border border-slate-800 text-teal-400 text-[10px] font-bold px-3 py-1.5 rounded-xl whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity shadow-xl" dir="rtl">
-              حجز موعد واستشارة طبية فورية 🤖
+            <span className={`absolute ${isRtl ? "right-16" : "left-16"} bg-slate-900 border border-slate-800 text-teal-400 text-[10px] font-bold px-3 py-1.5 rounded-xl whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity shadow-xl`} dir={isRtl ? "rtl" : "ltr"}>
+              {currentLanguage === "ar" ? "حجز موعد واستشارة طبية فورية 🤖" : currentLanguage === "fr" ? "Réservation et consultation médicale instantanée 🤖" : "Appointment booking & instant consultation 🤖"}
             </span>
           </button>
         </div>
 
         {/* PUBLIC FOOTER */}
-        <footer className="bg-slate-950 border-t border-slate-900 py-10 text-center text-xs text-slate-500 mt-auto text-right">
+        <footer className={`bg-slate-950 border-t border-slate-900 py-10 text-center text-xs text-slate-500 mt-auto ${isRtl ? "text-right" : "text-left"}`}>
           <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8 pb-8 border-b border-slate-900">
             <div className="space-y-3">
-              <span className="text-slate-300 font-bold block text-sm">{clinicInfo.name || "عيادتي الذكية"}</span>
+              <span className="text-slate-300 font-bold block text-sm">{localizeDynamicText(clinicInfo.name, currentLanguage) || (currentLanguage === "ar" ? "عيادتي الذكية" : currentLanguage === "fr" ? "Ma Clinique" : "My Clinic")}</span>
               <p className="text-[11px] leading-relaxed text-slate-400">
-                منصة متكاملة لربط العيادات بالمرضى وتسهيل الحجوزات العلاجية بأمان وموثوقية عالية باستخدام محركات الذكاء الاصطناعي الحصرية والآمنة طبياً.
+                {t('platformDesc')}
               </p>
             </div>
             <div className="space-y-3">
-              <span className="text-slate-300 font-bold block text-sm">أقسام موقع العيادة</span>
+              <span className="text-slate-300 font-bold block text-sm">{t('sectionsTitle')}</span>
               <ul className="space-y-1.5 text-[11px] text-slate-400">
-                <li><a href="#" className="hover:text-teal-400 transition-colors">الرئيسية</a></li>
-                <li><a href="#services" className="hover:text-teal-400 transition-colors">خدماتنا الطبية وأسعارها</a></li>
-                <li><a href="#e-clinic" className="hover:text-teal-400 transition-colors">مساعد الاستشارات والحجوزات</a></li>
-                <li><a href="#about" className="hover:text-teal-400 transition-colors">ساعات العمل الرسمية</a></li>
+                <li><a href="#" className="hover:text-teal-400 transition-colors">{t('navHome')}</a></li>
+                <li><a href="#services" className="hover:text-teal-400 transition-colors">{t('navServices')}</a></li>
+                <li><a href="#e-clinic" className="hover:text-teal-400 transition-colors">{t('navEClinic')}</a></li>
+                <li><a href="#about" className="hover:text-teal-400 transition-colors">{t('navAbout')}</a></li>
               </ul>
             </div>
             <div className="space-y-3">
-              <span className="text-slate-300 font-bold block text-sm">الاتصال والموقع الجغرافي</span>
+              <span className="text-slate-300 font-bold block text-sm">
+                {currentLanguage === "ar" ? "الاتصال والموقع الجغرافي" : currentLanguage === "fr" ? "Contact & Localisation" : "Contact & Location"}
+              </span>
               <ul className="space-y-1.5 text-[11px] text-slate-400">
-                <li>📍 العنوان: {clinicInfo.address || "الجزائر العاصمة، الجزائر"}</li>
-                <li>📞 الهاتف: {clinicInfo.phone || "غير مدخل"}</li>
-                <li>🕒 الطوارئ: {clinicInfo.emergencyPhone || clinicInfo.phone || "غير مدخل"}</li>
+                <li>
+                  {currentLanguage === "ar" ? "📍 العنوان: " : currentLanguage === "fr" ? "📍 Adresse : " : "📍 Address: "}
+                  {localizeDynamicText(clinicInfo.address, currentLanguage) || (currentLanguage === "ar" ? "الجزائر العاصمة، الجزائر" : "Algiers, Algeria")}
+                </li>
+                <li>
+                  {currentLanguage === "ar" ? "📞 الهاتف: " : currentLanguage === "fr" ? "📞 Téléphone : " : "📞 Phone: "}
+                  {clinicInfo.phone || (currentLanguage === "ar" ? "غير مدخل" : "Not entered")}
+                </li>
+                <li>
+                  {currentLanguage === "ar" ? "🕒 الطوارئ: " : currentLanguage === "fr" ? "🕒 Urgences : " : "🕒 Emergency: "}
+                  {clinicInfo.emergencyPhone || clinicInfo.phone || (currentLanguage === "ar" ? "غير مدخل" : "Not entered")}
+                </li>
               </ul>
             </div>
           </div>
 
           <div className="max-w-6xl mx-auto px-4 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-slate-500">© 2026 {clinicInfo.name || "عيادتي الذكية"} - جميع الحقوق محفوظة للعيادة.</p>
+            <p className="text-slate-500">{t('copyrightLabel').replace("{clinic}", localizeDynamicText(clinicInfo.name, currentLanguage) || (currentLanguage === "ar" ? "عيادتي الذكية" : currentLanguage === "fr" ? "Ma Clinique" : "My Clinic"))}</p>
             <div className="flex items-center gap-1.5 text-slate-400">
-              <span>صُنع بمهارة لتمكين العيادات الصحية بذكاء اصطناعي آمن</span>
+              <span>{t('madeWithSkill')}</span>
               <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500 animate-pulse" />
             </div>
           </div>
@@ -2969,13 +3603,13 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-100 font-sans antialiased flex flex-col" dir="rtl">
+    <div className="min-h-screen bg-slate-900 text-slate-100 font-sans antialiased flex flex-col" dir={isRtl ? "rtl" : "ltr"}>
       
       {/* Dynamic Top Bar in Doctor Dashboard Panel to let the doctor preview the clinic public website */}
       <div className="bg-gradient-to-r from-teal-500/10 to-cyan-500/10 border-b border-teal-500/20 px-4 py-2.5 flex items-center justify-between text-xs font-bold gap-4">
         <div className="flex items-center gap-2">
-          <span className="bg-teal-500 text-slate-950 px-2 py-0.5 rounded text-[10px]">وضع الإدارة 🔑</span>
-          <span className="text-slate-300">أنت حالياً في لوحة الإدارة الطبية لتخصيص الشات بوت وضبط حجوزات العيادة.</span>
+          <span className="bg-teal-500 text-slate-950 px-2 py-0.5 rounded text-[10px]">{t('adminModeLabel')}</span>
+          <span className="text-slate-300">{t('adminModeDesc')}</span>
         </div>
         <div className="flex items-center gap-2">
           <button
@@ -2987,14 +3621,14 @@ export default function App() {
             className="bg-teal-500 hover:bg-teal-400 text-slate-950 px-3 py-1 rounded-lg transition-all cursor-pointer border border-teal-400 flex items-center gap-1 shadow shadow-teal-500/10"
           >
             <Bot className="w-3.5 h-3.5" />
-            <span>معاينة موقع العيادة المباشر لمرضاك 🌐</span>
+            <span>{t('previewClinicBtn')}</span>
           </button>
           <button
             onClick={handleDoctorLogout}
             className="bg-rose-600 hover:bg-rose-500 text-white px-3 py-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1.5 shadow-md font-semibold"
           >
             <Lock className="w-3.5 h-3.5" />
-            <span>تسجيل الخروج من SaaS 🚪</span>
+            <span>{t('logoutSaaSDoc')}</span>
           </button>
         </div>
       </div>
@@ -3110,10 +3744,10 @@ export default function App() {
                 
                 <div className="flex-1">
                   <h3 className="text-lg font-bold text-slate-100">
-                    تأكيد الحجز وجدولة تذكير ذكي 🔔
+                    {t("confirmBookingTitle", "تأكيد الحجز وجدولة تذكير ذكي 🔔")}
                   </h3>
                   <p className="text-xs text-slate-400 mt-0.5">
-                    قم بتأكيد موعد المريض وتحديد موعد إرسال التذكير التلقائي له عبر الشات بوت.
+                    {t("confirmBookingDesc", "قم بتأكيد موعد المريض وتحديد موعد إرسال التذكير التلقائي له عبر الشات بوت.")}
                   </p>
                 </div>
               </div>
@@ -3121,19 +3755,19 @@ export default function App() {
               {/* Patient and Booking summary */}
               <div className="bg-slate-950/50 rounded-xl p-3 border border-slate-800/85 mb-4 grid grid-cols-2 gap-2 text-xs">
                 <div>
-                  <span className="text-slate-500 block">اسم المريض:</span>
-                  <span className="font-bold text-slate-200">{reminderModal.patientName}</span>
+                  <span className="text-slate-500 block">{t("pdfTranslations.patientNameLabel", "اسم المريض:")}</span>
+                  <span className="font-bold text-slate-200">{localizeDynamicText(reminderModal.patientName, currentLanguage)}</span>
                 </div>
                 <div>
-                  <span className="text-slate-500 block">الخدمة المطلوبة:</span>
-                  <span className="font-bold text-teal-400">{reminderModal.serviceName}</span>
+                  <span className="text-slate-500 block">{t("pdfTranslations.serviceNameLabel", "الخدمة المطلوبة:")}</span>
+                  <span className="font-bold text-teal-400">{localizeDynamicText(reminderModal.serviceName, currentLanguage)}</span>
                 </div>
                 <div>
-                  <span className="text-slate-500 block">تاريخ الموعد:</span>
+                  <span className="text-slate-500 block">{t("pdfTranslations.bookingDateLabel", "تاريخ الموعد:")}</span>
                   <span className="font-bold text-slate-200">{reminderModal.bookingDate}</span>
                 </div>
                 <div>
-                  <span className="text-slate-500 block">وقت الموعد:</span>
+                  <span className="text-slate-500 block">{t("pdfTranslations.bookingTimeLabel", "وقت الموعد:")}</span>
                   <span className="font-bold text-slate-200" dir="ltr">{reminderModal.bookingTime}</span>
                 </div>
               </div>
@@ -3148,8 +3782,8 @@ export default function App() {
                     className="w-4 h-4 rounded text-teal-500 focus:ring-teal-500 bg-slate-950 border-slate-800"
                   />
                   <div>
-                    <span className="text-xs font-bold text-slate-200 block">تفعيل التذكير التلقائي (تنبيه المريض)</span>
-                    <span className="text-[10px] text-slate-400">سيقوم النظام بتنبيه المريض تلقائياً في الوقت المحدد.</span>
+                    <span className="text-xs font-bold text-slate-200 block">{t("enableAutoReminderLabel", "تفعيل التذكير التلقائي (تنبيه المريض)")}</span>
+                    <span className="text-[10px] text-slate-400">{t("enableAutoReminderDesc", "سيقوم النظام بتنبيه المريض تلقائياً في الوقت المحدد.")}</span>
                   </div>
                 </label>
 
@@ -3162,42 +3796,44 @@ export default function App() {
                   >
                     {/* Time before dropdown */}
                     <div className="space-y-1">
-                      <label className="text-[11px] font-bold text-slate-300 block">وقت إرسال التذكير قبل الموعد:</label>
+                      <label className="text-[11px] font-bold text-slate-300 block">{t("reminderTimeLabel", "وقت إرسال التذكير قبل الموعد:")}</label>
                       <select
                         value={reminderModal.timeBefore}
                         onChange={(e) => {
                           const val = e.target.value;
                           setReminderModal(prev => {
-                            let label = "قبل الموعد بيوم واحد";
-                            if (val === "30_mins") label = "قبل الموعد بـ 30 دقيقة";
-                            else if (val === "2_hours") label = "قبل الموعد بساعتين";
-                            else if (val === "2_days") label = "قبل الموعد بيومين";
+                            let label = currentLanguage === "ar" ? "قبل الموعد بيوم واحد" : currentLanguage === "fr" ? "1 jour avant" : "1 day before";
+                            if (val === "30_mins") label = currentLanguage === "ar" ? "قبل الموعد بـ 30 دقيقة" : currentLanguage === "fr" ? "30 minutes avant" : "30 minutes before";
+                            else if (val === "2_hours") label = currentLanguage === "ar" ? "قبل الموعد بساعتين" : currentLanguage === "fr" ? "2 heures avant" : "2 hours before";
+                            else if (val === "2_days") label = currentLanguage === "ar" ? "قبل الموعد بيومين" : currentLanguage === "fr" ? "2 jours avant" : "2 days before";
                             
-                            const updatedMsg = `تذكير بموعدك: عزيزي المريض ${prev.patientName}، نود تذكيرك بموعدك لـ (${prev.serviceName}) في عيادتنا يوم ${prev.bookingDate} الساعة ${prev.bookingTime} (${label}). نتطلع لرؤيتك ونتمنى لك دوام الصحة والعافية.`;
-                            return { ...prev, timeBefore: val, customMessage: updatedMsg };
+                            const greetingStr = currentLanguage === "ar" ? `تذكير بموعدك: عزيزي المريض ${prev.patientName}، نود تذكيرك بموعدك لـ (${prev.serviceName}) في عيادتنا يوم ${prev.bookingDate} الساعة ${prev.bookingTime} (${label}). نتطلع لرؤيتك ونتمنى لك دوام الصحة والعافية.`
+                                              : currentLanguage === "fr" ? `Rappel de rendez-vous : Cher patient ${localizeDynamicText(prev.patientName, currentLanguage)}, nous vous rappelons votre rendez-vous pour (${localizeDynamicText(prev.serviceName, currentLanguage)}) dans notre clinique le ${prev.bookingDate} à ${prev.bookingTime} (${label}). Au plaisir de vous voir et nous vous souhaitons une excellente santé.`
+                                              : `Appointment Reminder: Dear Patient ${localizeDynamicText(prev.patientName, currentLanguage)}, we would like to remind you of your appointment for (${localizeDynamicText(prev.serviceName, currentLanguage)}) in our clinic on ${prev.bookingDate} at ${prev.bookingTime} (${label}). We look forward to seeing you and wish you good health.`;
+                            return { ...prev, timeBefore: val, customMessage: greetingStr };
                           });
                         }}
                         className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-300 focus:ring-1 focus:ring-teal-500 focus:outline-none"
                       >
-                        <option value="30_mins">قبل الموعد بـ 30 دقيقة</option>
-                        <option value="2_hours">قبل الموعد بساعتين</option>
-                        <option value="1_day">قبل الموعد بيوم واحد (24 ساعة)</option>
-                        <option value="2_days">قبل الموعد بيومين (48 ساعة)</option>
+                        <option value="30_mins">{t("before30Mins", "قبل الموعد بـ 30 دقيقة")}</option>
+                        <option value="2_hours">{t("before2Hours", "قبل الموعد بساعتين")}</option>
+                        <option value="1_day">{t("before1Day", "قبل الموعد بيوم واحد (24 ساعة)")}</option>
+                        <option value="2_days">{t("before2Days", "قبل الموعد بيومين (48 ساعة)")}</option>
                       </select>
                     </div>
 
                     {/* Custom message text area */}
                     <div className="space-y-1">
                       <label className="text-[11px] font-bold text-slate-300 block flex items-center justify-between">
-                        <span>نص رسالة التذكير:</span>
-                        <span className="text-[10px] text-slate-500">قابلة للتعديل</span>
+                        <span>{t("reminderMsgTextLabel", "نص رسالة التذكير:")}</span>
+                        <span className="text-[10px] text-slate-500">{t("editableLabel", "قابلة للتعديل")}</span>
                       </label>
                       <textarea
                         rows={3}
                         value={reminderModal.customMessage}
                         onChange={(e) => setReminderModal(prev => ({ ...prev, customMessage: e.target.value }))}
                         className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-300 focus:ring-1 focus:ring-teal-500 focus:outline-none leading-relaxed resize-none"
-                        placeholder="أدخل نص التذكير المخصص هنا..."
+                        placeholder={t("reminderMsgPlaceholder", "أدخل نص التذكير المخصص هنا...")}
                       />
                     </div>
                   </motion.div>
@@ -3211,7 +3847,7 @@ export default function App() {
                   onClick={() => setReminderModal(prev => ({ ...prev, isOpen: false }))}
                   className="px-4 py-2 text-xs font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-850 rounded-xl transition-all cursor-pointer"
                 >
-                  إلغاء
+                  {t("cancel", "إلغاء")}
                 </button>
                 <button
                   type="button"
@@ -3219,7 +3855,7 @@ export default function App() {
                   className="px-5 py-2 text-xs font-bold bg-teal-500 hover:bg-teal-400 active:bg-teal-600 text-slate-950 rounded-xl transition-all shadow-lg shadow-teal-500/10 hover:shadow-teal-500/25 flex items-center gap-1.5 cursor-pointer"
                 >
                   <Check className="w-4 h-4" />
-                  <span>تأكيد الحجز {reminderModal.enableReminder ? "وجدولة التذكير" : "فقط"}</span>
+                  <span>{reminderModal.enableReminder ? t("confirmAndSchedule", "تأكيد الحجز وجدولة التذكير") : t("confirmOnly", "تأكيد الحجز فقط")}</span>
                 </button>
               </div>
             </motion.div>
@@ -3236,9 +3872,9 @@ export default function App() {
           </div>
           <div>
             <h1 className="text-xl font-bold bg-gradient-to-l from-white via-slate-100 to-teal-400 bg-clip-text text-transparent flex items-center gap-2">
-              عيادتي الذكية <span className="text-xs bg-teal-500/10 text-teal-400 border border-teal-500/20 px-2 py-0.5 rounded-full font-normal">منصة الأطباء الذكية للعيادات</span>
+              {t("mySmartClinicHeader", "عيادتي الذكية")} <span className="text-xs bg-teal-500/10 text-teal-400 border border-teal-500/20 px-2 py-0.5 rounded-full font-normal">{t("doctorAppHeaderBadge", "منصة الأطباء الذكية للعيادات")}</span>
             </h1>
-            <p className="text-xs text-slate-400">لوحة التحكم السحابية وتخصيص شات بوت الذكاء الاصطناعي الحصري</p>
+            <p className="text-xs text-slate-400">{t("doctorAppHeaderDesc", "لوحة التحكم السحابية وتخصيص شات بوت الذكاء الاصطناعي الحصري")}</p>
           </div>
         </div>
 
@@ -3295,7 +3931,7 @@ export default function App() {
                   : "text-slate-300 hover:bg-slate-800/60"
               }`}
             >
-              {preset.id === "dental" ? "🦷 الأسنان" : preset.id === "derma" ? "🌸 الجلدية والتجميل" : "👶 الأطفال"}
+              {preset.id === "dental" ? "🦷 طب الأسنان" : preset.id === "general" ? "🩺 الطب العام" : "📅 إدارة المواعيد"}
             </button>
           ))}
 
@@ -3331,6 +3967,73 @@ export default function App() {
         
         {/* Left Side: Doctor's Control Panel (8 cols on lg) */}
         <div className="lg:col-span-7 flex flex-col gap-6">
+
+          {/* SaaS Outside Platform Subscription Check alerts */}
+          {msgSubPlan !== "unlimited" && msgUsed >= msgLimit && (
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              className="bg-rose-500/10 border-2 border-rose-500/30 rounded-2xl p-4 flex gap-3.5 items-start text-right relative overflow-hidden"
+              dir={isRtl ? "rtl" : "ltr"}
+            >
+              <div className="bg-rose-500/20 text-rose-400 p-2.5 rounded-xl">
+                <AlertCircle className="w-5 h-5 animate-pulse" />
+              </div>
+              <div className="space-y-1">
+                <h4 className="font-bold text-rose-400 text-sm">
+                  {currentLanguage === "ar" ? "🚨 انتهى اشتراك الرسائل المساعد الذكي خارج المنصة!" : currentLanguage === "fr" ? "🚨 L'abonnement de l'assistant intelligent hors plateforme a expiré !" : "🚨 Smart Assistant Off-Platform subscription has expired!"}
+                </h4>
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  {currentLanguage === "ar" 
+                    ? "الشات بوت متوقف حالياً عن الرد على المرضى في موقعك الإلكتروني لانتهاء الرصيد المتاح. يرجى تجديد الاشتراك فوراً لتجنب فقدان الحجوزات والزبائن." 
+                    : currentLanguage === "fr" 
+                    ? "Le chatbot est actuellement arrêté et ne répond plus aux patients sur votre site pour manque de crédit. Veuillez renouveler l'abonnement pour éviter de perdre des réservations." 
+                    : "The chatbot is currently stopped and won't respond to patients on your website due to out of balance. Please renew the subscription to avoid losing bookings."}
+                </p>
+                <div className="pt-2">
+                  <button
+                    onClick={() => setActiveTab("subscription")}
+                    className="bg-rose-500 hover:bg-rose-400 text-slate-950 font-bold text-xs px-3 py-1.5 rounded-lg transition-all cursor-pointer"
+                  >
+                    {currentLanguage === "ar" ? "تجديد الاشتراك الآن 💳" : currentLanguage === "fr" ? "Renouveler l'abonnement 💳" : "Renew Subscription 💳"}
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {msgSubPlan !== "unlimited" && msgUsed < msgLimit && msgLimit - msgUsed <= msgLimit * 0.1 && (
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              className="bg-amber-500/10 border-2 border-amber-500/30 rounded-2xl p-4 flex gap-3.5 items-start text-right relative overflow-hidden"
+              dir={isRtl ? "rtl" : "ltr"}
+            >
+              <div className="bg-amber-500/20 text-amber-400 p-2.5 rounded-xl">
+                <AlertCircle className="w-5 h-5 animate-bounce" />
+              </div>
+              <div className="space-y-1">
+                <h4 className="font-bold text-amber-400 text-sm">
+                  {currentLanguage === "ar" ? "⚠️ رصيد الرسائل يقترب من النفاد (باقي أقل من 10%)!" : currentLanguage === "fr" ? "⚠️ Le solde de messages est presque épuisé (moins de 10% restants) !" : "⚠️ Message balance is running low (less than 10% remaining)!"}
+                </h4>
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  {currentLanguage === "ar" 
+                    ? `متبقي للعيادة فقط ${msgLimit - msgUsed} رسالة من أصل باقة ${msgLimit} رسالة خارج المنصة. يرجى شحن الرصيد لتفادي توقف الخدمة التلقائية.` 
+                    : currentLanguage === "fr" 
+                    ? `Il ne reste que ${msgLimit - msgUsed} messages sur votre forfait de ${msgLimit} hors plateforme. Veuillez recharger pour éviter l'arrêt du service.` 
+                    : `Only ${msgLimit - msgUsed} messages remain out of your ${msgLimit} off-platform package. Please recharge to prevent service interruption.`}
+                </p>
+                <div className="pt-2">
+                  <button
+                    onClick={() => setActiveTab("subscription")}
+                    className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs px-3 py-1.5 rounded-lg transition-all cursor-pointer"
+                  >
+                    {currentLanguage === "ar" ? "شحن رصيد إضافي 💳" : currentLanguage === "fr" ? "Recharger le crédit 💳" : "Recharge Credit 💳"}
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          )}
           
           {/* Quick Informational Notice explaining strict data limits */}
           <div className="bg-slate-950/60 rounded-2xl p-5 border border-slate-800/50 flex gap-4 items-start relative overflow-hidden">
@@ -3339,11 +4042,11 @@ export default function App() {
               <ShieldCheck className="w-6 h-6" />
             </div>
             <div className="space-y-1">
-              <h3 className="font-bold text-teal-400 text-base">نظام الحماية والذكاء المحكم 🛡️</h3>
+              <h3 className="font-bold text-teal-400 text-base">{t("cognitiveLockSystemTitle", "نظام الحماية والذكاء المحكم 🛡️")}</h3>
               <p className="text-xs leading-relaxed text-slate-300">
-                الشات بوت مبرمج بـ 
-                <span className="text-teal-400 font-bold"> نظام الحصر المعرفي الحاسم </span>. 
-                لن يقوم بالاجتهاد أو "التعلم والاستنتاج" الطبي خارج ما تدخله هنا. إذا لم يجد إجابة دقيقة في قاعدة بيانات العيادة أو في حال الأسئلة الطبية المعقدة، سيوجه الزبون فوراً للاتصال بالعيادة أو حجز موعد. هذا يحمي العيادة قانونياً وطبياً ويحافظ على أرباحك وتدفق المرضى!
+                {t("cognitiveLockDescPart1", "الشات بوت مبرمج بـ ")}
+                <span className="text-teal-400 font-bold">{t("cognitiveLockDescPart2", " نظام الحصر المعرفي الحاسم ")}</span>
+                {t("cognitiveLockDescPart3", ". لن يقوم بالاجتهاد أو \"التعلم والاستنتاج\" الطبي خارج ما تدخله هنا. إذا لم يجد إجابة دقيقة في قاعدة بيانات العيادة أو في حال الأسئلة الطبية المعقدة، سيوجه الزبون فوراً للاتصال بالعيادة أو حجز موعد. هذا يحمي العيادة قانونياً وطبياً ويحافظ على أرباحك وتدفق المرضى!")}
               </p>
             </div>
           </div>
@@ -3352,25 +4055,25 @@ export default function App() {
           <div className="flex bg-slate-950/80 p-1 rounded-xl border border-slate-800/80 gap-1 overflow-x-auto">
             <button
               onClick={() => setActiveTab("profile")}
-              className={`flex-1 py-2.5 px-4 rounded-lg font-medium text-sm transition-all duration-300 whitespace-nowrap flex items-center justify-center gap-2 ${
+              className={`py-2.5 px-4 rounded-lg font-medium text-sm transition-all duration-300 whitespace-nowrap flex items-center justify-center gap-2 ${
                 activeTab === "profile"
                   ? "bg-slate-800 text-white shadow-sm border border-slate-700"
                   : "text-slate-400 hover:text-slate-200"
               }`}
             >
               <Sliders className="w-4 h-4" />
-              <span>الملف والحالة اليومية</span>
+              <span>{t('profileTab')}</span>
             </button>
             <button
               onClick={() => setActiveTab("bookings")}
-              className={`flex-1 py-2.5 px-4 rounded-lg font-medium text-sm transition-all duration-300 whitespace-nowrap flex items-center justify-center gap-2 ${
+              className={`py-2.5 px-4 rounded-lg font-medium text-sm transition-all duration-300 whitespace-nowrap flex items-center justify-center gap-2 ${
                 activeTab === "bookings"
                   ? "bg-slate-800 text-white shadow-sm border border-slate-700"
                   : "text-slate-400 hover:text-slate-200"
               }`}
             >
               <Calendar className="w-4 h-4 text-teal-400" />
-              <span>الحجوزات الذكية</span>
+              <span>{t('bookingsTab')}</span>
               {bookings.filter(b => b.status === "pending").length > 0 && (
                 <span className="bg-rose-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full animate-pulse">
                   {bookings.filter(b => b.status === "pending").length}
@@ -3379,47 +4082,47 @@ export default function App() {
             </button>
             <button
               onClick={() => setActiveTab("buttons")}
-              className={`flex-1 py-2.5 px-4 rounded-lg font-medium text-sm transition-all duration-300 whitespace-nowrap flex items-center justify-center gap-2 ${
+              className={`py-2.5 px-4 rounded-lg font-medium text-sm transition-all duration-300 whitespace-nowrap flex items-center justify-center gap-2 ${
                 activeTab === "buttons"
                   ? "bg-slate-800 text-white shadow-sm border border-slate-700"
                   : "text-slate-400 hover:text-slate-200"
               }`}
             >
               <Sliders className="w-4 h-4" />
-              <span>الأزرار السريعة</span>
+              <span>{t('buttonsTab')}</span>
             </button>
             <button
               onClick={() => setActiveTab("database")}
-              className={`flex-1 py-2.5 px-4 rounded-lg font-medium text-sm transition-all duration-300 whitespace-nowrap flex items-center justify-center gap-2 ${
+              className={`py-2.5 px-4 rounded-lg font-medium text-sm transition-all duration-300 whitespace-nowrap flex items-center justify-center gap-2 ${
                 activeTab === "database"
                   ? "bg-slate-800 text-white shadow-sm border border-slate-700"
                   : "text-slate-400 hover:text-slate-200"
               }`}
             >
               <Database className="w-4 h-4" />
-              <span>قاعدة البيانات</span>
+              <span>{t('databaseTab')}</span>
             </button>
             <button
               onClick={() => setActiveTab("import")}
-              className={`flex-1 py-2.5 px-4 rounded-lg font-medium text-sm transition-all duration-300 whitespace-nowrap flex items-center justify-center gap-2 ${
+              className={`py-2.5 px-4 rounded-lg font-medium text-sm transition-all duration-300 whitespace-nowrap flex items-center justify-center gap-2 ${
                 activeTab === "import"
                   ? "bg-slate-800 text-white shadow-sm border border-slate-700"
                   : "text-slate-400 hover:text-slate-200"
               }`}
             >
               <FileSpreadsheet className="w-4 h-4" />
-              <span>استيراد السجلات</span>
+              <span>{t('importTab')}</span>
             </button>
             <button
               onClick={() => setActiveTab("conversations")}
-              className={`flex-1 py-2.5 px-4 rounded-lg font-medium text-sm transition-all duration-300 whitespace-nowrap flex items-center justify-center gap-2 ${
+              className={`py-2.5 px-4 rounded-lg font-medium text-sm transition-all duration-300 whitespace-nowrap flex items-center justify-center gap-2 ${
                 activeTab === "conversations"
                   ? "bg-slate-800 text-white shadow-sm border border-slate-700"
                   : "text-slate-400 hover:text-slate-200"
               }`}
             >
               <MessageSquare className="w-4 h-4 text-teal-400" />
-              <span>مراقبة المحادثات والتحليلات</span>
+              <span>{t('conversationsTab')}</span>
               {conversations.filter(c => c.status === "pending_review").length > 0 && (
                 <span className="bg-amber-500 text-slate-950 text-[10px] font-bold px-1.5 py-0.5 rounded-full animate-pulse">
                   {conversations.filter(c => c.status === "pending_review").length}
@@ -3428,47 +4131,58 @@ export default function App() {
             </button>
             <button
               onClick={() => setActiveTab("market")}
-              className={`flex-1 py-2.5 px-4 rounded-lg font-medium text-sm transition-all duration-300 whitespace-nowrap flex items-center justify-center gap-2 ${
+              className={`py-2.5 px-4 rounded-lg font-medium text-sm transition-all duration-300 whitespace-nowrap flex items-center justify-center gap-2 ${
                 activeTab === "market"
                   ? "bg-teal-500/10 text-teal-300 border border-teal-500/30 shadow-md shadow-teal-500/5 font-bold"
                   : "text-slate-400 hover:text-teal-400"
               }`}
             >
               <Smartphone className="w-4 h-4 text-teal-400 animate-pulse" />
-              <span>تنزيل ونشر التطبيق بالسوق 🚀</span>
+              <span>{t('marketTab')}</span>
             </button>
             <button
               onClick={() => setActiveTab("presets")}
-              className={`flex-1 py-2.5 px-4 rounded-lg font-medium text-sm transition-all duration-300 whitespace-nowrap flex items-center justify-center gap-2 ${
+              className={`py-2.5 px-4 rounded-lg font-medium text-sm transition-all duration-300 whitespace-nowrap flex items-center justify-center gap-2 ${
                 activeTab === "presets"
                   ? "bg-slate-800 text-white shadow-sm border border-slate-700 font-bold"
                   : "text-slate-400 hover:text-slate-200"
               }`}
             >
               <Sparkles className="w-4 h-4 text-amber-400" />
-              <span className="text-amber-300">صنع القوالب الخاصة بك ⚙️</span>
+              <span className="text-amber-300">{t('presetsTab')}</span>
             </button>
             <button
               onClick={() => setActiveTab("backup")}
-              className={`flex-1 py-2.5 px-4 rounded-lg font-medium text-sm transition-all duration-300 whitespace-nowrap flex items-center justify-center gap-2 ${
+              className={`py-2.5 px-4 rounded-lg font-medium text-sm transition-all duration-300 whitespace-nowrap flex items-center justify-center gap-2 ${
                 activeTab === "backup"
                   ? "bg-slate-800 text-white shadow-sm border border-slate-700 font-bold"
                   : "text-slate-400 hover:text-slate-200"
               }`}
             >
               <Database className="w-4 h-4 text-teal-400" />
-              <span className="font-bold">حفظ واستعادة البيانات 💾</span>
+              <span className="font-bold">{t('backupTab')}</span>
             </button>
             <button
               onClick={() => setActiveTab("subscription")}
-              className={`flex-1 py-2.5 px-4 rounded-lg font-medium text-sm transition-all duration-300 whitespace-nowrap flex items-center justify-center gap-2 ${
+              className={`py-2.5 px-4 rounded-lg font-medium text-sm transition-all duration-300 whitespace-nowrap flex items-center justify-center gap-2 ${
                 activeTab === "subscription"
                   ? "bg-gradient-to-r from-emerald-500/20 to-teal-500/20 text-teal-300 border border-teal-500/30 shadow-md font-bold"
                   : "text-slate-400 hover:text-emerald-400"
               }`}
             >
               <CreditCard className="w-4 h-4 text-emerald-400" />
-              <span>اشتراك SaaS والفوترة 💳</span>
+              <span>{t('subscriptionTab')}</span>
+            </button>
+            <button
+              onClick={() => setActiveTab("settings")}
+              className={`py-2.5 px-4 rounded-lg font-medium text-sm transition-all duration-300 whitespace-nowrap flex items-center justify-center gap-2 ${
+                activeTab === "settings"
+                  ? "bg-gradient-to-r from-teal-500/20 to-cyan-500/20 text-cyan-300 border border-teal-500/30 shadow-md font-bold"
+                  : "text-slate-400 hover:text-teal-400"
+              }`}
+            >
+              <Settings className="w-4 h-4 text-teal-400 animate-spin" />
+              <span>{t('settings')}</span>
             </button>
           </div>
 
@@ -3490,23 +4204,23 @@ export default function App() {
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-2 text-teal-400 font-bold">
                         <Clock className="w-5 h-5" />
-                        <h4>الحالة اليومية السريعة للطبيب 📅</h4>
+                        <h4>{t("dailyStatusQuickTitle", "الحالة اليومية السريعة للطبيب 📅")}</h4>
                       </div>
                       <button 
                         onClick={handleSaveDailyStatus}
                         className="bg-teal-500 hover:bg-teal-400 text-slate-950 text-xs px-3 py-1.5 rounded-lg font-bold transition-all flex items-center gap-1"
                       >
                         <Save className="w-3.5 h-3.5" />
-                        <span>تحديث فوري</span>
+                        <span>{t("instantUpdateBtn", "تحديث فوري")}</span>
                       </button>
                     </div>
                     <p className="text-xs text-slate-300 mb-3 leading-relaxed">
-                      اكتب هنا حالتك اليومية للعيادة (مثال: مواعيد الحضور الاستثنائية، طبيب بديل، ازدحام متوقع، إغلاق طارئ). سيقوم الشات بوت باستخدام هذه الجملة لتحديث جميع إجاباته للمرضى اليوم تلقائياً!
+                      {t("dailyStatusDescriptionText", "اكتب هنا حالتك اليومية للعيادة (مثال: مواعيد الحضور الاستثنائية، طبيب بديل، ازدحام متوقع، إغلاق طارئ). سيقوم الشات بوت باستخدام هذه الجملة لتحديث جميع إجاباته للمرضى اليوم تلقائياً!")}
                     </p>
                     <textarea
                       value={dailyStatus}
                       onChange={(e) => setDailyStatus(e.target.value)}
-                      placeholder="اكتب هنا حالة العيادة اليوم... (مثلاً: طبيب الأسنان متواجد اليوم من 10 صباحاً وحتى 8 مساءً، ننصح بحجز موعد مسبق لتجنب الانتظار)"
+                      placeholder={t("dailyStatusTextareaPlaceholder", "اكتب هنا حالة العيادة اليوم... (مثلاً: طبيب الأسنان متواجد اليوم من 10 صباحاً وحتى 8 مساءً، ننصح بحجز موعد مسبق لتجنب الانتظار)")}
                       className="w-full bg-slate-950/80 border border-slate-700/60 rounded-xl px-4 py-3 text-slate-200 text-sm focus:ring-2 focus:ring-teal-500 focus:outline-none min-h-[100px]"
                     />
                   </div>
@@ -3514,13 +4228,13 @@ export default function App() {
                   {/* Clinic Info Inputs */}
                   <form onSubmit={handleSaveProfile} className="space-y-4">
                     <div className="border-b border-slate-800 pb-2">
-                      <h4 className="font-bold text-slate-200 text-sm">معلومات الملف التعريفي للعيادة</h4>
-                      <p className="text-xs text-slate-400">البيانات الثابتة الأساسية لتعريف الشات بوت بموقعك والاتصال بك</p>
+                      <h4 className="font-bold text-slate-200 text-sm">{t("clinicProfileTitle", "معلومات الملف التعريفي للعيادة")}</h4>
+                      <p className="text-xs text-slate-400">{t("clinicProfileDesc", "البيانات الثابتة الأساسية لتعريف الشات بوت بموقعك والاتصال بك")}</p>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-xs text-slate-400 mb-1.5 font-medium">اسم العيادة</label>
+                        <label className="block text-xs text-slate-400 mb-1.5 font-medium">{t("clinicNameInputLabel", "اسم العيادة")}</label>
                         <input
                           type="text"
                           value={clinicInfo.name}
@@ -3530,7 +4244,7 @@ export default function App() {
                         />
                       </div>
                       <div>
-                        <label className="block text-xs text-slate-400 mb-1.5 font-medium">التخصص الطبي</label>
+                        <label className="block text-xs text-slate-400 mb-1.5 font-medium">{t("clinicSpecialtyInputLabel", "التخصص الطبي")}</label>
                         <input
                           type="text"
                           value={clinicInfo.specialty}
@@ -3540,7 +4254,7 @@ export default function App() {
                         />
                       </div>
                       <div>
-                        <label className="block text-xs text-slate-400 mb-1.5 font-medium">رقم الهاتف السريع للتواصل وحجز المواعيد</label>
+                        <label className="block text-xs text-slate-400 mb-1.5 font-medium">{t("clinicPhoneInputLabel", "رقم الهاتف السريع للتواصل وحجز المواعيد")}</label>
                         <input
                           type="text"
                           value={clinicInfo.phone}
@@ -3550,7 +4264,7 @@ export default function App() {
                         />
                       </div>
                       <div>
-                        <label className="block text-xs text-slate-400 mb-1.5 font-medium">عنوان العيادة الجغرافي بالتفصيل</label>
+                        <label className="block text-xs text-slate-400 mb-1.5 font-medium">{t("clinicAddressInputLabel", "عنوان العيادة الجغرافي بالتفصيل")}</label>
                         <input
                           type="text"
                           value={clinicInfo.address}
@@ -3572,7 +4286,7 @@ export default function App() {
                         className="bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 font-bold py-2 px-5 rounded-lg text-sm transition-all flex items-center gap-2 cursor-pointer"
                       >
                         <Save className="w-4 h-4 text-teal-400" />
-                        <span>حفظ بيانات الملف الأساسي</span>
+                        <span>{t("saveBasicProfileBtn", "حفظ بيانات الملف الأساسي")}</span>
                       </button>
                     </div>
                   </form>
@@ -3592,10 +4306,10 @@ export default function App() {
                     <div>
                       <h3 className="font-bold text-white text-xl flex items-center gap-2">
                         <Calendar className="w-6 h-6 text-teal-400" />
-                        <span>نظام الحجوزات الذكي المباشر 📅</span>
+                        <span>{t("smartBookingsTitle", "نظام الحجوزات الذكي المباشر 📅")}</span>
                       </h3>
                       <p className="text-xs text-slate-400 mt-1">
-                        هنا تظهر طلبات الحجوزات التي يقوم المرضى بتسجيلها ذاتياً عبر شات بوت العيادة، بالإضافة إلى إمكانية تسجيل الحجوزات اليدوية.
+                        {t("smartBookingsDesc", "هنا تظهر طلبات الحجوزات التي يقوم المرضى بتسجيلها ذاتياً عبر شات بوت العيادة، بالإضافة إلى إمكانية تسجيل الحجوزات اليدوية.")}
                       </p>
                     </div>
                     
@@ -3604,7 +4318,7 @@ export default function App() {
                       className="bg-teal-500 hover:bg-teal-400 text-slate-950 text-xs font-bold px-4 py-2 rounded-xl transition-all flex items-center justify-center gap-2 self-start cursor-pointer"
                     >
                       <PlusCircle className="w-4 h-4" />
-                      <span>{isAddingBooking ? "إغلاق استمارة الحجز" : "تسجيل حجز جديد يدوي"}</span>
+                      <span>{isAddingBooking ? t("closeBookingForm", "إغلاق استمارة الحجز") : t("addManualBooking", "تسجيل حجز جديد يدوي")}</span>
                     </button>
                   </div>
 
@@ -3612,7 +4326,7 @@ export default function App() {
                   <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                     <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-4 flex items-center justify-between">
                       <div>
-                        <p className="text-xs text-slate-400 font-medium">إجمالي الحجوزات</p>
+                        <p className="text-xs text-slate-400 font-medium">{t("totalBookings", "إجمالي الحجوزات")}</p>
                         <h4 className="text-2xl font-bold text-white mt-1">{bookings.length}</h4>
                       </div>
                       <div className="w-10 h-10 rounded-lg bg-teal-500/10 flex items-center justify-center text-teal-400">
@@ -3622,7 +4336,7 @@ export default function App() {
 
                     <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-4 flex items-center justify-between">
                       <div>
-                        <p className="text-xs text-slate-400 font-medium">بانتظار المراجعة</p>
+                        <p className="text-xs text-slate-400 font-medium">{t("pendingBookings", "بانتظار المراجعة")}</p>
                         <h4 className="text-2xl font-bold text-amber-400 mt-1">
                           {bookings.filter(b => b.status === "pending").length}
                         </h4>
@@ -3634,7 +4348,7 @@ export default function App() {
 
                     <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-4 flex items-center justify-between">
                       <div>
-                        <p className="text-xs text-slate-400 font-medium">المؤكدة والمجدولة</p>
+                        <p className="text-xs text-slate-400 font-medium">{t("confirmedBookings", "المؤكدة والمجدولة")}</p>
                         <h4 className="text-2xl font-bold text-emerald-400 mt-1">
                           {bookings.filter(b => b.status === "confirmed").length}
                         </h4>
@@ -3646,7 +4360,7 @@ export default function App() {
 
                     <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-4 flex items-center justify-between">
                       <div>
-                        <p className="text-xs text-slate-400 font-medium">الملغاة</p>
+                        <p className="text-xs text-slate-400 font-medium">{t("cancelledBookings", "الملغاة")}</p>
                         <h4 className="text-2xl font-bold text-rose-400 mt-1">
                           {bookings.filter(b => b.status === "cancelled").length}
                         </h4>
@@ -3662,19 +4376,19 @@ export default function App() {
                     <div className="space-y-1">
                       <h4 className="font-bold text-white text-sm flex items-center gap-2">
                         <Bell className="w-4 h-4 text-teal-400" />
-                        <span>إشعارات الحجوزات المباشرة للمتصفح 📱🔔</span>
+                        <span>{t("browserNotificationsTitle", "إشعارات الحجوزات المباشرة للمتصفح 📱🔔")}</span>
                       </h4>
                       <p className="text-xs text-slate-400 max-w-2xl leading-relaxed">
-                        قم بتفعيل ميزة إشعارات المتصفح لتلقي تنبيه فوري مصحوب بنغمة رنين مميزة على هاتفك أو حاسوبك بمجرد قيام مريض بحجز موعد جديد عبر الشات بوت الذكي، حتى وإن كان التطبيق مغلقاً أو مفتوحاً في الخلفية!
+                        {t("browserNotificationsDesc", "قم بتفعيل ميزة إشعارات المتصفح لتلقي تنبيه فوري مصحوب بنغمة رنين مميزة على هاتفك أو حاسوبك بمجرد قيام مريض بحجز موعد جديد عبر الشات بوت الذكي، حتى وإن كان التطبيق مغلقاً أو مفتوحاً في الخلفية!")}
                       </p>
                       <div className="flex items-center gap-2 pt-1">
-                        <span className="text-[10px] text-slate-500 font-medium">حالة الإذن الحالية:</span>
+                        <span className="text-[10px] text-slate-500 font-medium">{t("notificationPermissionLabel", "حالة الإذن الحالية:")}</span>
                         {notificationPermission === "granted" ? (
-                          <span className="text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2.5 py-0.5 rounded-full font-bold">نشط ومفعل 🟢</span>
+                          <span className="text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2.5 py-0.5 rounded-full font-bold">{t("permissionActive", "نشط ومفعل 🟢")}</span>
                         ) : notificationPermission === "denied" ? (
-                          <span className="text-[10px] bg-rose-500/10 text-rose-400 border border-rose-500/20 px-2.5 py-0.5 rounded-full font-bold">محظور من المتصفح 🔴 (اضغط أيقونة القفل بجانب الرابط لتفعيله)</span>
+                          <span className="text-[10px] bg-rose-500/10 text-rose-400 border border-rose-500/20 px-2.5 py-0.5 rounded-full font-bold">{t("permissionBlocked", "محظور من المتصفح 🔴 (اضغط أيقونة القفل بجانب الرابط لتفعيله)")}</span>
                         ) : (
-                          <span className="text-[10px] bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2.5 py-0.5 rounded-full font-bold">بانتظار التفعيل ⏳</span>
+                          <span className="text-[10px] bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2.5 py-0.5 rounded-full font-bold">{t("permissionPending", "بانتظار التفعيل ⏳")}</span>
                         )}
                       </div>
                     </div>
@@ -3690,7 +4404,7 @@ export default function App() {
                         }`}
                       >
                         <Bell className="w-4 h-4" />
-                        <span>{notificationPermission === "granted" ? "إعادة اختبار التنبيه 🔔" : "تفعيل الإشعارات الآن"}</span>
+                        <span>{notificationPermission === "granted" ? t("testNotificationAlert", "إعادة اختبار التنبيه 🔔") : t("enableNotificationsNow", "تفعيل الإشعارات الآن")}</span>
                       </button>
                       
                       {notificationPermission === "granted" && (
@@ -3707,7 +4421,7 @@ export default function App() {
                           className="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold px-4 py-2.5 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer border border-slate-700/60"
                         >
                           <Sparkles className="w-4 h-4 text-teal-400" />
-                          <span>إرسال إشعار تجريبي</span>
+                          <span>{t("sendTestNotification", "إرسال إشعار تجريبي")}</span>
                         </button>
                       )}
                     </div>
@@ -3718,9 +4432,9 @@ export default function App() {
                     <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
                       <Sliders className="w-5 h-5 text-teal-400" />
                       <div>
-                        <h4 className="font-bold text-white text-sm">التحكم في الطاقة الاستيعابية وحالة استقبال الحجوزات للشات بوت ⚙️</h4>
+                        <h4 className="font-bold text-white text-sm">{t("capacityControlTitle", "التحكم في الطاقة الاستيعابية وحالة استقبال الحجوزات للشات بوت ⚙️")}</h4>
                         <p className="text-[11px] text-slate-400 mt-0.5">
-                          حدد أقصى عدد حجوزات مسموح بها لليوم أو تحكم يدويًا في ردود الشات بوت للمرضى عند محاولة الحجز.
+                          {t("capacityControlDesc", "حدد أقصى عدد حجوزات مسموح بها لليوم أو تحكم يدويًا في ردود الشات بوت للمرضى عند محاولة الحجز.")}
                         </p>
                       </div>
                     </div>
@@ -3729,7 +4443,7 @@ export default function App() {
                       {/* Section 1: Limits & Caps */}
                       <div className="space-y-4">
                         <h5 className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
-                          <span>📊 تحديد سقف الحجوزات التلقائي</span>
+                          <span>{t("bookingLimitHeader", "📊 تحديد سقف الحجوزات التلقائي")}</span>
                         </h5>
                         
                         <div className="flex items-center gap-3">
@@ -3741,12 +4455,12 @@ export default function App() {
                               className="sr-only peer" 
                             />
                             <div className="w-9 h-5 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-300 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-teal-500 peer-checked:after:bg-slate-950"></div>
-                            <span className="mr-2 text-xs text-slate-300 select-none">تفعيل الحد الأقصى التلقائي لعدد الحجوزات</span>
+                            <span className="mr-2 text-xs text-slate-300 select-none">{t("enableBookingMaxLimit", "تفعيل الحد الأقصى التلقائي لعدد الحجوزات")}</span>
                           </label>
                         </div>
 
                         <div className="space-y-2">
-                          <label className="block text-[11px] text-slate-400">الحد الأقصى للحجوزات اليومية:</label>
+                          <label className="block text-[11px] text-slate-400">{t("maxDailyBookingsLabel", "الحد الأقصى للحجوزات اليومية:")}</label>
                           <div className="flex items-center gap-2">
                             <input
                               type="number"
@@ -3756,16 +4470,16 @@ export default function App() {
                               onChange={(e) => setMaxBookingsCount(parseInt(e.target.value) || 1)}
                               className="bg-slate-950/60 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-teal-500/50 w-24 disabled:opacity-40"
                             />
-                            <span className="text-xs text-slate-400">حجوزات نشطة اليوم</span>
+                            <span className="text-xs text-slate-400">{t("activeBookingsCountLabel", "حجوزات نشطة اليوم")}</span>
                           </div>
                         </div>
 
                         {/* Progress display */}
                         <div className="bg-slate-950/40 border border-slate-800/80 rounded-lg p-3 space-y-2">
                           <div className="flex justify-between items-center text-[11px]">
-                            <span className="text-slate-400">معدل الامتلاء الفعلي اليوم:</span>
+                            <span className="text-slate-400">{t("actualOccupancyLabel", "معدل الامتلاء الفعلي اليوم:")}</span>
                             <span className="font-bold text-teal-400">
-                              {bookings.filter(b => b.status === "pending" || b.status === "confirmed").length} / {maxBookingsCount} حجز
+                              {bookings.filter(b => b.status === "pending" || b.status === "confirmed").length} / {maxBookingsCount} {t("bookingUnit", "حجز")}
                             </span>
                           </div>
                           <div className="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
@@ -3779,7 +4493,7 @@ export default function App() {
                             ></div>
                           </div>
                           {enableBookingLimits && bookings.filter(b => b.status === "pending" || b.status === "confirmed").length >= maxBookingsCount && (
-                            <p className="text-[10px] text-rose-400 font-medium">⚠️ تم الوصول للحد الأقصى! الشات بوت سيرد تلقائياً بأن الحجوزات مكتملة.</p>
+                            <p className="text-[10px] text-rose-400 font-medium">{t("maxReachedWarningText", "⚠️ تم الوصول للحد الأقصى! الشات بوت سيرد تلقائياً بأن الحجوزات مكتملة.")}</p>
                           )}
                         </div>
                       </div>
@@ -3787,7 +4501,7 @@ export default function App() {
                       {/* Section 2: Manual Control State Selection */}
                       <div className="space-y-3">
                         <h5 className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
-                          <span>🕒 وضع الرد الحالي للشات بوت (تجاوز يدوي)</span>
+                          <span>{t("botResponseModeHeader", "🕒 وضع الرد الحالي للشات بوت (تجاوز يدوي)")}</span>
                         </h5>
 
                         <div className="space-y-2">
@@ -3808,8 +4522,8 @@ export default function App() {
                               </div>
                             </div>
                             <div>
-                              <span className="text-xs font-bold block text-emerald-400">مفتوح - استقبال عادي للحجوزات 🟢</span>
-                              <span className="text-[10px] leading-relaxed block mt-0.5">يتم استقبال الحجوزات بشكل طبيعي عبر الاستمارة الذكية طالما لم يتم تجاوز الحد الأقصى.</span>
+                              <span className="text-xs font-bold block text-emerald-400">{t("bookingSystemStatusOpen", "مفتوح - استقبال عادي للحجوزات 🟢")}</span>
+                              <span className="text-[10px] leading-relaxed block mt-0.5">{t("bookingSystemStatusOpenDesc", "يتم استقبال الحجوزات بشكل طبيعي عبر الاستمارة الذكية طالما لم يتم تجاوز الحد الأقصى.")}</span>
                             </div>
                           </div>
 
@@ -3830,8 +4544,8 @@ export default function App() {
                               </div>
                             </div>
                             <div>
-                              <span className="text-xs font-bold block text-rose-400">مغلق - الحجوزات انتهت لليوم 🔴</span>
-                              <span className="text-[10px] leading-relaxed block mt-0.5">يرد الشات بوت فوراً للمريض بأن الحجوزات قد اكتملت لليوم وينصح بالاتصال أو الحجز غداً.</span>
+                              <span className="text-xs font-bold block text-rose-400">{t("bookingSystemStatusClosedLimit", "مغلق - الحجوزات انتهت لليوم 🔴")}</span>
+                              <span className="text-[10px] leading-relaxed block mt-0.5">{t("bookingSystemStatusClosedLimitDesc", "يرد الشات بوت فوراً للمريض بأن الحجوزات قد اكتملت لليوم وينصح بالاتصال أو الحجز غداً.")}</span>
                             </div>
                           </div>
 
@@ -3852,8 +4566,8 @@ export default function App() {
                               </div>
                             </div>
                             <div>
-                              <span className="text-xs font-bold block text-amber-400">خارج أوقات العمل الرسمية 🕒</span>
-                              <span className="text-[10px] leading-relaxed block mt-0.5">يرد الشات بوت فوراً للمريض بأن العيادة مغلقة حالياً خارج أوقات العمل ويطلب ترك الهاتف لخدمته لاحقاً.</span>
+                              <span className="text-xs font-bold block text-amber-400">{t("bookingSystemStatusOutsideHours", "خارج أوقات العمل الرسمية 🕒")}</span>
+                              <span className="text-[10px] leading-relaxed block mt-0.5">{t("bookingSystemStatusOutsideHoursDesc", "يرد الشات بوت فوراً للمريض بأن العيادة مغلقة حالياً خارج أوقات العمل ويطلب ترك الهاتف لخدمته لاحقاً.")}</span>
                             </div>
                           </div>
                         </div>
@@ -3869,7 +4583,7 @@ export default function App() {
                         className="bg-teal-500 hover:bg-teal-400 text-slate-950 text-xs font-bold px-4 py-2 rounded-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer border border-teal-400"
                       >
                         <Save className="w-4 h-4" />
-                        <span>حفظ إعدادات الحجز وتحديث الشات بوت فوراً</span>
+                        <span>{t("saveBookingSettingsBtn", "حفظ إعدادات الحجز وتحديث الشات بوت فوراً")}</span>
                       </button>
                     </div>
                   </div>
@@ -3886,54 +4600,54 @@ export default function App() {
                       >
                         <h4 className="font-bold text-white text-sm flex items-center gap-2 border-b border-slate-800 pb-2">
                           <Plus className="w-4 h-4 text-teal-400" />
-                          <span>إدخال حجز يدوي جديد (من الهاتف أو مريض في العيادة)</span>
+                          <span>{t("manualBookingFormTitle", "إدخل حجز يدوي جديد (من الهاتف أو مريض في العيادة)")}</span>
                         </h4>
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                           <div>
-                            <label className="block text-xs text-slate-400 mb-1.5 font-medium">اسم المريض بالكامل</label>
+                            <label className="block text-xs text-slate-400 mb-1.5 font-medium">{t("manualPatientNameLabel", "اسم المريض بالكامل")}</label>
                             <input
                               type="text"
                               value={manualPatientName}
                               onChange={(e) => setManualPatientName(e.target.value)}
-                              placeholder="مثال: صالح أحمد الزهراني"
+                              placeholder={t("manualPatientNamePlaceholder", "مثال: صالح أحمد الزهراني")}
                               className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-200 text-xs focus:ring-1 focus:ring-teal-500 focus:outline-none"
                               required
                             />
                           </div>
                           
                           <div>
-                            <label className="block text-xs text-slate-400 mb-1.5 font-medium">رقم الجوال للتواصل</label>
+                            <label className="block text-xs text-slate-400 mb-1.5 font-medium">{t("manualPatientPhoneLabel", "رقم الجوال للتواصل")}</label>
                             <input
                               type="tel"
                               value={manualPatientPhone}
                               onChange={(e) => setManualPatientPhone(e.target.value)}
-                              placeholder="مثال: 0512345678"
+                              placeholder={t("manualPatientPhonePlaceholder", "مثال: 0512345678")}
                               className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-200 text-xs text-right focus:ring-1 focus:ring-teal-500 focus:outline-none"
                               required
                             />
                           </div>
 
                           <div>
-                            <label className="block text-xs text-slate-400 mb-1.5 font-medium">الخدمة المطلوبة</label>
+                            <label className="block text-xs text-slate-400 mb-1.5 font-medium">{t("manualServiceNameLabel", "الخدمة المطلوبة")}</label>
                             <select
                               value={manualServiceName}
                               onChange={(e) => setManualServiceName(e.target.value)}
                               className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-200 text-xs focus:ring-1 focus:ring-teal-500 focus:outline-none cursor-pointer"
                               required
                             >
-                              <option value="">-- اختر الخدمة --</option>
+                              <option value="">{t("manualServiceNamePlaceholder", "-- اختر الخدمة --")}</option>
                               {services.map(s => (
                                 <option key={s.id} value={s.name}>{s.name} ({s.price})</option>
                               ))}
                               {services.length === 0 && (
-                                <option value="استشارة عامة">استشارة عامة (افتراضي)</option>
+                                <option value="استشارة عامة">{t("defaultGeneralConsultation", "استشارة عامة (افتراضي)")}</option>
                               )}
                             </select>
                           </div>
 
                           <div>
-                            <label className="block text-xs text-slate-400 mb-1.5 font-medium">تاريخ الموعد</label>
+                            <label className="block text-xs text-slate-400 mb-1.5 font-medium">{t("manualBookingDateLabel", "تاريخ الموعد")}</label>
                             <input
                               type="date"
                               value={manualBookingDate}
@@ -3943,7 +4657,7 @@ export default function App() {
                           </div>
 
                           <div>
-                            <label className="block text-xs text-slate-400 mb-1.5 font-medium">الوقت المفضل</label>
+                            <label className="block text-xs text-slate-400 mb-1.5 font-medium">{t("manualBookingTimeLabel", "الوقت المفضل")}</label>
                             <input
                               type="time"
                               value={manualBookingTime}
@@ -3953,12 +4667,12 @@ export default function App() {
                           </div>
 
                           <div>
-                            <label className="block text-xs text-slate-400 mb-1.5 font-medium">ملاحظات أو الأعراض الشكوى</label>
+                            <label className="block text-xs text-slate-400 mb-1.5 font-medium">{t("manualNotesLabel", "ملاحظات أو الأعراض الشكوى")}</label>
                             <input
                               type="text"
                               value={manualNotes}
                               onChange={(e) => setManualNotes(e.target.value)}
-                              placeholder="ملاحظات اختيارية عن الأعراض أو حالة المريض"
+                              placeholder={t("manualNotesPlaceholder", "ملاحظات اختيارية عن الأعراض أو حالة المريض")}
                               className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-200 text-xs focus:ring-1 focus:ring-teal-500 focus:outline-none"
                             />
                           </div>
@@ -3970,7 +4684,7 @@ export default function App() {
                             className="bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold px-5 py-2 rounded-lg text-xs transition-all flex items-center gap-1.5 cursor-pointer"
                           >
                             <Check className="w-4 h-4" />
-                            <span>تأكيد تسجيل الحجز 📅</span>
+                            <span>{t("confirmBookingBtn", "تأكيد تسجيل الحجز 📅")}</span>
                           </button>
                         </div>
                       </motion.form>
@@ -3983,12 +4697,12 @@ export default function App() {
                       <div>
                         <h4 className="font-bold text-white text-sm flex items-center gap-2">
                           <TrendingUp className="w-4 h-4 text-teal-400" />
-                          <span>تحليل الطلب وتوزيع الحجوزات حسب الخدمة 📊</span>
+                          <span>{t("bookingAnalyticsTitle", "تحليل الطلب وتوزيع الحجوزات حسب الخدمة 📊")}</span>
                         </h4>
                         <p className="text-[11px] text-slate-400 mt-0.5">
                           {getBookingChartData().isPastWeekOnly 
-                            ? "إحصائيات دقيقة للحجوزات المسجلة خلال الأسبوع الماضي (آخر 7 أيام)" 
-                            : "إحصائيات إجمالية لكافة الحجوزات المسجلة بالعيادة (لعدم وجود حجوزات كافية في الأسبوع الأخير)"}
+                            ? t("bookingAnalyticsPastWeek", "إحصائيات دقيقة للحجوزات المسجلة خلال الأسبوع الماضي (آخر 7 أيام)") 
+                            : t("bookingAnalyticsTotalAll", "إحصائيات إجمالية لكافة الحجوزات المسجلة بالعيادة (لعدم وجود حجوزات كافية في الأسبوع الأخير)")}
                         </p>
                       </div>
                       
@@ -4090,7 +4804,7 @@ export default function App() {
                       <Search className="absolute right-3 top-2.5 w-4 h-4 text-slate-400" />
                       <input
                         type="text"
-                        placeholder="البحث بالاسم أو رقم الهاتف..."
+                        placeholder={currentLanguage === "ar" ? "البحث بالاسم أو رقم الهاتف..." : currentLanguage === "fr" ? "Rechercher par nom ou téléphone..." : "Search by name or phone..."}
                         value={bookingSearchQuery}
                         onChange={(e) => setBookingSearchQuery(e.target.value)}
                         className="w-full bg-slate-950 border border-slate-800 rounded-lg pr-9 pl-3 py-2 text-slate-200 text-xs focus:ring-1 focus:ring-teal-500 focus:outline-none"
@@ -4109,10 +4823,10 @@ export default function App() {
                               : "text-slate-400 hover:text-slate-200"
                           }`}
                         >
-                          {status === "all" && "الكل"}
-                          {status === "pending" && "قيد الانتظار"}
-                          {status === "confirmed" && "المؤكدة"}
-                          {status === "cancelled" && "الملغاة"}
+                          {status === "all" && (currentLanguage === "ar" ? "الكل" : currentLanguage === "fr" ? "Tous" : "All")}
+                          {status === "pending" && (currentLanguage === "ar" ? "قيد الانتظار" : currentLanguage === "fr" ? "En attente" : "Pending")}
+                          {status === "confirmed" && (currentLanguage === "ar" ? "المؤكدة" : currentLanguage === "fr" ? "Confirmés" : "Confirmed")}
+                          {status === "cancelled" && (t('cancelled'))}
                         </button>
                       ))}
                     </div>
@@ -4128,8 +4842,12 @@ export default function App() {
                     }).length === 0 ? (
                       <div className="bg-slate-900/20 border border-slate-800 rounded-xl py-12 px-4 text-center">
                         <Calendar className="w-12 h-12 text-slate-600 mx-auto mb-3 animate-pulse" />
-                        <h5 className="font-bold text-slate-400 text-sm">لا توجد حجوزات مسجلة تطابق بحثك حالياً</h5>
-                        <p className="text-xs text-slate-500 mt-1">قم بتجربة الشات بوت على اليسار لحجز موعد ومراقبته هنا فورياً!</p>
+                        <h5 className="font-bold text-slate-400 text-sm">
+                          {t('noBookingsMatch')}
+                        </h5>
+                        <p className="text-xs text-slate-500 mt-1">
+                          {t('tryChatbotLeft')}
+                        </p>
                       </div>
                     ) : (
                       bookings
@@ -4150,7 +4868,7 @@ export default function App() {
                               {/* Left / Info Side */}
                               <div className="space-y-2 flex-1">
                                 <div className="flex items-center gap-2 flex-wrap">
-                                  <h4 className="font-bold text-white text-sm md:text-base">{b.patientName}</h4>
+                                  <h4 className="font-bold text-white text-sm md:text-base">{localizeDynamicText(b.patientName, currentLanguage)}</h4>
                                   
                                   {/* Status badge */}
                                   <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
@@ -4160,16 +4878,16 @@ export default function App() {
                                       ? "bg-rose-500/10 text-rose-400 border border-rose-500/20"
                                       : "bg-amber-500/10 text-amber-400 border border-amber-500/20 animate-pulse"
                                   }`}>
-                                    {b.status === "confirmed" && "موعد مؤكد"}
-                                    {b.status === "cancelled" && "ملغي"}
-                                    {b.status === "pending" && "بانتظار التأكيد"}
+                                    {b.status === 'confirmed' && t('appointmentConfirmed')}
+                                    {b.status === 'cancelled' && t('appointmentCancelled')}
+                                    {b.status === 'pending' && t('appointmentPending')}
                                   </span>
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-1 text-xs">
                                   <div className="flex items-center gap-1.5 text-slate-300">
-                                    <span className="text-slate-400">الخدمة:</span>
-                                    <span className="font-medium text-teal-400">{b.serviceName}</span>
+                                    <span className="text-slate-400">{t('serviceLabelColon')}</span>
+                                    <span className="font-medium text-teal-400">{localizeDynamicText(b.serviceName, currentLanguage)}</span>
                                   </div>
 
                                   <div className="flex items-center gap-1.5 text-slate-300">
@@ -4181,7 +4899,7 @@ export default function App() {
                                   </div>
 
                                   <div className="flex items-center gap-1.5 text-slate-300">
-                                    <span className="text-slate-400">رقم الهاتف:</span>
+                                    <span className="text-slate-400">{t('phoneLabelColon')}</span>
                                     <a href={`tel:${b.patientPhone}`} className="text-sky-400 hover:underline flex items-center gap-1">
                                       <span>{b.patientPhone}</span>
                                       <Phone className="w-3 h-3" />
@@ -4189,16 +4907,16 @@ export default function App() {
                                   </div>
 
                                   <div className="flex items-center gap-1.5 text-slate-400">
-                                    <span>تاريخ الطلب:</span>
+                                    <span>{t('requestDateLabelColon')}</span>
                                     <span className="text-[10px]" dir="ltr">
-                                      {new Date(b.createdAt).toLocaleString("ar-SA", { hour12: true })}
+                                      {new Date(b.createdAt).toLocaleString(currentLanguage === "ar" ? "ar-DZ" : currentLanguage === "fr" ? "fr-FR" : "en-US", { hour12: true })}
                                     </span>
                                   </div>
                                 </div>
 
                                 {b.notes && (
                                   <div className="bg-slate-950/40 rounded-lg p-2.5 border border-slate-800/80 mt-2 text-xs text-slate-300 italic">
-                                    " {b.notes} "
+                                    " {localizeDynamicText(b.notes, currentLanguage)} "
                                   </div>
                                 )}
 
@@ -4207,9 +4925,9 @@ export default function App() {
                                     <div className="flex items-center justify-between border-b border-slate-800/80 pb-1.5">
                                       <span className="text-[11px] font-bold text-slate-300 flex items-center gap-1.5">
                                         <Bell className="w-3.5 h-3.5 text-teal-400" />
-                                        <span>تنبيهات وتذكيرات الحجز المجدولة</span>
+                                        <span>{t('scheduledReminders')}</span>
                                       </span>
-                                      <span className="text-[9px] text-slate-500 font-medium">سجل التذكير</span>
+                                      <span className="text-[9px] text-slate-500 font-medium">{t('reminderHistory')}</span>
                                     </div>
 
                                     <div className="space-y-2">
@@ -4217,8 +4935,8 @@ export default function App() {
                                         <div key={rem.id} className="bg-slate-900/50 rounded-lg p-2.5 border border-slate-800/40 text-[11px] space-y-2">
                                           <div className="flex flex-wrap items-center justify-between gap-1.5">
                                             <div className="flex items-center gap-1.5">
-                                              <span className="text-slate-400 font-bold">التوقيت:</span>
-                                              <span className="text-teal-400 font-medium">{rem.timeBeforeLabel}</span>
+                                              <span className="text-slate-400 font-bold">{t('timingLabelColon')}</span>
+                                              <span className="text-teal-400 font-medium">{localizeDynamicText(rem.timeBeforeLabel, currentLanguage)}</span>
                                             </div>
 
                                             <div className="flex items-center gap-2">
@@ -4228,23 +4946,23 @@ export default function App() {
                                                   : "bg-amber-500/10 text-amber-400 border border-amber-500/20"
                                               }`}>
                                                 <span className={`w-1 h-1 rounded-full ${rem.isSent ? "bg-emerald-400" : "bg-amber-400 animate-pulse"}`} />
-                                                <span>{rem.isSent ? `تم الإرسال للشات بوت (${rem.sentAt})` : "مجدول تلقائياً"}</span>
+                                                <span>{rem.isSent ? `${t('sentToChatbot')} (${rem.sentAt})` : t('autoScheduled')}</span>
                                               </span>
 
                                               {!rem.isSent && (
                                                 <button
                                                   onClick={() => handleTriggerReminder(b.id, rem.id)}
                                                   className="bg-teal-500/10 hover:bg-teal-500/20 text-teal-400 text-[10px] px-2 py-1 rounded border border-teal-500/20 font-bold transition-all cursor-pointer flex items-center gap-1"
-                                                  title="إرسال رسالة التذكير الآن إلى واجهة الشات بوت"
+                                                  title={t('sendReminderNow')}
                                                 >
-                                                  <span>إرسال الآن 📲</span>
+                                                  <span>{t('sendNowEmoji')}</span>
                                                 </button>
                                               )}
                                             </div>
                                           </div>
 
                                           <div className="text-slate-300 italic bg-slate-950/40 p-1.5 rounded border border-slate-800/40 leading-relaxed text-[10px]">
-                                            "{rem.message}"
+                                            "{localizeDynamicText(rem.message, currentLanguage)}"
                                           </div>
                                         </div>
                                       ))}
@@ -4262,14 +4980,14 @@ export default function App() {
                                       className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs py-1.5 px-3 rounded-lg transition-all flex items-center gap-1 cursor-pointer"
                                     >
                                       <UserCheck className="w-3.5 h-3.5" />
-                                      <span>تأكيد ✅</span>
+                                      <span>{t('confirmEmoji')}</span>
                                     </button>
                                     <button
                                       onClick={() => handleCancelBooking(b.id)}
                                       className="bg-slate-800 hover:bg-slate-750 text-rose-400 border border-slate-700 font-medium text-xs py-1.5 px-3 rounded-lg transition-all flex items-center gap-1 cursor-pointer"
                                     >
                                       <XCircle className="w-3.5 h-3.5" />
-                                      <span>إلغاء الحجز</span>
+                                      <span>{t('cancelBooking')}</span>
                                     </button>
                                   </>
                                 )}
@@ -4280,7 +4998,7 @@ export default function App() {
                                     className="bg-slate-800 hover:bg-slate-750 text-rose-400 border border-slate-700 font-medium text-xs py-1.5 px-3 rounded-lg transition-all flex items-center gap-1 cursor-pointer"
                                   >
                                     <XCircle className="w-3.5 h-3.5" />
-                                    <span>إلغاء الحجز ❌</span>
+                                    <span>{t('cancelBookingEmoji')}</span>
                                   </button>
                                 )}
 
@@ -4290,14 +5008,14 @@ export default function App() {
                                     className="bg-slate-800 hover:bg-slate-750 text-teal-400 border border-slate-700 font-medium text-xs py-1.5 px-3 rounded-lg transition-all flex items-center gap-1 cursor-pointer"
                                   >
                                     <RefreshCw className="w-3.5 h-3.5" />
-                                    <span>إعادة تفعيل 🔄</span>
+                                    <span>{t('reactivateEmoji')}</span>
                                   </button>
                                 )}
 
                                 <button
                                   onClick={() => handleDeleteBooking(b.id)}
                                   className="text-slate-500 hover:text-rose-500 p-2 rounded-lg hover:bg-rose-500/10 transition-all cursor-pointer"
-                                  title="حذف من السجلات"
+                                  title={t('deleteFromRecords')}
                                 >
                                   <Trash className="w-4 h-4" />
                                 </button>
@@ -4557,7 +5275,7 @@ export default function App() {
 
                   {/* Part C: Comprehensive Clinic Definition, Services, CV & Working Hours */}
                   <div className="space-y-4 pt-5 border-t border-slate-800/80">
-                    <div className="flex justify-between items-center flex-wrap gap-2 text-right" dir="rtl">
+                    <div className="flex justify-between items-center flex-wrap gap-2 text-right" dir={isRtl ? "rtl" : "ltr"}>
                       <div>
                         <h4 className="font-bold text-slate-200 text-sm flex items-center gap-1.5 justify-end">
                           <span>التعريف الشامل بالعيادة، الخدمات، السيرة الذاتية وأوقات العمل 🏥</span>
@@ -4568,7 +5286,7 @@ export default function App() {
                     </div>
 
                     <div className="bg-slate-900/40 p-5 rounded-xl border border-slate-800 space-y-4">
-                      <div className="flex justify-between items-center gap-2 flex-wrap" dir="rtl">
+                      <div className="flex justify-between items-center gap-2 flex-wrap" dir={isRtl ? "rtl" : "ltr"}>
                         <span className="text-xs font-bold text-slate-300">اكتب هنا التعريف التفصيلي لعيادتك:</span>
                         <button
                           type="button"
@@ -4591,11 +5309,11 @@ export default function App() {
                         onChange={(e) => setClinicInfo(prev => ({ ...prev, notes: e.target.value }))}
                         placeholder="مثال: تلتزم عيادتنا بتقديم خدمات طبية متكاملة... (اضغط على الزر أعلاه لتنزيل مثال جاهز لتعديله فوراً)"
                         className="w-full bg-slate-950 border border-slate-700/60 rounded-xl px-4 py-3 text-slate-200 text-xs focus:ring-2 focus:ring-teal-500 focus:outline-none min-h-[140px] leading-relaxed text-right"
-                        dir="rtl"
+                        dir={isRtl ? "rtl" : "ltr"}
                       />
 
                       <div className="flex justify-between items-center gap-4 flex-wrap pt-2 border-t border-slate-850">
-                        <div className="text-[10px] text-slate-400 leading-relaxed text-right max-w-lg" dir="rtl">
+                        <div className="text-[10px] text-slate-400 leading-relaxed text-right max-w-lg" dir={isRtl ? "rtl" : "ltr"}>
                           * يتم استخدام هذه الفقرة مباشرة بواسطة <strong>محرك الذكاء الاصطناعي</strong> للإجابة على المرضى حول خدمات العيادة وأوقات العمل والسيرة الذاتية للطبيب وضمان تقديم معلومات دقيقة ودائمة.
                         </div>
                         <button
@@ -5049,7 +5767,7 @@ export default function App() {
                   {/* Top Analytics Cards Bento-Grid */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     {/* Stat Card 1: Total Conversations */}
-                    <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-800/80 flex items-center justify-between gap-3 text-right" dir="rtl">
+                    <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-800/80 flex items-center justify-between gap-3 text-right" dir={isRtl ? "rtl" : "ltr"}>
                       <div className="space-y-1">
                         <span className="text-[10px] text-slate-400 block font-bold">إجمالي المحادثات (اليوم)</span>
                         <div className="flex items-baseline gap-2">
@@ -5064,7 +5782,7 @@ export default function App() {
                     </div>
 
                     {/* Stat Card 2: AI Booking Rate with Circular Progress */}
-                    <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-800/80 flex items-center justify-between gap-3 text-right" dir="rtl">
+                    <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-800/80 flex items-center justify-between gap-3 text-right" dir={isRtl ? "rtl" : "ltr"}>
                       <div className="space-y-1">
                         <span className="text-[10px] text-slate-400 block font-bold">معدل الحجز الذكي الناجح</span>
                         <div className="flex items-baseline gap-2">
@@ -5083,7 +5801,7 @@ export default function App() {
                     </div>
 
                     {/* Stat Card 3: Patient Satisfaction Rating */}
-                    <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-800/80 flex items-center justify-between gap-3 sm:col-span-2 lg:col-span-1 text-right" dir="rtl">
+                    <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-800/80 flex items-center justify-between gap-3 sm:col-span-2 lg:col-span-1 text-right" dir={isRtl ? "rtl" : "ltr"}>
                       <div className="space-y-1">
                         <span className="text-[10px] text-slate-400 block font-bold">مستوى رضا المرضى (AI)</span>
                         <div className="flex items-baseline gap-1.5">
@@ -5105,7 +5823,7 @@ export default function App() {
                       <Sliders className="w-4 h-4 text-teal-400" />
                     </h5>
                     
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-right" dir="rtl">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-right" dir={isRtl ? "rtl" : "ltr"}>
                       {/* Control 1: Temperature */}
                       <div className="space-y-2">
                         <div className="flex justify-between items-center">
@@ -5221,7 +5939,7 @@ export default function App() {
                             }`}
                           >
                             {/* Badges and date */}
-                            <div className="flex justify-between items-center" dir="rtl">
+                            <div className="flex justify-between items-center" dir={isRtl ? "rtl" : "ltr"}>
                               <span className="text-[9px] text-slate-500 font-mono">{session.date}</span>
                               <div className="flex gap-1">
                                 {session.status === "pending_review" ? (
@@ -5258,7 +5976,7 @@ export default function App() {
                             </div>
 
                             {/* Footer hint */}
-                            <div className="flex justify-between items-center text-[9px] text-slate-500 border-t border-slate-850/60 pt-2 mt-1" dir="rtl">
+                            <div className="flex justify-between items-center text-[9px] text-slate-500 border-t border-slate-850/60 pt-2 mt-1" dir={isRtl ? "rtl" : "ltr"}>
                               <span>💬 {session.messages.length} رسائل متبادلة</span>
                               <span className="text-teal-400 hover:underline flex items-center gap-0.5">
                                 <ChevronLeft className="w-3 h-3" />
@@ -5275,7 +5993,7 @@ export default function App() {
                       <div className="lg:col-span-7 bg-slate-900/60 rounded-xl border border-slate-800 p-4.5 space-y-4 text-right">
                         
                         {/* Session Header */}
-                        <div className="flex justify-between items-start border-b border-slate-800 pb-3 flex-wrap gap-2 text-right" dir="rtl">
+                        <div className="flex justify-between items-start border-b border-slate-800 pb-3 flex-wrap gap-2 text-right" dir={isRtl ? "rtl" : "ltr"}>
                           <div>
                             <div className="flex items-center gap-2">
                               <span className="text-[9px] font-mono text-slate-500">#{selectedSession.id}</span>
@@ -5408,7 +6126,7 @@ export default function App() {
                               name="doctorMsg"
                               placeholder="اكتب ردك المباشر كطبيب (مثال: أهلاً بك يا أحمد، اطلعت على حالتك وسأكون بانتظارك)..."
                               className="flex-1 bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-amber-500 placeholder-slate-600 text-right"
-                              dir="rtl"
+                              dir={isRtl ? "rtl" : "ltr"}
                             />
                             <button
                               type="submit"
@@ -5435,7 +6153,7 @@ export default function App() {
                   exit={{ opacity: 0, x: -20 }}
                   className="space-y-6"
                 >
-                  <div className="border-b border-slate-800 pb-2 flex justify-between items-center flex-wrap gap-2 text-right" dir="rtl">
+                  <div className="border-b border-slate-800 pb-2 flex justify-between items-center flex-wrap gap-2 text-right" dir={isRtl ? "rtl" : "ltr"}>
                     <div className="space-y-1">
                       <h4 className="font-bold text-slate-200 text-sm">مركز التنزيل ونشر التطبيق في السوق التجاري 🚀</h4>
                       <p className="text-xs text-slate-400">حول مشروعك إلى تطبيق حقيقي للهواتف المحمولة والكمبيوتر، اربطه بـ WhatsApp و Telegram، وابدأ بجني الأرباح.</p>
@@ -5450,7 +6168,7 @@ export default function App() {
                   <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                     
                     {/* Left Panel: PWA Installer & App Download (5 cols) */}
-                    <div className="lg:col-span-5 bg-slate-900/40 border border-slate-800 rounded-xl p-5 space-y-4 text-right" dir="rtl">
+                    <div className="lg:col-span-5 bg-slate-900/40 border border-slate-800 rounded-xl p-5 space-y-4 text-right" dir={isRtl ? "rtl" : "ltr"}>
                       <div className="space-y-1">
                         <h5 className="text-xs font-black text-slate-200 flex items-center gap-1.5 justify-end">
                           <span>تحميل التطبيق كنسخة هاتف حقيقية 📱</span>
@@ -5509,7 +6227,7 @@ export default function App() {
                           {installDeviceType === "android" && (
                             <div className="text-right space-y-1.5 text-[10px] text-slate-400">
                               <span className="font-bold text-slate-300 text-right block">طريقة التثبيت اليدوية على أندرويد (Chrome):</span>
-                              <ol className="list-decimal list-inside space-y-1 text-right text-[9px]" dir="rtl">
+                              <ol className="list-decimal list-inside space-y-1 text-right text-[9px]" dir={isRtl ? "rtl" : "ltr"}>
                                 <li>افتح رابط التطبيق في متصفح <strong className="text-teal-400">Google Chrome</strong>.</li>
                                 <li>اضغط على رمز <strong className="text-slate-200">النقاط الثلاث (⋮)</strong> في الزاوية العلوية للمتصفح.</li>
                                 <li>اختر <strong className="text-slate-200">"تثبيت التطبيق" (Install App)</strong> أو "إضافة إلى الشاشة الرئيسية".</li>
@@ -5521,7 +6239,7 @@ export default function App() {
                           {installDeviceType === "ios" && (
                             <div className="text-right space-y-1.5 text-[10px] text-slate-400">
                               <span className="font-bold text-slate-300 text-right block">طريقة التثبيت على آيفون وآيباد (Safari):</span>
-                              <ol className="list-decimal list-inside space-y-1 text-right text-[9px]" dir="rtl">
+                              <ol className="list-decimal list-inside space-y-1 text-right text-[9px]" dir={isRtl ? "rtl" : "ltr"}>
                                 <li>افتح رابط التطبيق عبر متصفح <strong className="text-teal-400">Safari</strong> الافتراضي للآيفون.</li>
                                 <li>اضغط على زر <strong className="text-slate-200">"مشاركة" (Share - ⎋)</strong> في الأسفل.</li>
                                 <li>اسحب لأسفل واضغط على خيار <strong className="text-slate-200">"إضافة إلى الشاشة الرئيسية" (Add to Home Screen)</strong>.</li>
@@ -5533,7 +6251,7 @@ export default function App() {
                           {installDeviceType === "pc" && (
                             <div className="text-right space-y-1.5 text-[10px] text-slate-400">
                               <span className="font-bold text-slate-300 text-right block">طريقة التثبيت على الكمبيوتر والماك:</span>
-                              <ol className="list-decimal list-inside space-y-1 text-right text-[9px]" dir="rtl">
+                              <ol className="list-decimal list-inside space-y-1 text-right text-[9px]" dir={isRtl ? "rtl" : "ltr"}>
                                 <li>افتح التطبيق في متصفح Chrome أو Edge على جهازك المحمول أو المكتبي.</li>
                                 <li>ستلاحظ ظهور أيقونة <strong className="text-teal-400">"كمبيوتر محمول صغير مع سهم تنزيل"</strong> في شريط العنوان بالأعلى.</li>
                                 <li>اضغط عليها ثم اختر <strong className="text-slate-200">"تثبيت" (Install)</strong> لتشغيله كبرنامج مستقل على سطح المكتب.</li>
@@ -5545,7 +6263,7 @@ export default function App() {
                     </div>
 
                     {/* Right Panel: Multi-Channel WhatsApp / Telegram Webhook Integration (7 cols) */}
-                    <div className="lg:col-span-7 bg-slate-900/40 border border-slate-800 rounded-xl p-5 space-y-4 text-right" dir="rtl">
+                    <div className="lg:col-span-7 bg-slate-900/40 border border-slate-800 rounded-xl p-5 space-y-4 text-right" dir={isRtl ? "rtl" : "ltr"}>
                       <div className="space-y-1">
                         <h5 className="text-xs font-black text-slate-200 flex items-center gap-1.5 justify-end">
                           <span>ربط محرك الذكاء بقنوات التواصل الشهيرة 🔗</span>
@@ -5875,7 +6593,7 @@ export default function App() {
                   <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                     
                     {/* Profit Planner Calculator (5 cols) */}
-                    <div className="lg:col-span-5 bg-slate-900/40 border border-slate-800 rounded-xl p-5 space-y-4 text-right" dir="rtl">
+                    <div className="lg:col-span-5 bg-slate-900/40 border border-slate-800 rounded-xl p-5 space-y-4 text-right" dir={isRtl ? "rtl" : "ltr"}>
                       <div className="space-y-1">
                         <h5 className="text-xs font-black text-slate-200 flex items-center gap-1.5 justify-end">
                           <span>آلة احتساب أرباح بيع الخدمة للعيادات 💰</span>
@@ -5946,7 +6664,7 @@ export default function App() {
                     </div>
 
                     {/* Clinic Flyer Generator & PDF/Print Ready (7 cols) */}
-                    <div className="lg:col-span-7 bg-slate-900/40 border border-slate-800 rounded-xl p-5 space-y-4 text-right" dir="rtl">
+                    <div className="lg:col-span-7 bg-slate-900/40 border border-slate-800 rounded-xl p-5 space-y-4 text-right" dir={isRtl ? "rtl" : "ltr"}>
                       <div className="space-y-1">
                         <h5 className="text-xs font-black text-slate-200 flex items-center gap-1.5 justify-end">
                           <span>مولد بطاقة الاستقبال والمطبوعات الترويجية للعيادة 🖨️</span>
@@ -6079,6 +6797,426 @@ export default function App() {
                 </motion.div>
               )}
 
+              {/* Tab: Subscription & Billing Dashboard */}
+              {activeTab === "subscription" && (
+                <motion.div
+                  key="subscription-tab"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  className="space-y-6 text-right"
+                  dir={isRtl ? "rtl" : "ltr"}
+                >
+                  <div className="border-b border-slate-800 pb-3 flex justify-between items-center flex-wrap gap-2">
+                    <div>
+                      <h3 className="font-bold text-slate-100 text-lg flex items-center gap-2">
+                        <CreditCard className="w-5 h-5 text-emerald-400" />
+                        <span>{t('subscriptionPlans')}</span>
+                      </h3>
+                      <p className="text-xs text-slate-400 mt-1">تتبع استهلاك الشات بوت خارج المنصة وشحن باقات الرسائل الإضافية للمرضى.</p>
+                    </div>
+                    <span className="bg-emerald-500/10 text-emerald-400 text-xs px-2.5 py-1 rounded-full font-bold border border-emerald-500/20">
+                      {t('platformFree')}
+                    </span>
+                  </div>
+
+                  {/* Active Subscription Status Card */}
+                  <div className="bg-slate-900/60 rounded-2xl border border-slate-800 p-6 grid grid-cols-1 md:grid-cols-12 gap-6 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-2xl" />
+                    
+                    {/* Left: Message usage progress */}
+                    <div className="md:col-span-7 space-y-4">
+                      <div className="flex justify-between items-center">
+                        <span className="text-xs text-slate-400">{t('activePlan')}</span>
+                        <span className="text-xs bg-slate-800 px-2.5 py-1 rounded-lg text-teal-400 font-bold border border-slate-700">
+                          {msgSubPlan === "trial" ? t('planTrial') :
+                           msgSubPlan === "msg1500" ? t('plan1500') :
+                           msgSubPlan === "msg4000" ? t('plan4000') :
+                           msgSubPlan === "unlimited" ? t('planUnlimited') :
+                           t('planCustom')}
+                        </span>
+                      </div>
+
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-center text-sm">
+                          <span className="text-slate-300 font-medium">
+                            {t('messagesUsed')}: <strong className="text-white text-base">{msgUsed}</strong>
+                          </span>
+                          <span className="text-slate-400">
+                            {t('messagesRemaining')}: <strong className="text-teal-400 text-base">{msgSubPlan === "unlimited" ? t('unlimited') : Math.max(0, msgLimit - msgUsed)}</strong>
+                          </span>
+                        </div>
+
+                        {/* Visual Progress Meter */}
+                        <div className="w-full bg-slate-950 h-3 rounded-full overflow-hidden border border-slate-800">
+                          <motion.div
+                            initial={{ width: 0 }}
+                            animate={{ 
+                              width: msgSubPlan === "unlimited" ? "100%" : `${Math.min(100, (msgUsed / msgLimit) * 100)}%` 
+                            }}
+                            className={`h-full rounded-full ${
+                              msgSubPlan === "unlimited" 
+                                ? "bg-gradient-to-r from-emerald-500 to-teal-500" 
+                                : (msgUsed / msgLimit) >= 0.9 
+                                ? "bg-rose-500" 
+                                : "bg-gradient-to-r from-teal-500 to-emerald-400"
+                            }`}
+                          />
+                        </div>
+                        
+                        <div className="flex justify-between items-center text-[11px] text-slate-500 pt-0.5">
+                          <span>0</span>
+                          <span>{msgSubPlan === "unlimited" ? "♾️" : msgLimit}</span>
+                        </div>
+                      </div>
+
+                      {/* Remaining alarm text status */}
+                      <div className="pt-2">
+                        {msgSubPlan !== "unlimited" && msgUsed >= msgLimit ? (
+                          <div className="bg-rose-500/10 text-rose-400 text-xs p-3 rounded-xl border border-rose-500/20 font-bold flex items-center gap-2">
+                            <span className="w-2 h-2 bg-rose-500 rounded-full animate-ping" />
+                            <span>{t('alertExpired')}</span>
+                          </div>
+                        ) : msgSubPlan !== "unlimited" && (msgLimit - msgUsed <= msgLimit * 0.1) ? (
+                          <div className="bg-amber-500/10 text-amber-400 text-xs p-3 rounded-xl border border-amber-500/20 font-bold flex items-center gap-2">
+                            <span className="w-2 h-2 bg-amber-500 rounded-full animate-ping" />
+                            <span>{t('alert10Percent')}</span>
+                          </div>
+                        ) : (
+                          <div className="bg-emerald-500/5 text-emerald-400 text-xs p-3 rounded-xl border border-emerald-500/10 font-bold flex items-center gap-2">
+                            <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+                            <span>اشتراكك خارج المنصة نشط وفي وضع الاستعداد المستمر للرد على زبائن عيادتك. 🟢</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Right: Circle meter / quick stats */}
+                    <div className="md:col-span-5 bg-slate-950/60 rounded-xl p-4 border border-slate-800/80 flex flex-col justify-center items-center text-center">
+                      <div className="text-3xl font-black text-white flex items-baseline gap-1">
+                        <span>{msgSubPlan === "unlimited" ? "♾️" : Math.max(0, msgLimit - msgUsed)}</span>
+                        <span className="text-xs text-slate-400 font-normal">رسالة متبقية</span>
+                      </div>
+                      <p className="text-xs text-slate-500 mt-1">من رصيد استهلاك المرضى خارج المنصة</p>
+                      
+                      <div className="mt-4 flex gap-1.5 w-full">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            // Reset simulator consumed messages to show alarm behaviors easily
+                            saveMsgSubscriptionData("msg1500", 1500, 1400); // Set consumed to 1400 / 1500 (triggers 10% remaining alarm)
+                            showNotification("🔔 تم إعادة ضبط الاستهلاك لنسق المحاكاة (متبقي 10% من الرسائل لتجربة التنبيه)!", "info");
+                          }}
+                          className="flex-1 bg-slate-900 hover:bg-slate-850 text-slate-300 hover:text-slate-100 border border-slate-800 text-[10px] py-1.5 rounded-lg transition-all"
+                          title="يضبط الاستهلاك ليكون متبقي 10% لتجربة التنبيه"
+                        >
+                          محاكاة متبقي 10% ⚠️
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            // Set consumed to full to trigger expired alarm
+                            saveMsgSubscriptionData("msg1500", 1500, 1500); 
+                            showNotification("🔔 تم محاكاة انتهاء رصيد الباقة بالكامل لتجربة توقف الشات بوت!", "error");
+                          }}
+                          className="flex-1 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 text-[10px] py-1.5 rounded-lg transition-all"
+                          title="يضبط الاستهلاك ليكون 100% لتجربة التوقف التام"
+                        >
+                          محاكاة نفاد الرصيد 🚨
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Daily Messages Analytics Dashboard Chart (THE REQUESTED GRAPH) */}
+                  <div className="bg-slate-900/60 rounded-2xl border border-slate-800 p-6 space-y-4">
+                    <div className="flex justify-between items-center flex-wrap gap-2">
+                      <div className="space-y-0.5">
+                        <h4 className="font-bold text-slate-100 text-sm flex items-center gap-2 justify-end">
+                          <span>رسم بياني لعدد الرسائل اليومية 📊 (Dashboard)</span>
+                        </h4>
+                        <p className="text-xs text-slate-400">إحصائيات تفاعل المرضى والرسائل اليومية الصادرة والواردة خارج المنصة لآخر 7 أيام.</p>
+                      </div>
+                      <div className="flex gap-2">
+                        <span className="text-xs bg-teal-500/10 text-teal-400 border border-teal-500/20 px-2.5 py-1 rounded-full font-bold">
+                          إجمالي رسائل الأسبوع: {dailyMessagesData.reduce((acc, d) => acc + d.count, 0)} رسالة
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="h-[220px] w-full bg-slate-950/80 p-4 rounded-xl border border-slate-800/80">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart data={dailyMessagesData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                          <defs>
+                            <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="5%" stopColor="#0d9488" stopOpacity={0.3}/>
+                              <stop offset="95%" stopColor="#0d9488" stopOpacity={0}/>
+                            </linearGradient>
+                          </defs>
+                          <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+                          <XAxis dataKey="date" stroke="#64748b" fontSize={10} />
+                          <YAxis stroke="#64748b" fontSize={10} />
+                          <Tooltip 
+                            contentStyle={{ backgroundColor: '#020617', borderColor: '#1e293b', borderRadius: '8px' }}
+                            labelStyle={{ color: '#94a3b8', fontSize: '11px', fontWeight: 'bold' }}
+                            itemStyle={{ color: '#2dd4bf', fontSize: '11px' }}
+                          />
+                          <Area type="monotone" dataKey="count" name="عدد الرسائل" stroke="#2dd4bf" strokeWidth={2} fillOpacity={1} fill="url(#colorCount)" />
+                        </AreaChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </div>
+
+                  {/* Pricing Tiers Grid */}
+                  <div className="space-y-4">
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
+                      <h4 className="font-black text-slate-200 text-sm">{t('outsidePlatform')}</h4>
+                      <span className="text-xs bg-teal-500/15 border border-teal-500/30 text-teal-400 font-bold px-3 py-1 rounded-full">
+                        🌐 تدعم جميع الباقات الربط المباشر بـ (واتساب، تليجرام، فيسبوك ماسنجر، وإنستغرام)
+                      </span>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                      {/* Plan 1: 7 days free */}
+                      <div className={`bg-slate-900/60 rounded-xl p-5 border transition-all hover:scale-[1.02] flex flex-col justify-between ${msgSubPlan === "trial" ? "border-teal-500 shadow-lg shadow-teal-500/5 ring-1 ring-teal-500" : "border-slate-800"}`}>
+                        <div className="space-y-2">
+                          <span className="text-[10px] bg-slate-800 text-slate-300 font-bold px-2 py-0.5 rounded-full">باقة البداية 🆓</span>
+                          <h5 className="font-bold text-white text-sm">{t('planTrial')}</h5>
+                          <div className="text-2xl font-black text-white pt-1">0$ <span className="text-xs text-slate-400 font-normal">/ 7 أيام</span></div>
+                          <p className="text-[11px] text-slate-400 leading-relaxed pt-2">فترة تجريبية مجانية بالكامل لاستكشاف ميزات الشات بوت الذكي خارج المنصة.</p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            saveMsgSubscriptionData("trial", 999999, 0);
+                            showNotification("🎉 تم تفعيل الفترة التجريبية الـ 7 أيام المجانية بنجاح!", "success");
+                          }}
+                          className={`w-full text-xs font-bold py-2 px-3 rounded-lg mt-4 transition-all cursor-pointer ${
+                            msgSubPlan === "trial" ? "bg-teal-500 text-slate-950" : "bg-slate-800 hover:bg-slate-750 text-slate-200"
+                          }`}
+                        >
+                          {msgSubPlan === "trial" ? "نشط حالياً ✓" : "تفعيل الباقة مجاناً"}
+                        </button>
+                      </div>
+
+                      {/* Plan 2: 1500 messages */}
+                      <div className={`bg-slate-900/60 rounded-xl p-5 border transition-all hover:scale-[1.02] flex flex-col justify-between ${msgSubPlan === "msg1500" ? "border-teal-500 shadow-lg shadow-teal-500/5 ring-1 ring-teal-500" : "border-slate-800"}`}>
+                        <div className="space-y-2">
+                          <span className="text-[10px] bg-emerald-500/10 text-emerald-400 font-bold px-2 py-0.5 rounded-full">الباقة الفضية 🥈</span>
+                          <h5 className="font-bold text-white text-sm">{t('plan1500')}</h5>
+                          <div className="text-2xl font-black text-white pt-1">10$ <span className="text-xs text-slate-400 font-normal">/ دفعة</span></div>
+                          <p className="text-[11px] text-slate-400 leading-relaxed pt-2">شحن رصيد 1500 رسالة تفاعل صالحة للاستخدام في أي وقت دون انتهاء الصلاحية.</p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            saveMsgSubscriptionData("msg1500", 1500, 0);
+                            showNotification("🎉 تم الاشتراك بنجاح في باقة 1500 رسالة بقيمة 10$!", "success");
+                          }}
+                          className={`w-full text-xs font-bold py-2 px-3 rounded-lg mt-4 transition-all cursor-pointer ${
+                            msgSubPlan === "msg1500" ? "bg-teal-500 text-slate-950" : "bg-slate-800 hover:bg-slate-750 text-slate-200"
+                          }`}
+                        >
+                          {msgSubPlan === "msg1500" ? "نشط حالياً ✓" : "شراء الباقة بـ 10$"}
+                        </button>
+                      </div>
+
+                      {/* Plan 3: 4000 messages */}
+                      <div className={`bg-slate-900/60 rounded-xl p-5 border transition-all hover:scale-[1.02] flex flex-col justify-between ${msgSubPlan === "msg4000" ? "border-teal-500 shadow-lg shadow-teal-500/5 ring-1 ring-teal-500" : "border-slate-800"}`}>
+                        <div className="space-y-2">
+                          <span className="text-[10px] bg-amber-500/10 text-amber-400 font-bold px-2 py-0.5 rounded-full">الباقة الذهبية 🥇</span>
+                          <h5 className="font-bold text-white text-sm">{t('plan4000')}</h5>
+                          <div className="text-2xl font-black text-white pt-1">20$ <span className="text-xs text-slate-400 font-normal">/ دفعة</span></div>
+                          <p className="text-[11px] text-slate-400 leading-relaxed pt-2">شحن رصيد 4000 رسالة كاملة للعيادات المزدحمة لضمان بقاء الروبوت مستيقظاً.</p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            saveMsgSubscriptionData("msg4000", 4000, 0);
+                            showNotification("🎉 تم الاشتراك بنجاح في باقة 4000 رسالة بقيمة 20$!", "success");
+                          }}
+                          className={`w-full text-xs font-bold py-2 px-3 rounded-lg mt-4 transition-all cursor-pointer ${
+                            msgSubPlan === "msg4000" ? "bg-teal-500 text-slate-950" : "bg-slate-800 hover:bg-slate-750 text-slate-200"
+                          }`}
+                        >
+                          {msgSubPlan === "msg4000" ? "نشط حالياً ✓" : "شراء الباقة بـ 20$"}
+                        </button>
+                      </div>
+
+                      {/* Plan 4: Unlimited */}
+                      <div className={`bg-gradient-to-br from-slate-900 to-teal-950 rounded-xl p-5 border transition-all hover:scale-[1.02] flex flex-col justify-between ${msgSubPlan === "unlimited" ? "border-teal-400 shadow-lg shadow-teal-500/10 ring-1 ring-teal-400" : "border-slate-800"}`}>
+                        <div className="space-y-2">
+                          <span className="text-[10px] bg-teal-400 text-slate-950 font-black px-2 py-0.5 rounded-full">الباقة اللانهائية 🔥</span>
+                          <h5 className="font-bold text-teal-300 text-sm">{t('planUnlimited')}</h5>
+                          <div className="text-2xl font-black text-white pt-1">35$ <span className="text-xs text-slate-300 font-normal">/ شهرياً</span></div>
+                          <p className="text-[11px] text-slate-300 leading-relaxed pt-2">كل شيء غير محدود بالكامل! لا تقلق أبداً بشأن رصيد الرسائل أو التنبيهات.</p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            saveMsgSubscriptionData("unlimited", 999999, 0);
+                            showNotification("🎉 تم الاشتراك بنجاح في الباقة غير المحدودة بقيمة 35$/شهرياً!", "success");
+                          }}
+                          className="w-full text-xs font-bold py-2 px-3 rounded-lg mt-4 transition-all cursor-pointer bg-gradient-to-r from-teal-400 to-emerald-400 text-slate-950 hover:from-teal-300 hover:to-emerald-300 shadow-md shadow-teal-400/10"
+                        >
+                          {msgSubPlan === "unlimited" ? "نشط حالياً ✓" : "تفعيل اللامحدود بـ 35$"}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Plan 5: Custom Pay-as-you-go Slider ($1 = 100 messages) */}
+                  <div className="bg-slate-900/60 rounded-2xl border border-slate-800 p-6 space-y-4">
+                    <div className="space-y-1">
+                      <h4 className="font-bold text-slate-200 text-sm flex items-center gap-2 justify-end">
+                        <span>باقة الشحن المرنة المخصصة (1$ = 100 رسالة) 🎚️</span>
+                      </h4>
+                      <p className="text-xs text-slate-400">تحكم بقيمة الفاتورة الدقيقة! اشحن بأي مبلغ تريده لتقابل كل 1$ شحن 100 رسالة للمرضى خارج المنصة.</p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+                      <div className="md:col-span-8 space-y-2">
+                        <div className="flex justify-between items-center text-xs">
+                          <span className="text-slate-300 font-bold">مبلغ الشحن المخصص</span>
+                          <span className="text-teal-400 font-black">{customPaymentAmount}$ دولار</span>
+                        </div>
+                        <input 
+                          type="range" 
+                          min="1" 
+                          max="100" 
+                          step="1"
+                          value={customPaymentAmount}
+                          onChange={(e) => setCustomPaymentAmount(parseInt(e.target.value))}
+                          className="w-full accent-teal-400 bg-slate-800 rounded-lg cursor-pointer h-1.5"
+                        />
+                        <div className="flex justify-between text-[10px] text-slate-500 pt-1">
+                          <span>1$ (100 رسالة)</span>
+                          <span>100$ (10,000 رسالة)</span>
+                        </div>
+                      </div>
+
+                      <div className="md:col-span-4 bg-slate-950 p-4 rounded-xl border border-slate-850 flex flex-col items-center justify-center text-center">
+                        <div className="text-xl font-black text-emerald-400 flex items-center gap-1">
+                          <span>+{customPaymentAmount * 100}</span>
+                          <span className="text-xs font-normal text-slate-400">رسالة إضافية</span>
+                        </div>
+                        <p className="text-[10px] text-slate-500 mt-1">مقابل دفع {customPaymentAmount}$</p>
+                        
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const addMsgs = customPaymentAmount * 100;
+                            // If current plan was limited, extend it. Otherwise convert to custom
+                            const currentLimit = (msgSubPlan === "trial" || msgSubPlan === "unlimited") ? 0 : msgLimit;
+                            const nextLimit = currentLimit + addMsgs;
+                            saveMsgSubscriptionData("custom", nextLimit, msgUsed);
+                            showNotification(`🎉 تم شحن رصيدك بنجاح بمقدار +${addMsgs} رسالة إضافية مقابل دفع ${customPaymentAmount}$!`, "success");
+                          }}
+                          className="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs py-2 rounded-lg mt-3 transition-all cursor-pointer"
+                        >
+                          شحن الرصيد الآن 💳
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
+              {/* Tab: System Settings */}
+              {activeTab === "settings" && (
+                <motion.div
+                  key="settings-tab"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  className={`space-y-6 ${isRtl ? "text-right" : "text-left"}`}
+                  dir={isRtl ? "rtl" : "ltr"}
+                >
+                  <div className="border-b border-slate-800 pb-3">
+                    <h3 className={`font-bold text-slate-100 text-lg flex items-center gap-2 ${isRtl ? "" : "flex-row-reverse"}`}>
+                      <Settings className="w-5 h-5 text-teal-400 animate-spin" />
+                      <span>{t('settings')}</span>
+                    </h3>
+                    <p className="text-xs text-slate-400 mt-1">{t('settingsDesc')}</p>
+                  </div>
+
+                  {/* Multi-lingual Selector */}
+                  <div className="bg-slate-900/60 rounded-2xl border border-slate-800 p-6 space-y-4">
+                    <h4 className={`font-bold text-slate-200 text-sm flex items-center gap-2 ${isRtl ? "justify-end" : "justify-start"}`}>
+                      <span>{t('chooseLanguage')} 🌐</span>
+                    </h4>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+                      {/* Arabic */}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setCurrentLanguage("ar");
+                          localStorage.setItem("shafi_current_language", "ar");
+                          showNotification("تم تغيير لغة المنصة والتحكم إلى العربية بنجاح! 🇸🇦", "success");
+                        }}
+                        className={`p-5 rounded-xl border transition-all flex flex-col justify-between hover:border-teal-500 hover:bg-teal-500/5 ${isRtl ? "text-right" : "text-left"} ${
+                          currentLanguage === "ar" ? "border-teal-500 bg-teal-500/10 ring-1 ring-teal-500" : "border-slate-800"
+                        }`}
+                      >
+                        <div className="flex justify-between items-center w-full">
+                          <span className="text-2xl">🇸🇦</span>
+                          {currentLanguage === "ar" && <span className="bg-teal-500 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded-full">نشط ✓</span>}
+                        </div>
+                        <div className="mt-4">
+                          <div className="font-black text-white text-sm">{t('arabic')}</div>
+                          <p className="text-xs text-slate-400 mt-1">{t("arabicDesc", "عرض جميع علامات التبويب والمحاذاة باللغة العربية الافتراضية.")}</p>
+                        </div>
+                      </button>
+
+                      {/* English */}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setCurrentLanguage("en");
+                          localStorage.setItem("shafi_current_language", "en");
+                          showNotification("System language successfully changed to English! 🇺🇸", "success");
+                        }}
+                        className={`p-5 rounded-xl border transition-all flex flex-col justify-between hover:border-teal-500 hover:bg-teal-500/5 ${isRtl ? "text-right" : "text-left"} ${
+                          currentLanguage === "en" ? "border-teal-500 bg-teal-500/10 ring-1 ring-teal-500" : "border-slate-800"
+                        }`}
+                      >
+                        <div className="flex justify-between items-center w-full">
+                          <span className="text-2xl">🇺🇸</span>
+                          {currentLanguage === "en" && <span className="bg-teal-500 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded-full">Active ✓</span>}
+                        </div>
+                        <div className="mt-4">
+                          <div className="font-black text-white text-sm">{t('english')}</div>
+                          <p className="text-xs text-slate-400 mt-1">{t("englishDesc", "Translate all tab controls and descriptions to English layout.")}</p>
+                        </div>
+                      </button>
+
+                      {/* French */}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setCurrentLanguage("fr");
+                          localStorage.setItem("shafi_current_language", "fr");
+                          showNotification("Langue du système changée en français avec succès ! 🇫🇷", "success");
+                        }}
+                        className={`p-5 rounded-xl border transition-all flex flex-col justify-between hover:border-teal-500 hover:bg-teal-500/5 ${isRtl ? "text-right" : "text-left"} ${
+                          currentLanguage === "fr" ? "border-teal-500 bg-teal-500/10 ring-1 ring-teal-500" : "border-slate-800"
+                        }`}
+                      >
+                        <div className="flex justify-between items-center w-full">
+                          <span className="text-2xl">🇫🇷</span>
+                          {currentLanguage === "fr" && <span className="bg-teal-500 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded-full">Actif ✓</span>}
+                        </div>
+                        <div className="mt-4">
+                          <div className="font-black text-white text-sm">{t('french')}</div>
+                          <p className="text-xs text-slate-400 mt-1">{t("frenchDesc", "Traduire les contrôles et les descriptions en français.")}</p>
+                        </div>
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
             </AnimatePresence>
           </div>
         </div>
@@ -6105,13 +7243,13 @@ export default function App() {
                   <div className="w-3 h-3 bg-emerald-500 border-2 border-slate-900 rounded-full absolute -bottom-0.5 -right-0.5 animate-pulse" />
                 </div>
                 <div>
-                  <h4 className="font-bold text-xs text-slate-100 line-clamp-1">{clinicInfo.name || "مساعد العيادة الذكي"}</h4>
-                  <p className="text-[10px] text-slate-400 line-clamp-1">{clinicInfo.specialty || "شات بوت الاستفسارات والحجوزات"}</p>
+                  <h4 className="font-bold text-xs text-slate-100 line-clamp-1">{localizeDynamicText(clinicInfo.name, currentLanguage) || t('botSmartAssistant')}</h4>
+                  <p className="text-[10px] text-slate-400 line-clamp-1">{localizeDynamicText(clinicInfo.specialty, currentLanguage) || t('botSubtitle')}</p>
                 </div>
               </div>
               <div className="text-left">
                 <span className="text-[9px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-full font-bold">
-                  مستعد للرد 🤖
+                  {t('botStatusReady')}
                 </span>
               </div>
             </div>
@@ -6120,9 +7258,9 @@ export default function App() {
             <div className="bg-teal-500/5 border-b border-teal-500/10 px-3.5 py-2 shrink-0 flex items-start gap-2">
               <Clock className="w-3.5 h-3.5 text-teal-400 mt-0.5 shrink-0" />
               <div className="space-y-0.5 text-[10px] text-slate-300 leading-normal">
-                <span className="font-bold text-teal-400">تحديث اليوم من العيادة:</span>
-                <p className="line-clamp-2" title={dailyStatus || "لا توجد تحديثات خاصة لليوم"}>
-                  {dailyStatus || "العيادة تعمل بمواعيدها الرسمية ونرحب بكم في أي وقت!"}
+                <span className="font-bold text-teal-400">{t('botDailyUpdateBanner')}</span>
+                <p className="line-clamp-2" title={localizeDynamicText(dailyStatus, currentLanguage) || t('botDefaultUpdateText')}>
+                  {localizeDynamicText(dailyStatus, currentLanguage) || t('botDefaultUpdateText')}
                 </p>
               </div>
             </div>
@@ -6162,7 +7300,7 @@ export default function App() {
                     )}
 
                     {msg.audio && (
-                      <div className="rounded-xl p-2 border border-slate-800 bg-slate-900 flex items-center gap-2 max-w-[200px] md:max-w-[240px]" dir="rtl">
+                      <div className="rounded-xl p-2 border border-slate-800 bg-slate-900 flex items-center gap-2 max-w-[200px] md:max-w-[240px]" dir={isRtl ? "rtl" : "ltr"}>
                         <div className="bg-teal-500/15 p-1.5 rounded-lg text-teal-400 shrink-0">
                           <Volume2 className="w-3.5 h-3.5" />
                         </div>
@@ -6180,13 +7318,13 @@ export default function App() {
                           ? "bg-teal-500 text-slate-950 rounded-tr-none font-medium"
                           : "bg-slate-900 border border-slate-800 text-slate-100 rounded-tl-none"
                       }`}>
-                        {msg.text}
+                        {localizeDynamicText(msg.text, currentLanguage)}
                       </div>
                     )}
 
                     {/* Smart Interactive Booking Card Widget inside the Bot Bubble */}
                     {msg.isBookingCard && (
-                      <div className="mt-2 bg-slate-950/95 rounded-2xl p-4 border border-slate-800/85 space-y-3.5 w-72 md:w-80 shadow-xl" dir="rtl">
+                      <div className="mt-2 bg-slate-950/95 rounded-2xl p-4 border border-slate-800/85 space-y-3.5 w-72 md:w-80 shadow-xl" dir={isRtl ? "rtl" : "ltr"}>
                         {submittedBookingId === msg.id ? (
                           <div className="text-center py-5 space-y-2.5">
                             <motion.div
@@ -6196,29 +7334,29 @@ export default function App() {
                             >
                               <CheckCircle className="w-12 h-12 text-emerald-400 mx-auto animate-bounce" />
                             </motion.div>
-                            <p className="font-bold text-white text-xs">تم إرسال طلب الحجز بنجاح! 🎉</p>
+                            <p className="font-bold text-white text-xs">{t('botBookingSuccessTitle')}</p>
                             <p className="text-[10px] text-slate-400 leading-relaxed">
-                              لقد تم تدوين طلبك فورياً في لوحة تحكم الطبيب. شات بوت العيادة استقبل الحجز بنجاح وسنتصل بك للتأكيد.
+                              {t('botBookingSuccessDesc')}
                             </p>
                           </div>
                         ) : (
-                          <form onSubmit={(e) => handleChatBookingSubmit(e, msg.id)} className="space-y-3 text-right">
+                          <form onSubmit={(e) => handleChatBookingSubmit(e, msg.id)} className={`space-y-3 ${isRtl ? "text-right" : "text-left"}`}>
                             <div className="border-b border-slate-800/80 pb-2 flex items-center justify-between">
                               <div className="flex items-center gap-1.5">
                                 <Calendar className="w-4 h-4 text-teal-400" />
-                                <h5 className="font-bold text-teal-400 text-xs">استمارة الحجز الفوري الذكي</h5>
+                                <h5 className="font-bold text-teal-400 text-xs">{t('botSmartBookingTitle')}</h5>
                               </div>
                               <span className="text-[9px] bg-slate-900 border border-slate-800 text-slate-400 px-1.5 py-0.5 rounded-md font-mono">
-                                خطوة {getChatBookingProgress().filled}/{getChatBookingProgress().total}
+                                {t('stepLabel')} {getChatBookingProgress().filled}/{getChatBookingProgress().total}
                               </span>
                             </div>
 
                             {/* Dynamic Booking Progress Bar */}
                             <div className="bg-slate-900/40 p-2 rounded-xl border border-slate-800/60 space-y-1.5">
                               <div className="flex items-center justify-between text-[10px]">
-                                <span className="text-slate-400 font-medium">مستوى اكتمال البيانات:</span>
+                                <span className="text-slate-400 font-medium">{t('botBookingProgressLabel')}</span>
                                 <span className={`font-bold transition-all duration-300 ${getChatBookingProgress().percentage === 100 ? 'text-emerald-400' : 'text-teal-400'}`}>
-                                  {getChatBookingProgress().percentage}% {getChatBookingProgress().percentage === 100 && "جاهز! ✨"}
+                                  {getChatBookingProgress().percentage}% {getChatBookingProgress().percentage === 100 && t('botBookingProgressReady')}
                                 </span>
                               </div>
                               <div className="w-full h-1.5 bg-slate-850 rounded-full overflow-hidden relative">
@@ -6232,76 +7370,76 @@ export default function App() {
                             </div>
                             
                             <div className="space-y-1">
-                              <label className="block text-[10px] text-slate-400 font-medium">اسم المريض بالكامل</label>
+                              <label className="block text-[10px] text-slate-400 font-medium">{t('botPatientNameLabel')}</label>
                               <input
                                 type="text"
                                 value={chatBookingName}
                                 onChange={(e) => setChatBookingName(e.target.value)}
-                                placeholder="مثال: أحمد عبد الله"
-                                className="w-full bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-slate-200 text-xs focus:ring-1 focus:ring-teal-500 focus:outline-none"
+                                placeholder={t('botPatientNamePlaceholder')}
+                                className={`w-full bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-slate-200 text-xs focus:ring-1 focus:ring-teal-500 focus:outline-none ${isRtl ? "text-right" : "text-left"}`}
                                 required
                               />
                             </div>
 
                             <div className="space-y-1">
-                              <label className="block text-[10px] text-slate-400 font-medium">رقم الجوال للتأكيد</label>
+                              <label className="block text-[10px] text-slate-400 font-medium">{t('botPatientPhoneLabel')}</label>
                               <input
                                 type="tel"
                                 value={chatBookingPhone}
                                 onChange={(e) => setChatBookingPhone(e.target.value)}
-                                placeholder="05xxxxxxxx"
-                                className="w-full bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-slate-200 text-xs text-right focus:ring-1 focus:ring-teal-500 focus:outline-none"
+                                placeholder={t('botPatientPhonePlaceholder')}
+                                className={`w-full bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-slate-200 text-xs focus:ring-1 focus:ring-teal-500 focus:outline-none ${isRtl ? "text-right" : "text-left"}`}
                                 required
                               />
                             </div>
 
                             <div className="space-y-1">
-                              <label className="block text-[10px] text-slate-400 font-medium">الخدمة المرغوبة</label>
+                              <label className="block text-[10px] text-slate-400 font-medium">{t('botPatientServiceLabel')}</label>
                               <select
                                 value={chatBookingService}
                                 onChange={(e) => setChatBookingService(e.target.value)}
-                                className="w-full bg-slate-900 border border-slate-800 rounded-lg px-2 py-1.5 text-slate-200 text-xs focus:ring-1 focus:ring-teal-500 focus:outline-none cursor-pointer"
+                                className={`w-full bg-slate-900 border border-slate-800 rounded-lg px-2 py-1.5 text-slate-200 text-xs focus:ring-1 focus:ring-teal-500 focus:outline-none cursor-pointer ${isRtl ? "text-right" : "text-left"}`}
                                 required
                               >
-                                <option value="">-- اختر الخدمة المطلوبة --</option>
+                                <option value="">{t('botPatientServicePlaceholder')}</option>
                                 {services.map(s => (
-                                  <option key={s.id} value={s.name}>{s.name} ({s.price})</option>
+                                  <option key={s.id} value={s.name}>{localizeDynamicText(s.name, currentLanguage)} ({s.price})</option>
                                 ))}
                                 {services.length === 0 && (
-                                  <option value="استشارة وفحص طبي">استشارة وفحص طبي</option>
+                                  <option value="استشارة وفحص طبي">{currentLanguage === "ar" ? "استشارة وفحص طبي" : currentLanguage === "fr" ? "Consultation & Examen médical" : "Medical Consultation & Examination"}</option>
                                 )}
                               </select>
                             </div>
 
                             <div className="grid grid-cols-2 gap-2">
                               <div className="space-y-1">
-                                <label className="block text-[10px] text-slate-400 font-medium">تاريخ الموعد</label>
+                                <label className="block text-[10px] text-slate-400 font-medium">{t('botPatientDateLabel')}</label>
                                 <input
                                   type="date"
                                   value={chatBookingDate}
                                   onChange={(e) => setChatBookingDate(e.target.value)}
-                                  className="w-full bg-slate-900 border border-slate-800 rounded-lg px-2 py-1 text-slate-200 text-[10px] focus:ring-1 focus:ring-teal-500 focus:outline-none cursor-pointer"
+                                  className={`w-full bg-slate-900 border border-slate-800 rounded-lg px-2 py-1 text-slate-200 text-[10px] focus:ring-1 focus:ring-teal-500 focus:outline-none cursor-pointer ${isRtl ? "text-right" : "text-left"}`}
                                 />
                               </div>
                               <div className="space-y-1">
-                                <label className="block text-[10px] text-slate-400 font-medium">الوقت المفضل</label>
+                                <label className="block text-[10px] text-slate-400 font-medium">{t('botPatientTimeLabel')}</label>
                                 <input
                                   type="time"
                                   value={chatBookingTime}
                                   onChange={(e) => setChatBookingTime(e.target.value)}
-                                  className="w-full bg-slate-900 border border-slate-800 rounded-lg px-2 py-1 text-slate-200 text-[10px] focus:ring-1 focus:ring-teal-500 focus:outline-none cursor-pointer"
+                                  className={`w-full bg-slate-900 border border-slate-800 rounded-lg px-2 py-1 text-slate-200 text-[10px] focus:ring-1 focus:ring-teal-500 focus:outline-none cursor-pointer ${isRtl ? "text-right" : "text-left"}`}
                                 />
                               </div>
                             </div>
 
                             <div className="space-y-1">
-                              <label className="block text-[10px] text-slate-400 font-medium">الأعراض أو ملاحظات إضافية</label>
+                              <label className="block text-[10px] text-slate-400 font-medium">{t('botPatientSymptomsLabel')}</label>
                               <input
                                 type="text"
                                 value={chatBookingNotes}
                                 onChange={(e) => setChatBookingNotes(e.target.value)}
-                                placeholder="ملاحظات اختيارية للطبيب..."
-                                className="w-full bg-slate-900 border border-slate-800 rounded-lg px-2 py-1.5 text-slate-200 text-xs focus:ring-1 focus:ring-teal-500 focus:outline-none"
+                                placeholder={t('botPatientSymptomsPlaceholder')}
+                                className={`w-full bg-slate-900 border border-slate-800 rounded-lg px-2 py-1.5 text-slate-200 text-xs focus:ring-1 focus:ring-teal-500 focus:outline-none ${isRtl ? "text-right" : "text-left"}`}
                               />
                             </div>
 
@@ -6310,7 +7448,7 @@ export default function App() {
                               className="w-full bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold text-xs py-2 rounded-lg transition-all flex items-center justify-center gap-1 cursor-pointer mt-2.5"
                             >
                               <CheckCircle className="w-3.5 h-3.5" />
-                              <span>إرسال طلب حجز فوري 📅</span>
+                              <span>{t('botBookingConfirmBtn')}</span>
                             </button>
                           </form>
                         )}
@@ -6345,19 +7483,19 @@ export default function App() {
              {/* Custom Quick Actions Panel - Patient can tap them instantly! */}
             <div className="bg-slate-950/90 border-t border-slate-800/50 p-2.5 shrink-0 space-y-1.5">
               <p className="text-[9px] text-slate-400 px-1.5 font-bold flex items-center gap-1">
-                <Sparkles className="w-3 h-3 text-teal-400" /> خيارات سريعة مبرمجة ومتاحة:
+                <Sparkles className="w-3 h-3 text-teal-400" /> {t('botQuickActionLabel')}
               </p>
               <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-thin scrollbar-thumb-slate-800">
                 {/* Permanent high-conversion Smart Booking button */}
                 <button
                   onClick={() => handleQuickActionClick({
                     id: "booking-trigger",
-                    label: "📅 حجز موعد ذكي",
-                    response: "أهلاً بك! يرجى ملء نموذج حجز الموعد أدناه."
+                    label: t('botQuickActionBookingBtn'),
+                    response: t('botBookingTriggerResponse')
                   })}
                   className="text-[10px] bg-teal-500 hover:bg-teal-400 border border-teal-600/30 text-slate-950 px-3 py-1.5 rounded-full font-bold transition-all shrink-0 cursor-pointer flex items-center gap-1 shadow-sm shadow-teal-500/20"
                 >
-                  <span>📅 حجز موعد ذكي</span>
+                  <span>{t('botQuickActionBookingBtn')}</span>
                 </button>
 
                 {quickActions.map((action) => (
@@ -6366,7 +7504,7 @@ export default function App() {
                     onClick={() => handleQuickActionClick(action)}
                     className="text-[10px] bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200 px-3 py-1.5 rounded-full font-bold transition-all shrink-0 cursor-pointer"
                   >
-                    {action.label}
+                    {localizeDynamicText(action.label, currentLanguage)}
                   </button>
                 ))}
               </div>
@@ -6384,15 +7522,15 @@ export default function App() {
                     />
                   </div>
                   <div className="text-[10px] text-slate-400">
-                    <span className="font-bold text-teal-400 block">صورة مرفقة جاهزة للإرسال 📸</span>
-                    <span className="text-[9px] opacity-70">سيقوم البوت بقراءتها وتحليلها فور الإرسال</span>
+                    <span className="font-bold text-teal-400 block">{t('botAttachedImageTitle')}</span>
+                    <span className="text-[9px] opacity-70">{t('botAttachedImageDesc')}</span>
                   </div>
                 </div>
                 <button
                   type="button"
                   onClick={() => setAttachedImage(null)}
                   className="p-1 rounded-full bg-slate-850 text-slate-400 hover:text-rose-400 border border-slate-750 transition-all cursor-pointer"
-                  title="إلغاء المرفق"
+                  title={t('botCancelAttachment')}
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
@@ -6401,21 +7539,21 @@ export default function App() {
 
             {/* Audio Preview attachment panel */}
             {attachedAudio && (
-              <div className="bg-slate-900 border-t border-slate-850 px-3.5 py-2 flex items-center justify-between gap-2 shrink-0" dir="rtl">
+              <div className="bg-slate-900 border-t border-slate-850 px-3.5 py-2 flex items-center justify-between gap-2 shrink-0" dir={isRtl ? "rtl" : "ltr"}>
                 <div className="flex items-center gap-2">
                   <div className="w-10 h-10 rounded-lg bg-teal-500/10 flex items-center justify-center text-teal-400 border border-teal-500/20 shrink-0">
                     <Mic className="w-4 h-4 animate-pulse" />
                   </div>
                   <div className="text-[10px] text-slate-400">
-                    <span className="font-bold text-teal-400 block">مقطع صوتي جاهز للإرسال 🎙️</span>
-                    <span className="text-[9px] opacity-70 block">سيقوم البوت بسماع المقطع وتحليله فور الإرسال</span>
+                    <span className="font-bold text-teal-400 block">{t('botAttachedAudioTitle')}</span>
+                    <span className="text-[9px] opacity-70 block">{t('botAttachedAudioDesc')}</span>
                   </div>
                 </div>
                 <button
                   type="button"
                   onClick={() => setAttachedAudio(null)}
                   className="p-1 rounded-full bg-slate-850 text-slate-400 hover:text-rose-400 border border-slate-750 transition-all cursor-pointer"
-                  title="إلغاء التسجيل"
+                  title={t('botCancelRecording')}
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
@@ -6424,7 +7562,7 @@ export default function App() {
 
             {/* Camera Live Stream & Capture Panel */}
             {isCameraOpen && (
-              <div className="bg-slate-950 border-t border-slate-800 p-3 shrink-0 flex flex-col gap-2.5 items-center relative" dir="rtl">
+              <div className="bg-slate-950 border-t border-slate-800 p-3 shrink-0 flex flex-col gap-2.5 items-center relative" dir={isRtl ? "rtl" : "ltr"}>
                 <div className="relative w-full max-w-[320px] aspect-video rounded-xl overflow-hidden border border-slate-850 bg-black">
                   <video 
                     ref={videoElementRef} 
@@ -6433,7 +7571,7 @@ export default function App() {
                     className="w-full h-full object-cover transform -scale-x-100"
                   />
                   <div className="absolute top-2 right-2 bg-slate-950/80 px-2 py-0.5 rounded text-[9px] text-teal-400 font-mono animate-pulse">
-                    البث المباشر
+                    {t('botLiveCameraLabel')}
                   </div>
                 </div>
                 
@@ -6444,7 +7582,7 @@ export default function App() {
                     className="px-4 py-2 bg-teal-500 hover:bg-teal-400 text-slate-950 rounded-xl font-bold text-[10px] flex items-center gap-1 shadow-md shadow-teal-500/10 cursor-pointer"
                   >
                     <Camera className="w-3.5 h-3.5" />
-                    <span>التقاط الصورة 📸</span>
+                    <span>{t('botCapturePhotoBtn')}</span>
                   </button>
                   <button
                     type="button"
@@ -6452,7 +7590,7 @@ export default function App() {
                     className="px-4 py-2 bg-slate-800 hover:bg-slate-750 text-slate-300 rounded-xl font-bold text-[10px] flex items-center gap-1 cursor-pointer"
                   >
                     <X className="w-3.5 h-3.5" />
-                    <span>إلغاء</span>
+                    <span>{t('btnCancel')}</span>
                   </button>
                 </div>
               </div>
@@ -6481,7 +7619,7 @@ export default function App() {
                   onClick={() => document.getElementById("chat-image-input")?.click()}
                   disabled={isBotTyping || isRecording}
                   className="p-2.5 rounded-xl bg-slate-950 text-slate-400 hover:text-teal-400 border border-slate-800 hover:bg-slate-900 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-                  title="إرفاق صورة"
+                  title={t('botTitleImageUpload')}
                 >
                   <Image className="w-4 h-4 text-teal-400" />
                 </button>
@@ -6496,7 +7634,7 @@ export default function App() {
                       ? "bg-rose-500/10 text-rose-400 border-rose-500/30" 
                       : "bg-slate-950 text-slate-400 hover:text-teal-400 border-slate-800 hover:bg-slate-900"
                   }`}
-                  title="التقاط بالكاميرا"
+                  title={t('botTitleCameraShot')}
                 >
                   <Camera className="w-4 h-4 text-teal-400" />
                 </button>
@@ -6511,20 +7649,20 @@ export default function App() {
                       ? "bg-rose-500/20 text-rose-400 border-rose-500/40 animate-pulse" 
                       : "bg-slate-950 text-slate-400 hover:text-teal-400 border-slate-800 hover:bg-slate-900"
                   }`}
-                  title="تسجيل صوتي"
+                  title={t('botTitleAudioRecording')}
                 >
                   <Mic className="w-4 h-4 text-teal-400" />
                 </button>
               </div>
 
               {isRecording ? (
-                <div className="flex-1 bg-slate-950 border border-rose-500/30 rounded-xl px-3.5 py-2.5 flex items-center justify-between gap-3" dir="rtl">
+                <div className="flex-1 bg-slate-950 border border-rose-500/30 rounded-xl px-3.5 py-2.5 flex items-center justify-between gap-3" dir={isRtl ? "rtl" : "ltr"}>
                   <div className="flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping shrink-0" />
                     <span className="text-[10px] text-rose-400 font-bold font-mono">
                       {String(Math.floor(recordingSeconds / 60)).padStart(2, "0")}:{String(recordingSeconds % 60).padStart(2, "0")}
                     </span>
-                    <span className="text-[9px] text-slate-400">جاري تسجيل رسالتك الصوتية...</span>
+                    <span className="text-[9px] text-slate-400">{t('botRecordingStatusText')}</span>
                   </div>
                   
                   <div className="flex items-center gap-1.5">
@@ -6532,7 +7670,7 @@ export default function App() {
                       type="button"
                       onClick={stopRecording}
                       className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/20 transition-all cursor-pointer flex items-center justify-center"
-                      title="تأكيد وحفظ"
+                      title={t('botConfirmSaveTitle')}
                     >
                       <Check className="w-3.5 h-3.5" />
                     </button>
@@ -6540,7 +7678,7 @@ export default function App() {
                       type="button"
                       onClick={cancelRecording}
                       className="p-1.5 rounded-lg bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 border border-rose-500/20 transition-all cursor-pointer flex items-center justify-center"
-                      title="إلغاء"
+                      title={t('btnCancel')}
                     >
                       <Trash className="w-3.5 h-3.5" />
                     </button>
@@ -6549,7 +7687,7 @@ export default function App() {
               ) : (
                 <input
                   type="text"
-                  placeholder="اسأل الشات بوت أو أرفق صورة أو تسجيلاً صوتياً..."
+                  placeholder={t('botPlaceholderText')}
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
                   disabled={isBotTyping}
@@ -6601,8 +7739,8 @@ export default function App() {
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-slate-900 border border-slate-800 rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl text-right"
-              dir="rtl"
+              className={`bg-slate-900 border border-slate-800 rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl ${isRtl ? "text-right" : "text-left"}`}
+              dir={isRtl ? "rtl" : "ltr"}
             >
               {/* Modal Header */}
               <div className="flex justify-between items-center px-6 py-4 border-b border-slate-800 bg-slate-950">
@@ -6610,7 +7748,9 @@ export default function App() {
                   <div className="p-1.5 rounded-lg bg-teal-500/10 text-teal-400">
                     <Printer className="w-5 h-5" />
                   </div>
-                  <h3 className="text-sm font-bold text-slate-100">معاينة ومراجعة التقرير الطبي الرسمي والتحليلات</h3>
+                  <h3 className="text-sm font-bold text-slate-100">
+                    {pdfTranslations[currentLanguage]?.previewTitle}
+                  </h3>
                 </div>
                 <button
                   onClick={() => {
@@ -6629,8 +7769,8 @@ export default function App() {
                 {/* Visual A4 Document Wrapper inside Screen */}
                 <div 
                   id="screen-medical-report-preview"
-                  className="bg-white text-slate-950 p-8 rounded-xl max-w-3xl mx-auto shadow-lg border border-slate-200 text-right space-y-6 font-sans relative"
-                  dir="rtl"
+                  className={`bg-white text-slate-950 p-8 rounded-xl max-w-3xl mx-auto shadow-lg border border-slate-200 space-y-6 font-sans relative ${isRtl ? "text-right" : "text-left"}`}
+                  dir={isRtl ? "rtl" : "ltr"}
                 >
                   {/* Decorative Medical Watermark */}
                   <div className="absolute inset-0 flex items-center justify-center opacity-[0.015] pointer-events-none select-none">
@@ -6641,10 +7781,18 @@ export default function App() {
                   <div className="flex justify-between items-start border-b-2 border-teal-600 pb-5">
                     {/* Clinic Details */}
                     <div className="space-y-1">
-                      <h4 className="text-lg font-black text-teal-800">{clinicInfo.name || "العيادة الطبية الذكية"}</h4>
-                      <p className="text-xs font-bold text-slate-600">{clinicInfo.specialty || "استشارات عامة ورعاية ذكية"}</p>
-                      <p className="text-[10px] text-slate-500">تحت إشراف: د. {clinicInfo.doctorName || "الاستشاري المسؤول"}</p>
-                      <p className="text-[10px] text-slate-500">الهاتف: {clinicInfo.phone} | العنوان: {clinicInfo.address}</p>
+                      <h4 className="text-lg font-black text-teal-800">{localizeDynamicText(clinicInfo.name, currentLanguage) || pdfTranslations[currentLanguage]?.defaultClinicName}</h4>
+                      <p className="text-xs font-bold text-slate-600">{localizeDynamicText(clinicInfo.specialty, currentLanguage) || pdfTranslations[currentLanguage]?.defaultSpecialty}</p>
+                      <p className="text-[10px] text-slate-500">
+                        {t('supervisionOf')}
+                        {localizeDynamicText(clinicInfo.doctorName || "", currentLanguage) || pdfTranslations[currentLanguage]?.defaultDoctor}
+                      </p>
+                      <p className="text-[10px] text-slate-500">
+                        {t('phoneLabel')}
+                        {clinicInfo.phone} | 
+                        {t('addressLabel')}
+                        {localizeDynamicText(clinicInfo.address, currentLanguage)}
+                      </p>
                     </div>
 
                     {/* Report Branding Emblem */}
@@ -6658,7 +7806,7 @@ export default function App() {
                     {/* Report Metadata */}
                     <div className="text-left space-y-1 text-slate-700 font-mono" dir="ltr">
                       <div className="text-[10px] font-bold text-slate-800">REPORT REF: REP-2026-{(pdfSession.id || "SESS").toUpperCase()}</div>
-                      <div className="text-[10px]">DATE: {new Date().toLocaleDateString('ar-EG')}</div>
+                      <div className="text-[10px]">DATE: {new Date().toLocaleDateString(currentLanguage === 'ar' ? 'ar-EG' : currentLanguage === 'fr' ? 'fr-FR' : 'en-US')}</div>
                       <div className="text-[10px]">STATUS: VERIFIED (AI)</div>
                       <div className="text-[10px] text-teal-700 font-bold">MODE: SAFE CLINICAL GATEWAY</div>
                     </div>
@@ -6667,7 +7815,7 @@ export default function App() {
                   {/* Main Report Title */}
                   <div className="text-center">
                     <h3 className="text-sm font-black text-slate-800 border-b border-slate-200 pb-1.5 inline-block px-8">
-                      تقرير استشارة طبية أولية وتتبع تفاعل المريض
+                      {pdfTranslations[currentLanguage]?.reportTitle}
                     </h3>
                   </div>
 
@@ -6675,21 +7823,21 @@ export default function App() {
                   <div className="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-100 text-xs">
                     <div className="space-y-1.5">
                       <div>
-                        <span className="text-slate-500 block">اسم المريض الكامل:</span>
+                        <span className="text-slate-500 block">{pdfTranslations[currentLanguage]?.patientNameLabel}</span>
                         <strong className="text-slate-800 text-sm">{pdfSession.patientName}</strong>
                       </div>
                       <div>
-                        <span className="text-slate-500 block">رقم الاتصال الموثق:</span>
+                        <span className="text-slate-500 block">{pdfTranslations[currentLanguage]?.contactPhoneLabel}</span>
                         <strong className="text-slate-800 font-mono">{pdfSession.patientPhone}</strong>
                       </div>
                     </div>
                     <div className="space-y-1.5">
                       <div>
-                        <span className="text-slate-500 block">تاريخ وتوقيت الاستشارة:</span>
+                        <span className="text-slate-500 block">{pdfTranslations[currentLanguage]?.consultationDateLabel}</span>
                         <strong className="text-slate-800">{pdfSession.date}</strong>
                       </div>
                       <div>
-                        <span className="text-slate-500 block">موضوع الاستشارة المبدئي:</span>
+                        <span className="text-slate-500 block">{pdfTranslations[currentLanguage]?.consultationTopicLabel}</span>
                         <strong className="text-slate-800">{pdfSession.topic}</strong>
                       </div>
                     </div>
@@ -6697,45 +7845,49 @@ export default function App() {
 
                   {/* Clinical Analytics Center */}
                   <div className="space-y-3">
-                    <h5 className="text-xs font-bold text-slate-800 border-r-2 border-teal-600 pr-2">أولاً: تحليلات الجلسة ومؤشرات الذكاء الاصطناعي الطبية 📊</h5>
+                    <h5 className={`text-xs font-bold text-slate-800 border-teal-600 ${isRtl ? "border-r-2 pr-2" : "border-l-2 pl-2"}`}>
+                      {pdfTranslations[currentLanguage]?.section1Title}
+                    </h5>
                     <div className="grid grid-cols-3 gap-3">
-                      <div className="bg-teal-50/50 p-3 rounded-lg border border-teal-100/60 text-right">
-                        <span className="text-[10px] text-slate-500 block">مستوى الرضا المتوقع</span>
+                      <div className="bg-teal-50/50 p-3 rounded-lg border border-teal-100/60">
+                        <span className="text-[10px] text-slate-500 block">{pdfTranslations[currentLanguage]?.satisfactionLevel}</span>
                         <strong className="text-xs text-teal-800 block mt-0.5">
-                          {pdfSession.aiSentiment === "satisfied" ? "مرتفع جداً (راضي 😊)" : "متوسط (محايد 😐)"}
+                          {pdfSession.aiSentiment === "satisfied" ? pdfTranslations[currentLanguage]?.satisfiedStatus : pdfTranslations[currentLanguage]?.neutralStatus}
                         </strong>
                       </div>
-                      <div className="bg-amber-50/50 p-3 rounded-lg border border-amber-100/60 text-right">
-                        <span className="text-[10px] text-slate-500 block">التصنيف والاستعجال</span>
+                      <div className="bg-amber-50/50 p-3 rounded-lg border border-amber-100/60">
+                        <span className="text-[10px] text-slate-500 block">{pdfTranslations[currentLanguage]?.classificationUrgency}</span>
                         <strong className="text-xs text-amber-800 block mt-0.5">
-                          {pdfSession.topic.match(/(ألم|وجع|نزيف|خلع|كسر|طوارئ)/) ? "طارئ وعاجل ⚠️" : "استفسار اعتيادي 🟢"}
+                          {pdfSession.topic.match(/(ألم|وجع|نزيف|خلع|كسر|طوارئ|pain|mal|saignement|fracture|urgence|emergency)/i) ? pdfTranslations[currentLanguage]?.urgentStatus : pdfTranslations[currentLanguage]?.normalStatus}
                         </strong>
                       </div>
-                      <div className="bg-slate-50 p-3 rounded-lg border border-slate-200/60 text-right">
-                        <span className="text-[10px] text-slate-500 block">الالتزام بالصمامات الآمنة</span>
-                        <strong className="text-xs text-slate-800 block mt-0.5">مجتاز ومعتمد بنسبة 100% ✓</strong>
+                      <div className="bg-slate-50 p-3 rounded-lg border border-slate-200/60">
+                        <span className="text-[10px] text-slate-500 block">{pdfTranslations[currentLanguage]?.safetyCommitment}</span>
+                        <strong className="text-xs text-slate-800 block mt-0.5">{pdfTranslations[currentLanguage]?.safetyPassed}</strong>
                       </div>
                     </div>
 
                     <div className="bg-slate-50 p-3 rounded-lg border border-slate-100 text-[11px] leading-relaxed text-slate-700">
-                      <span className="font-bold text-slate-800 block mb-1">💡 ملخص التوصية الطبية والتحليل الفوري للمشرف:</span>
-                      {pdfSession.topic.match(/(ألم|وجع|نزيف|خلع|كسر|طوارئ)/) ? (
-                        <span>يشكو المريض من أعراض حادة ومتعلقة بالألم أو النزيف. تم حظر الإجابات الدوائية العشوائية تماماً بواسطة نظام الصمامات الطبي. يوصى بقيام موظفي الاستقبال بالاتصال الهاتفي فوراً لتسجيل موعد فحص سريري عاجل.</span>
+                      <span className="font-bold text-slate-800 block mb-1">{pdfTranslations[currentLanguage]?.recommendationSummary}</span>
+                      {pdfSession.topic.match(/(ألم|وجع|نزيف|خلع|كسر|طوارئ|pain|mal|saignement|fracture|urgence|emergency)/i) ? (
+                        <span>{pdfTranslations[currentLanguage]?.urgentRecommendation}</span>
                       ) : (
-                        <span>الاستشارة تتعلق باستفسار خدمي أو معرفي عام (مثل الأسعار أو الإجراءات الشائعة). تم تزويد المريض بالمعلومات الدقيقة وحجز موعد مبدئي بنجاح لضمان استمرارية المتابعة التجارية والطبية داخل العيادة.</span>
+                        <span>{pdfTranslations[currentLanguage]?.normalRecommendation}</span>
                       )}
                     </div>
                   </div>
 
                   {/* Complete Chat Transcript Logs */}
                   <div className="space-y-3">
-                    <h5 className="text-xs font-bold text-slate-800 border-r-2 border-teal-600 pr-2">ثانياً: سجل المحادثة الطبي الموثق 💬</h5>
+                    <h5 className={`text-xs font-bold text-slate-800 border-teal-600 ${isRtl ? "border-r-2 pr-2" : "border-l-2 pl-2"}`}>
+                      {pdfTranslations[currentLanguage]?.section2Title}
+                    </h5>
                     
                     <div className="border border-slate-200 rounded-xl overflow-hidden text-[10px]">
                       {/* Table Header */}
                       <div className="grid grid-cols-12 bg-slate-100 text-slate-700 font-bold p-2.5 border-b border-slate-200">
-                        <div className="col-span-3">المرسل</div>
-                        <div className="col-span-9 text-right">محتوى الرسالة الاستشارية بالتفصيل</div>
+                        <div className="col-span-3">{pdfTranslations[currentLanguage]?.senderLabel}</div>
+                        <div className="col-span-9">{pdfTranslations[currentLanguage]?.messageContentLabel}</div>
                       </div>
 
                       {/* Messages Rows */}
@@ -6752,10 +7904,10 @@ export default function App() {
                             >
                               <div className="col-span-3 font-bold text-slate-700 flex flex-col gap-0.5">
                                 <span className={isDoc ? "text-amber-700" : isUser ? "text-slate-800" : "text-teal-700"}>
-                                  {isUser ? "👤 المريض" : isDoc ? "🧑‍⚕️ طبيب معالج" : "🤖 المساعد الذكي"}
+                                  {isUser ? pdfTranslations[currentLanguage]?.patient : isDoc ? pdfTranslations[currentLanguage]?.doctor : pdfTranslations[currentLanguage]?.assistant}
                                 </span>
                                 <span className="text-[8px] text-slate-400 font-normal font-mono">
-                                  {pdfSession.date.split(" ")[1] || "نشط"}
+                                  {pdfSession.date.split(" ")[1] || "Active"}
                                 </span>
                               </div>
                               <div className={`col-span-9 text-slate-800 leading-relaxed whitespace-pre-wrap ${isDoc ? "font-bold" : ""}`}>
@@ -6772,14 +7924,14 @@ export default function App() {
                   <div className="pt-4 border-t border-slate-200 grid grid-cols-12 gap-4 text-xs">
                     {/* Disclaimer */}
                     <div className="col-span-7 text-[9px] text-slate-500 leading-relaxed space-y-1">
-                      <strong className="text-slate-700 block">إخلاء مسؤولية طبي معتمد:</strong>
+                      <strong className="text-slate-700 block">{pdfTranslations[currentLanguage]?.disclaimerTitle}</strong>
                       <p>
-                        هذا التقرير يمثل تلخيصاً آلياً دقيقاً للمحادثة الاستكشافية الأولية التي تمت عبر مساعد العيادة المعتمد على الذكاء الاصطناعي. لا يغني هذا التقرير ولا يمثل بديلاً عن الفحص السريري المباشر والأشعة التشخيصية داخل العيادة. أي وصفات علاجية يجب أن تتم سريرياً وتوقع يدوياً من الطبيب المعالج.
+                        {pdfTranslations[currentLanguage]?.disclaimerText}
                       </p>
                     </div>
 
                     {/* Signature and Stamp placeholders */}
-                    <div className="col-span-5 flex justify-between items-center pl-4 border-r border-slate-100 pr-4">
+                    <div className={`col-span-5 flex justify-between items-center ${isRtl ? "pl-4 border-r pr-4" : "pr-4 border-l pl-4"} border-slate-100`}>
                       {/* Official Stamp Vector representation */}
                       <div className="flex flex-col items-center justify-center relative shrink-0">
                         <div className="w-16 h-16 rounded-full border-2 border-dashed border-teal-600/60 flex flex-col items-center justify-center text-teal-600/70 p-1 relative transform rotate-6 scale-95">
@@ -6789,16 +7941,17 @@ export default function App() {
                           </div>
                           <span className="absolute text-[5px] font-bold text-teal-600/50 bottom-0.5">2026 OFFICIAL</span>
                         </div>
-                        <span className="text-[8px] text-slate-400 mt-1">ختم العيادة الرسمي</span>
+                        <span className="text-[8px] text-slate-400 mt-1">{pdfTranslations[currentLanguage]?.officialStamp}</span>
                       </div>
 
                       {/* Doctor Signature */}
                       <div className="text-center space-y-3 shrink-0">
-                        <span className="text-[10px] text-slate-400 block">توقيع الطبيب المشرف:</span>
+                        <span className="text-[10px] text-slate-400 block">{pdfTranslations[currentLanguage]?.doctorSignatureLabel}</span>
                         <div className="font-mono text-slate-800 text-xs italic border-b border-slate-300 pb-1 px-2 font-bold select-none transform rotate-[-2deg]">
-                          د. {clinicInfo.doctorName || "الاستشاري"}
+                          {t('drPrefix')}
+                          {clinicInfo.doctorName || pdfTranslations[currentLanguage]?.defaultDoctor}
                         </div>
-                        <span className="text-[9px] text-slate-500 font-mono">{new Date().toLocaleDateString('ar-EG')}</span>
+                        <span className="text-[9px] text-slate-500 font-mono">{new Date().toLocaleDateString(currentLanguage === 'ar' ? 'ar-EG' : currentLanguage === 'fr' ? 'fr-FR' : 'en-US')}</span>
                       </div>
                     </div>
                   </div>
@@ -6808,7 +7961,7 @@ export default function App() {
               </div>
 
               {/* Modal Footer Controls */}
-              <div className="px-6 py-4 border-t border-slate-800 bg-slate-950 flex justify-between items-center" dir="rtl">
+              <div className="px-6 py-4 border-t border-slate-800 bg-slate-950 flex justify-between items-center" dir={isRtl ? "rtl" : "ltr"}>
                 <button
                   onClick={() => {
                     setShowMedicalPdfModal(false);
@@ -6816,29 +7969,29 @@ export default function App() {
                   }}
                   className="bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-bold px-4 py-2 rounded-xl transition-all cursor-pointer"
                 >
-                  إغلاق المعاينة
+                  {pdfTranslations[currentLanguage]?.closePreview}
                 </button>
 
                 <div className="flex gap-2">
                   <button
                     onClick={() => {
-                      const textToCopy = `[تقرير طبي معتمد - عيادة ${clinicInfo.name || "الأسنان"}]
-رقم التقرير: REP-2026-${pdfSession.id.toUpperCase()}
-المريض: ${pdfSession.patientName}
-الجوال: ${pdfSession.patientPhone}
-موضوع الاستشارة: ${pdfSession.topic}
-تاريخها: ${pdfSession.date}
-معدل الرضا المتوقع: ${pdfSession.aiSentiment === "satisfied" ? "ممتاز 😊" : "محايد 😐"}
+                      const textToCopy = `[${pdfTranslations[currentLanguage]?.reportTitle} - ${clinicInfo.name || "Clinic"}]
+REPORT REF: REP-2026-${pdfSession.id.toUpperCase()}
+Patient: ${pdfSession.patientName}
+Phone: ${pdfSession.patientPhone}
+Topic: ${pdfSession.topic}
+Date: ${pdfSession.date}
+Satisfaction: ${pdfSession.aiSentiment === "satisfied" ? pdfTranslations[currentLanguage]?.satisfiedStatus : pdfTranslations[currentLanguage]?.neutralStatus}
 
-[موجز المحادثة]:
-${pdfSession.messages.map(m => `- ${m.sender === "user" ? "المريض" : m.sender === "doctor" ? "الطبيب المعالج" : "المساعد الذكي"}: ${m.text}`).join("\n")}
+[Transcript]:
+${pdfSession.messages.map(m => `- ${m.sender === "user" ? "Patient" : m.sender === "doctor" ? "Doctor" : "Assistant"}: ${m.text}`).join("\n")}
 `;
                       navigator.clipboard.writeText(textToCopy);
-                      showNotification("تم نسخ التقرير الطبي الكامل بنجاح! 📋", "success");
+                      showNotification(t('reportCopied'), "success");
                     }}
                     className="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold px-4 py-2 rounded-xl transition-all cursor-pointer border border-slate-700"
                   >
-                    نسخ النص بالكامل 📋
+                    {pdfTranslations[currentLanguage]?.copyFullText}
                   </button>
 
                   <button
@@ -6850,7 +8003,7 @@ ${pdfSession.messages.map(m => `- ${m.sender === "user" ? "المريض" : m.sen
                     className="bg-teal-500 hover:bg-teal-400 text-slate-950 text-xs font-bold px-5 py-2.5 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 shadow-md shadow-teal-500/10"
                   >
                     <Printer className="w-4 h-4" />
-                    <span>تحميل كملف PDF / طباعة التقرير 🖨️</span>
+                    <span>{pdfTranslations[currentLanguage]?.downloadPrintPdf}</span>
                   </button>
                 </div>
               </div>
@@ -6862,17 +8015,25 @@ ${pdfSession.messages.map(m => `- ${m.sender === "user" ? "المريض" : m.sen
 
       {/* 🖨️ Absolute hidden container used EXCLUSIVELY for high-fidelity A4 printing */}
       {pdfSession && (
-        <div id="printable-medical-report-root" className="hidden" dir="rtl">
-          <div className="bg-white text-slate-950 p-8 w-full max-w-4xl mx-auto text-right space-y-6 font-sans relative">
+        <div id="printable-medical-report-root" className="hidden" dir={isRtl ? "rtl" : "ltr"}>
+          <div className={`bg-white text-slate-950 p-8 w-full max-w-4xl mx-auto space-y-6 font-sans relative ${isRtl ? "text-right" : "text-left"}`}>
             
             {/* Header Letterhead */}
             <div className="flex justify-between items-start border-b-2 border-teal-600 pb-5">
               {/* Clinic Details */}
               <div className="space-y-1">
-                <h4 className="text-xl font-black text-teal-800">{clinicInfo.name || "العيادة الطبية الذكية"}</h4>
-                <p className="text-sm font-bold text-slate-600">{clinicInfo.specialty || "استشارات عامة ورعاية ذكية"}</p>
-                <p className="text-xs text-slate-500">تحت إشراف: د. {clinicInfo.doctorName || "الاستشاري المسؤول"}</p>
-                <p className="text-xs text-slate-500">الهاتف: {clinicInfo.phone} | العنوان: {clinicInfo.address}</p>
+                <h4 className="text-xl font-black text-teal-800">{localizeDynamicText(clinicInfo.name, currentLanguage) || pdfTranslations[currentLanguage]?.defaultClinicName}</h4>
+                <p className="text-sm font-bold text-slate-600">{localizeDynamicText(clinicInfo.specialty, currentLanguage) || pdfTranslations[currentLanguage]?.defaultSpecialty}</p>
+                <p className="text-xs text-slate-500">
+                  {t('supervisionOf')}
+                  {localizeDynamicText(clinicInfo.doctorName || "", currentLanguage) || pdfTranslations[currentLanguage]?.defaultDoctor}
+                </p>
+                <p className="text-xs text-slate-500">
+                  {t('phoneLabel')}
+                  {clinicInfo.phone} | 
+                  {t('addressLabel')}
+                  {localizeDynamicText(clinicInfo.address, currentLanguage)}
+                </p>
               </div>
 
               {/* Report Branding Emblem */}
@@ -6886,7 +8047,7 @@ ${pdfSession.messages.map(m => `- ${m.sender === "user" ? "المريض" : m.sen
               {/* Report Metadata */}
               <div className="text-left space-y-1 text-slate-700 font-mono" dir="ltr">
                 <div className="text-xs font-bold text-slate-800">REPORT REF: REP-2026-{(pdfSession.id || "SESS").toUpperCase()}</div>
-                <div className="text-xs">DATE: {new Date().toLocaleDateString('ar-EG')}</div>
+                <div className="text-xs">DATE: {new Date().toLocaleDateString(currentLanguage === 'ar' ? 'ar-EG' : currentLanguage === 'fr' ? 'fr-FR' : 'en-US')}</div>
                 <div className="text-xs">STATUS: VERIFIED (AI)</div>
                 <div className="text-xs text-teal-700 font-bold">MODE: SAFE CLINICAL GATEWAY</div>
               </div>
@@ -6895,7 +8056,7 @@ ${pdfSession.messages.map(m => `- ${m.sender === "user" ? "المريض" : m.sen
             {/* Main Report Title */}
             <div className="text-center pt-2">
               <h3 className="text-lg font-black text-slate-800 border-b border-slate-200 pb-2 inline-block px-12">
-                تقرير استشارة طبية أولية وتتبع تفاعل المريض
+                {pdfTranslations[currentLanguage]?.reportTitle}
               </h3>
             </div>
 
@@ -6903,21 +8064,21 @@ ${pdfSession.messages.map(m => `- ${m.sender === "user" ? "المريض" : m.sen
             <div className="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-150 text-xs">
               <div className="space-y-1.5">
                 <div>
-                  <span className="text-slate-500 block">اسم المريض الكامل:</span>
+                  <span className="text-slate-500 block">{pdfTranslations[currentLanguage]?.patientNameLabel}</span>
                   <strong className="text-slate-800 text-sm">{pdfSession.patientName}</strong>
                 </div>
                 <div>
-                  <span className="text-slate-500 block">رقم الاتصال الموثق:</span>
+                  <span className="text-slate-500 block">{pdfTranslations[currentLanguage]?.contactPhoneLabel}</span>
                   <strong className="text-slate-800 font-mono">{pdfSession.patientPhone}</strong>
                 </div>
               </div>
               <div className="space-y-1.5">
                 <div>
-                  <span className="text-slate-500 block">تاريخ وتوقيت الاستشارة:</span>
+                  <span className="text-slate-500 block">{pdfTranslations[currentLanguage]?.consultationDateLabel}</span>
                   <strong className="text-slate-800">{pdfSession.date}</strong>
                 </div>
                 <div>
-                  <span className="text-slate-500 block">موضوع الاستشارة المبدئي:</span>
+                  <span className="text-slate-500 block">{pdfTranslations[currentLanguage]?.consultationTopicLabel}</span>
                   <strong className="text-slate-800">{pdfSession.topic}</strong>
                 </div>
               </div>
@@ -6925,45 +8086,49 @@ ${pdfSession.messages.map(m => `- ${m.sender === "user" ? "المريض" : m.sen
 
             {/* Clinical Analytics Center */}
             <div className="space-y-3">
-              <h5 className="text-sm font-bold text-slate-800 border-r-2 border-teal-600 pr-2">أولاً: تحليلات الجلسة ومؤشرات الذكاء الاصطناعي الطبية 📊</h5>
+              <h5 className={`text-sm font-bold text-slate-800 border-teal-600 ${isRtl ? "border-r-2 pr-2" : "border-l-2 pl-2"}`}>
+                {pdfTranslations[currentLanguage]?.section1Title}
+              </h5>
               <div className="grid grid-cols-3 gap-3">
-                <div className="bg-teal-50/50 p-3 rounded-lg border border-teal-100/60 text-right">
-                  <span className="text-[10px] text-slate-500 block">مستوى الرضا المتوقع</span>
+                <div className="bg-teal-50/50 p-3 rounded-lg border border-teal-100/60">
+                  <span className="text-[10px] text-slate-500 block">{pdfTranslations[currentLanguage]?.satisfactionLevel}</span>
                   <strong className="text-xs text-teal-800 block mt-0.5">
-                    {pdfSession.aiSentiment === "satisfied" ? "مرتفع جداً (راضي 😊)" : "متوسط (محايد 😐)"}
+                    {pdfSession.aiSentiment === "satisfied" ? pdfTranslations[currentLanguage]?.satisfiedStatus : pdfTranslations[currentLanguage]?.neutralStatus}
                   </strong>
                 </div>
-                <div className="bg-amber-50/50 p-3 rounded-lg border border-amber-100/60 text-right">
-                  <span className="text-[10px] text-slate-500 block">التصنيف والاستعجال</span>
+                <div className="bg-amber-50/50 p-3 rounded-lg border border-amber-100/60">
+                  <span className="text-[10px] text-slate-500 block">{pdfTranslations[currentLanguage]?.classificationUrgency}</span>
                   <strong className="text-xs text-amber-800 block mt-0.5">
-                    {pdfSession.topic.match(/(ألم|وجع|نزيف|خلع|كسر|طوارئ)/) ? "طارئ وعاجل ⚠️" : "استفسار اعتيادي 🟢"}
+                    {pdfSession.topic.match(/(ألم|وجع|نزيف|خلع|كسر|طوارئ|pain|mal|saignement|fracture|urgence|emergency)/i) ? pdfTranslations[currentLanguage]?.urgentStatus : pdfTranslations[currentLanguage]?.normalStatus}
                   </strong>
                 </div>
-                <div className="bg-slate-50 p-3 rounded-lg border border-slate-200/60 text-right">
-                  <span className="text-[10px] text-slate-500 block">الالتزام بالصمامات الآمنة</span>
-                  <strong className="text-xs text-slate-800 block mt-0.5">مجتاز ومعتمد بنسبة 100% ✓</strong>
+                <div className="bg-slate-50 p-3 rounded-lg border border-slate-200/60">
+                  <span className="text-[10px] text-slate-500 block">{pdfTranslations[currentLanguage]?.safetyCommitment}</span>
+                  <strong className="text-xs text-slate-800 block mt-0.5">{pdfTranslations[currentLanguage]?.safetyPassed}</strong>
                 </div>
               </div>
 
               <div className="bg-slate-50 p-3 rounded-lg border border-slate-100 text-xs leading-relaxed text-slate-700">
-                <span className="font-bold text-slate-800 block mb-1">💡 ملخص التوصية الطبية والتحليل الفوري للمشرف:</span>
-                {pdfSession.topic.match(/(ألم|وجع|نزيف|خلع|كسر|طوارئ)/) ? (
-                  <span>يشكو المريض من أعراض حادة ومتعلقة بالألم أو النزيف. تم حظر الإجابات الدوائية العشوائية تماماً بواسطة نظام الصمامات الطبي لضمان سلامته التامة. يوصى بقيام موظفي الاستقبال بالاتصال الهاتفي فوراً لتأكيد الحجز وتنسيق الكشف العاجل.</span>
+                <span className="font-bold text-slate-800 block mb-1">{pdfTranslations[currentLanguage]?.recommendationSummary}</span>
+                {pdfSession.topic.match(/(ألم|وجع|نزيف|خلع|كسر|طوارئ|pain|mal|saignement|fracture|urgence|emergency)/i) ? (
+                  <span>{pdfTranslations[currentLanguage]?.urgentRecommendation}</span>
                 ) : (
-                  <span>الاستشارة تتعلق باستفسار خدمي أو معرفي عام (مثل الأسعار أو الإجراءات الشائعة). تم تزويد المريض بالمعلومات الدقيقة وحجز موعد مبدئي بنجاح لضمان المتابعة والاستفادة التامة من خدمات العيادة.</span>
+                  <span>{pdfTranslations[currentLanguage]?.normalRecommendation}</span>
                 )}
               </div>
             </div>
 
             {/* Complete Chat Transcript Logs */}
             <div className="space-y-3">
-              <h5 className="text-sm font-bold text-slate-800 border-r-2 border-teal-600 pr-2">ثانياً: سجل المحادثة المعتمد والموثق للتقرير الطارئ 💬</h5>
+              <h5 className={`text-sm font-bold text-slate-800 border-teal-600 ${isRtl ? "border-r-2 pr-2" : "border-l-2 pl-2"}`}>
+                {pdfTranslations[currentLanguage]?.section2TitlePrint}
+              </h5>
               
               <div className="border border-slate-200 rounded-xl overflow-hidden text-xs">
                 {/* Table Header */}
                 <div className="grid grid-cols-12 bg-slate-100 text-slate-700 font-bold p-2.5 border-b border-slate-200">
-                  <div className="col-span-3">المرسل</div>
-                  <div className="col-span-9 text-right">محتوى الرسالة الاستشارية بالتفصيل</div>
+                  <div className="col-span-3">{pdfTranslations[currentLanguage]?.senderLabel}</div>
+                  <div className="col-span-9">{pdfTranslations[currentLanguage]?.messageContentLabel}</div>
                 </div>
 
                 {/* Messages Rows */}
@@ -6980,10 +8145,10 @@ ${pdfSession.messages.map(m => `- ${m.sender === "user" ? "المريض" : m.sen
                       >
                         <div className="col-span-3 font-bold text-slate-700 flex flex-col gap-0.5">
                           <span className={isDoc ? "text-amber-700" : isUser ? "text-slate-800" : "text-teal-700"}>
-                            {isUser ? "👤 المريض" : isDoc ? "🧑‍⚕️ طبيب معالج" : "🤖 المساعد الذكي"}
+                            {isUser ? pdfTranslations[currentLanguage]?.patient : isDoc ? pdfTranslations[currentLanguage]?.doctor : pdfTranslations[currentLanguage]?.assistant}
                           </span>
                           <span className="text-[10px] text-slate-400 font-normal font-mono">
-                            {pdfSession.date.split(" ")[1] || "نشط"}
+                            {pdfSession.date.split(" ")[1] || "Active"}
                           </span>
                         </div>
                         <div className={`col-span-9 text-slate-800 leading-relaxed whitespace-pre-wrap ${isDoc ? "font-bold" : ""}`}>
@@ -7000,14 +8165,14 @@ ${pdfSession.messages.map(m => `- ${m.sender === "user" ? "المريض" : m.sen
             <div className="pt-6 border-t border-slate-200 grid grid-cols-12 gap-4 text-xs">
               {/* Disclaimer */}
               <div className="col-span-7 text-[10px] text-slate-500 leading-relaxed space-y-1">
-                <strong className="text-slate-700 block">إخلاء مسؤولية طبي معتمد:</strong>
+                <strong className="text-slate-700 block">{pdfTranslations[currentLanguage]?.disclaimerTitle}</strong>
                 <p>
-                  هذا التقرير يمثل تلخيصاً آلياً دقيقاً للمحادثة الاستكشافية الأولية التي تمت عبر مساعد العيادة المعتمد على الذكاء الاصطناعي لـ {clinicInfo.name}. لا يغني هذا التقرير ولا يمثل بديلاً عن الفحص السريري المباشر والأشعة التشخيصية داخل العيادة. أي وصفات علاجية يجب أن تتم سريرياً وتوقع يدوياً من الطبيب الاستشاري المعالج.
+                  {pdfTranslations[currentLanguage]?.disclaimerText}
                 </p>
               </div>
 
               {/* Signature and Stamp placeholders */}
-              <div className="col-span-5 flex justify-between items-center pl-4 border-r border-slate-150 pr-4">
+              <div className={`col-span-5 flex justify-between items-center ${isRtl ? "pl-4 border-r pr-4" : "pr-4 border-l pl-4"} border-slate-150 pr-4`}>
                 {/* Official Stamp Vector representation */}
                 <div className="flex flex-col items-center justify-center shrink-0">
                   <div className="w-16 h-16 rounded-full border-2 border-dashed border-teal-600/60 flex flex-col items-center justify-center text-teal-600/70 p-1 relative">
@@ -7016,16 +8181,17 @@ ${pdfSession.messages.map(m => `- ${m.sender === "user" ? "المريض" : m.sen
                       <span className="text-[5px] font-black mt-0.5">APPROVED</span>
                     </div>
                   </div>
-                  <span className="text-[8px] text-slate-400 mt-1">ختم العيادة الرسمي</span>
+                  <span className="text-[8px] text-slate-400 mt-1">{pdfTranslations[currentLanguage]?.officialStamp}</span>
                 </div>
 
                 {/* Doctor Signature */}
                 <div className="text-center space-y-2 shrink-0">
-                  <span className="text-[10px] text-slate-400 block">توقيع الطبيب المشرف:</span>
+                  <span className="text-[10px] text-slate-400 block">{pdfTranslations[currentLanguage]?.doctorSignatureLabel}</span>
                   <div className="font-mono text-slate-800 text-sm italic border-b border-slate-300 pb-1 px-4 font-bold">
-                    د. {clinicInfo.doctorName || "الاستشاري"}
+                    {t('drPrefix')}
+                    {clinicInfo.doctorName || pdfTranslations[currentLanguage]?.defaultDoctor}
                   </div>
-                  <span className="text-[9px] text-slate-500 font-mono">{new Date().toLocaleDateString('ar-EG')}</span>
+                  <span className="text-[9px] text-slate-500 font-mono">{new Date().toLocaleDateString(currentLanguage === 'ar' ? 'ar-EG' : currentLanguage === 'fr' ? 'fr-FR' : 'en-US')}</span>
                 </div>
               </div>
             </div>
@@ -7037,14 +8203,22 @@ ${pdfSession.messages.map(m => `- ${m.sender === "user" ? "المريض" : m.sen
       {/* Premium Footer */}
       <footer className="bg-slate-950 border-t border-slate-900 py-6 text-center text-xs text-slate-500 mt-auto">
         <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p>© 2026 عيادتي الذكية - منصة الربح وتدريب الشات بوت للعيادات. جميع الحقوق محفوظة.</p>
+          <p>{t('saasCopyright')}</p>
           <div className="flex items-center gap-1.5 text-slate-400">
-            <span>صُنع بشغف لتمكين العيادات العربية بذكاء اصطناعي آمن ومحكم</span>
+            <span>{t('saasFooterNote')}</span>
             <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500 animate-pulse" />
           </div>
         </div>
       </footer>
 
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <I18nextProvider i18n={i18n}>
+      <InnerApp />
+    </I18nextProvider>
   );
 }

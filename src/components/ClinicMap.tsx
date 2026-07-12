@@ -5,19 +5,110 @@ import { ClinicInfo } from "../types";
 interface ClinicMapProps {
   clinicInfo: ClinicInfo;
   onChange: (updated: ClinicInfo) => void;
+  currentLanguage?: string;
 }
 
 // Default coordinates centered in Middle East/North Africa area (or Algiers center)
 const DEFAULT_LAT = 36.7538; // Algiers
 const DEFAULT_LNG = 3.0588;
 
-const getPopupHTML = (info: ClinicInfo) => {
+const mapTranslations: Record<string, any> = {
+  ar: {
+    popupOurClinic: "عيادتنا",
+    popupAddress: "العنوان: ",
+    popupCall: "اتصال: ",
+    mapTitle: "خريطة العيادة التفاعلية 📍",
+    mapDesc: "حدد موقع العيادة الجغرافي بدقة ليتمكن الشات بوت من توجيه المرضى ومشاركة الموقع معهم.",
+    mapStyleStreet: "مظهر الشوارع",
+    mapStyleDark: "المظهر الداكن",
+    mapStyleTitle: "تغيير مظهر الخريطة",
+    locateFromAddress: "تحديد من العنوان",
+    locateMe: "تحديد موقعي الحالي",
+    locating: "جاري تحديد الموقع...",
+    geolocationTitle: "استخدم الـ Geolocation لتحديد إحداثيات موقع العيادة الحالي تلقائياً",
+    shareLocationTitle: "مشاركة موقع العيادة الجغرافي",
+    copied: "تم نسخ الرابط!",
+    shareLocation: "مشاركة الموقع",
+    loadingMap: "جاري تحميل الخريطة التفاعلية...",
+    mapHint: "تلميح: يمكنك سحب الدبوس أو النقر في أي مكان لتعديل الموقع بدقة.",
+    approxLocation: "الموقع الحالي تقريبي (يرجى النقر للتأكيد)",
+    approxLocationShort: "الموقع تقريبي",
+    errorDenied: "تم رفض صلاحية الوصول للموقع الجغرافي. يرجى تفعيل الصلاحية في المتصفح أو تحديد الموقع يدوياً.",
+    errorUnavailable: "معلومات الموقع الجغرافي غير متوفرة حالياً.",
+    errorTimeout: "انتهت مهلة جلب الموقع الجغرافي للعيادة.",
+    errorGeneral: "حدث خطأ أثناء جلب موقعك الحالي.",
+    errorShare: "لم نتمكن من مشاركة الموقع أو نسخه تلقائياً.",
+    shareTextClinic: "موقع عيادة ",
+    shareTextAddress: " العنوان: ",
+    shareTextNav: " رابط خرائط جوجل للملاحة والموقع:\n"
+  },
+  en: {
+    popupOurClinic: "Our Clinic",
+    popupAddress: "Address: ",
+    popupCall: "Call: ",
+    mapTitle: "Interactive Clinic Map 📍",
+    mapDesc: "Pinpoint the clinic's location precisely so the chatbot can direct patients and share directions.",
+    mapStyleStreet: "Street View",
+    mapStyleDark: "Dark Mode",
+    mapStyleTitle: "Toggle Map Style",
+    locateFromAddress: "Locate from Address",
+    locateMe: "Locate Me",
+    locating: "Locating...",
+    geolocationTitle: "Use Geolocation to automatically detect the current clinic coordinates",
+    shareLocationTitle: "Share clinic's location",
+    copied: "Link Copied!",
+    shareLocation: "Share Location",
+    loadingMap: "Loading interactive map...",
+    mapHint: "Hint: Drag the marker or click anywhere to adjust location precisely.",
+    approxLocation: "Current location is approximate (click to confirm)",
+    approxLocationShort: "Approximate location",
+    errorDenied: "Location permission denied. Please allow location access in your browser or select manually.",
+    errorUnavailable: "Location information is currently unavailable.",
+    errorTimeout: "Location request timed out.",
+    errorGeneral: "An error occurred while fetching your current location.",
+    errorShare: "Could not share location or copy the link automatically.",
+    shareTextClinic: "Clinic location ",
+    shareTextAddress: " Address: ",
+    shareTextNav: " Google Maps link for navigation:\n"
+  },
+  fr: {
+    popupOurClinic: "Notre Clinique",
+    popupAddress: "Adresse : ",
+    popupCall: "Appeler : ",
+    mapTitle: "Carte Interactive de la Clinique 📍",
+    mapDesc: "Localisez précisément la clinique pour que le chatbot puisse guider les patients.",
+    mapStyleStreet: "Mode Rues",
+    mapStyleDark: "Mode Sombre",
+    mapStyleTitle: "Changer le style de la carte",
+    locateFromAddress: "Localiser depuis l'adresse",
+    locateMe: "Me géolocaliser",
+    locating: "Géolocalisation...",
+    geolocationTitle: "Utiliser la géolocalisation pour trouver automatiquement les coordonnées",
+    shareLocationTitle: "Partager la position de la clinique",
+    copied: "Lien copié !",
+    shareLocation: "Partager la position",
+    loadingMap: "Chargement de la carte interactive...",
+    mapHint: "Astuce : Glissez le marqueur ou cliquez n'importe où pour ajuster précisément la position.",
+    approxLocation: "La position actuelle est approximative (cliquez pour confirmer)",
+    approxLocationShort: "Position approximative",
+    errorDenied: "Permission de localisation refusée. Veuillez l'activer dans le navigateur ou localiser manuellement.",
+    errorUnavailable: "Les informations de localisation ne sont pas disponibles.",
+    errorTimeout: "Délai d'attente de localisation dépassé.",
+    errorGeneral: "Une erreur est survenue lors de la géolocalisation.",
+    errorShare: "Impossible de partager la position ou de copier le lien automatiquement.",
+    shareTextClinic: "Position de la clinique ",
+    shareTextAddress: " Adresse : ",
+    shareTextNav: " Lien Google Maps pour la navigation :\n"
+  }
+};
+
+const getPopupHTML = (info: ClinicInfo, t: any, isRtl: boolean) => {
   return `
-    <div style="font-family: inherit; direction: rtl; text-align: right; min-width: 190px; padding: 4px;" class="text-slate-950">
-      <div style="font-weight: 700; font-size: 14px; margin-bottom: 2px; color: #0f172a;">${info.name || "عيادتنا"}</div>
+    <div style="font-family: inherit; direction: ${isRtl ? "rtl" : "ltr"}; text-align: ${isRtl ? "right" : "left"}; min-width: 190px; padding: 4px;" class="text-slate-950">
+      <div style="font-weight: 700; font-size: 14px; margin-bottom: 2px; color: #0f172a;">${info.name || t.popupOurClinic}</div>
       ${info.specialty ? `<div style="font-size: 11px; color: #0d9488; font-weight: 600; margin-bottom: 6px;">${info.specialty}</div>` : ""}
       <div style="font-size: 11px; color: #475569; margin-bottom: 8px; line-height: 1.4;">
-        <strong>العنوان: </strong>${info.address || "الموقع الجغرافي المحدد"}
+        <strong>${t.popupAddress}</strong>${info.address || t.approxLocationShort}
       </div>
       ${info.phone ? `
         <div style="margin-top: 8px; border-top: 1px solid #e2e8f0; padding-top: 8px;">
@@ -25,8 +116,8 @@ const getPopupHTML = (info: ClinicInfo) => {
              style="display: flex; align-items: center; justify-content: center; gap: 6px; background-color: #0d9488; color: white; text-decoration: none; font-size: 11px; font-weight: bold; padding: 6px 12px; border-radius: 6px; text-align: center; transition: background 0.2s; white-space: nowrap;"
              onmouseover="this.style.backgroundColor='#0f766e'"
              onmouseout="this.style.backgroundColor='#0d9488'">
-             <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left: 2px;"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-             اتصال: ${info.phone}
+             <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="${isRtl ? "margin-left: 2px;" : "margin-right: 2px;"}"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+             ${t.popupCall}${info.phone}
           </a>
         </div>
       ` : ""}
@@ -34,7 +125,10 @@ const getPopupHTML = (info: ClinicInfo) => {
   `;
 };
 
-export default function ClinicMap({ clinicInfo, onChange }: ClinicMapProps) {
+export default function ClinicMap({ clinicInfo, onChange, currentLanguage = "ar" }: ClinicMapProps) {
+  const t = mapTranslations[currentLanguage] || mapTranslations["ar"];
+  const isRtl = currentLanguage === "ar";
+
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
   const markerRef = useRef<any>(null);
@@ -158,7 +252,7 @@ export default function ClinicMap({ clinicInfo, onChange }: ClinicMapProps) {
         markerRef.current = marker;
 
         // Add Bind Popup with Clinic details
-        marker.bindPopup(getPopupHTML(clinicInfo));
+        marker.bindPopup(getPopupHTML(clinicInfo, t, isRtl));
 
         // Handle Marker Drag
         marker.on("dragend", () => {
@@ -229,14 +323,14 @@ export default function ClinicMap({ clinicInfo, onChange }: ClinicMapProps) {
       }
 
       // Update popup content with latest details (name, specialty, phone, address, etc.)
-      markerRef.current.setPopupContent(getPopupHTML(clinicInfo));
+      markerRef.current.setPopupContent(getPopupHTML(clinicInfo, t, isRtl));
     }
   }, [clinicInfo, isLoaded]);
 
   // Geocode address using OSM Nominatim API
   const handleGeocode = async () => {
     if (!clinicInfo.address || clinicInfo.address.trim() === "") {
-      setGeocodingError("يرجى كتابة عنوان العيادة أولاً لتحديد موقعه.");
+      setGeocodingError(currentLanguage === "ar" ? "يرجى كتابة عنوان العيادة أولاً لتحديد موقعه." : currentLanguage === "fr" ? "Veuillez d'abord saisir l'adresse de la clinique." : "Please type the clinic's address first to locate it.");
       return;
     }
 
@@ -271,12 +365,22 @@ export default function ClinicMap({ clinicInfo, onChange }: ClinicMapProps) {
         setGeocodingError(null);
       } else {
         setGeocodingError(
-          "لم نتمكن من العثور على هذا العنوان بدقة. يرجى تعديل النص أو تحديد الموقع يدوياً بالنقر على الخريطة."
+          currentLanguage === "ar" 
+            ? "لم نتمكن من العثور على هذا العنوان بدقة. يرجى تعديل النص أو تحديد الموقع يدوياً بالنقر على الخريطة." 
+            : currentLanguage === "fr" 
+            ? "Impossible de trouver cette adresse avec précision. Veuillez modifier le texte ou localiser manuellement." 
+            : "Could not find this address precisely. Please refine the text or locate manually by clicking the map."
         );
       }
     } catch (error) {
       console.error("Geocoding failed:", error);
-      setGeocodingError("حدث خطأ أثناء الاتصال بخدمة الخرائط. يرجى النقر على الخريطة لتحديد الموقع يدوياً.");
+      setGeocodingError(
+        currentLanguage === "ar" 
+          ? "حدث خطأ أثناء الاتصال بخدمة الخرائط. يرجى النقر على الخريطة لتحديد الموقع يدوياً." 
+          : currentLanguage === "fr" 
+          ? "Erreur lors de la connexion au service de carte. Veuillez cliquer sur la carte pour localiser manuellement." 
+          : "Error connecting to map service. Please click on the map to locate manually."
+      );
     } finally {
       setIsGeocoding(false);
     }
@@ -284,7 +388,7 @@ export default function ClinicMap({ clinicInfo, onChange }: ClinicMapProps) {
 
   const handleLocateMe = () => {
     if (!navigator.geolocation) {
-      setGeocodingError("متصفحك لا يدعم جلب الموقع الجغرافي (Geolocation).");
+      setGeocodingError(currentLanguage === "ar" ? "متصفحك لا يدعم جلب الموقع الجغرافي (Geolocation)." : currentLanguage === "fr" ? "Votre navigateur ne supporte pas la géolocalisation." : "Your browser does not support geolocation.");
       return;
     }
 
@@ -330,13 +434,13 @@ export default function ClinicMap({ clinicInfo, onChange }: ClinicMapProps) {
         console.error("Geolocation error:", error);
         setIsLocating(false);
         
-        let msg = "حدث خطأ أثناء جلب موقعك الحالي.";
+        let msg = t.errorGeneral;
         if (error.code === error.PERMISSION_DENIED) {
-          msg = "تم رفض صلاحية الوصول للموقع الجغرافي. يرجى تفعيل الصلاحية في المتصفح أو تحديد الموقع يدوياً.";
+          msg = t.errorDenied;
         } else if (error.code === error.POSITION_UNAVAILABLE) {
-          msg = "معلومات الموقع الجغرافي غير متوفرة حالياً.";
+          msg = t.errorUnavailable;
         } else if (error.code === error.TIMEOUT) {
-          msg = "انتهت مهلة جلب الموقع الجغرافي للعيادة.";
+          msg = t.errorTimeout;
         }
         setGeocodingError(msg);
       },
@@ -352,12 +456,12 @@ export default function ClinicMap({ clinicInfo, onChange }: ClinicMapProps) {
     const lat = clinicInfo.latitude || DEFAULT_LAT;
     const lng = clinicInfo.longitude || DEFAULT_LNG;
     const mapUrl = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
-    const shareText = `موقع عيادة ${clinicInfo.name || "العيادة"}:\n📍 العنوان: ${clinicInfo.address || "العنوان المكتوب"}\n\n📌 رابط خرائط جوجل للملاحة والموقع:\n${mapUrl}`;
+    const shareText = `${t.shareTextClinic}${clinicInfo.name || t.popupOurClinic}:\n📍${t.shareTextAddress}${clinicInfo.address || t.approxLocationShort}\n\n📌${t.shareTextNav}${mapUrl}`;
 
     if (navigator.share) {
       try {
         await navigator.share({
-          title: `موقع عيادة ${clinicInfo.name || "العيادة"}`,
+          title: `${t.shareTextClinic}${clinicInfo.name || t.popupOurClinic}`,
           text: shareText,
           url: mapUrl,
         });
@@ -375,7 +479,7 @@ export default function ClinicMap({ clinicInfo, onChange }: ClinicMapProps) {
         setTimeout(() => setShareSuccess(false), 3000);
       } catch (err) {
         console.error("Failed to copy:", err);
-        setGeocodingError("لم نتمكن من مشاركة الموقع أو نسخه تلقائياً.");
+        setGeocodingError(t.errorShare);
       }
     }
   };
@@ -390,10 +494,10 @@ export default function ClinicMap({ clinicInfo, onChange }: ClinicMapProps) {
         <div>
           <h5 className="text-sm font-bold text-slate-200 flex items-center gap-2">
             <MapPin className="w-4 h-4 text-teal-400" />
-            <span>خريطة العيادة التفاعلية 📍</span>
+            <span>{t.mapTitle}</span>
           </h5>
           <p className="text-xs text-slate-400 mt-1">
-            حدد موقع العيادة الجغرافي بدقة ليتمكن الشات بوت من توجيه المرضى ومشاركة الموقع معهم.
+            {t.mapDesc}
           </p>
         </div>
 
@@ -403,10 +507,10 @@ export default function ClinicMap({ clinicInfo, onChange }: ClinicMapProps) {
             type="button"
             onClick={toggleMapStyle}
             className="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs text-slate-300 font-medium px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all cursor-pointer"
-            title="تغيير مظهر الخريطة"
+            title={t.mapStyleTitle}
           >
             <Eye className="w-3.5 h-3.5 text-teal-400" />
-            <span>{mapStyle === "dark" ? "مظهر الشوارع" : "المظهر الداكن"}</span>
+            <span>{mapStyle === "dark" ? t.mapStyleStreet : t.mapStyleDark}</span>
           </button>
 
           {/* Auto Detect */}
@@ -421,7 +525,7 @@ export default function ClinicMap({ clinicInfo, onChange }: ClinicMapProps) {
             ) : (
               <RefreshCw className="w-3.5 h-3.5" />
             )}
-            <span>تحديد من العنوان</span>
+            <span>{t.locateFromAddress}</span>
           </button>
 
           {/* Locate Me */}
@@ -430,14 +534,14 @@ export default function ClinicMap({ clinicInfo, onChange }: ClinicMapProps) {
             disabled={isGeocoding || isLocating}
             onClick={handleLocateMe}
             className="bg-teal-500 hover:bg-teal-400 disabled:opacity-50 text-slate-950 text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all cursor-pointer"
-            title="استخدم الـ Geolocation لتحديد إحداثيات موقع العيادة الحالي تلقائياً"
+            title={t.geolocationTitle}
           >
             {isLocating ? (
               <Loader2 className="w-3.5 h-3.5 animate-spin text-slate-950" />
             ) : (
               <Navigation className="w-3.5 h-3.5 fill-slate-950 stroke-slate-950" />
             )}
-            <span>{isLocating ? "جاري تحديد الموقع..." : "تحديد موقعي الحالي"}</span>
+            <span>{isLocating ? t.locating : t.locateMe}</span>
           </button>
 
           {/* Share Location */}
@@ -445,14 +549,14 @@ export default function ClinicMap({ clinicInfo, onChange }: ClinicMapProps) {
             type="button"
             onClick={handleShareLocation}
             className="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs text-slate-300 font-medium px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all cursor-pointer"
-            title="مشاركة موقع العيادة الجغرافي"
+            title={t.shareLocationTitle}
           >
             {shareSuccess ? (
               <Check className="w-3.5 h-3.5 text-teal-400" />
             ) : (
               <Share2 className="w-3.5 h-3.5 text-teal-400" />
             )}
-            <span>{shareSuccess ? "تم نسخ الرابط!" : "مشاركة الموقع"}</span>
+            <span>{shareSuccess ? t.copied : t.shareLocation}</span>
           </button>
         </div>
       </div>
@@ -462,7 +566,7 @@ export default function ClinicMap({ clinicInfo, onChange }: ClinicMapProps) {
         {!isLoaded && (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-950/90 z-20 space-y-3">
             <Loader2 className="w-8 h-8 text-teal-400 animate-spin" />
-            <p className="text-xs text-slate-400">جاري تحميل الخريطة التفاعلية...</p>
+            <p className="text-xs text-slate-400">{t.loadingMap}</p>
           </div>
         )}
 
@@ -473,7 +577,7 @@ export default function ClinicMap({ clinicInfo, onChange }: ClinicMapProps) {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 text-[11px] text-slate-400 bg-slate-950/40 p-2.5 rounded-lg border border-slate-800/50">
         <div className="flex items-center gap-1 text-slate-300">
           <Navigation className="w-3.5 h-3.5 text-teal-400" />
-          <span>تلميح: يمكنك سحب الدبوس أو النقر في أي مكان لتعديل الموقع بدقة.</span>
+          <span>{t.mapHint}</span>
         </div>
         
         {clinicInfo.latitude && clinicInfo.longitude ? (
@@ -482,7 +586,7 @@ export default function ClinicMap({ clinicInfo, onChange }: ClinicMapProps) {
           </div>
         ) : (
           <div className="text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
-            الموقع الحالي تقريبي (يرجى النقر للتأكيد)
+            {t.approxLocation}
           </div>
         )}
       </div>
