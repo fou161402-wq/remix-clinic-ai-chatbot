@@ -1,0 +1,687 @@
+819: patientName: "أحمد منصور",
+821: topic: "استشارة زراعة أسنان وتكلفة العلاج",
+826: { id: "m-1", sender: "user", text: "مرحبا، أريد الاستفسار عن تكلفة زراعة السن الواحد في عيادتكم وما هي الإجراءات؟", timestamp: new Date() },
+827: { id: "m-2", sender: "bot", text: "أهلاً بك يا فندم في عيادتنا! زراعة السن الواحد لدينا تتم بأحدث التقنيات السويسرية والألمانية. تكلفتها تبدأ من 35000 دج وتعتمد على نوع الغرسة وحالة عظام الفك. الإجراء يتضمن فحصاً أولياً، ثم زراعة وتثبيت الغرسة، تليها فترة شفاء قصيرة قبل وضع التاج النهائي. هل تود حجز موعد لفحص مجاني مع طبيب الزراعة؟", timestamp: new Date() },
+828: { id: "m-3", sender: "user", text: "نعم، أريد موعداً يوم الخميس القادم مساءً إن أمكن.", timestamp: new Date() },
+829: { id: "m-4", sender: "bot", text: "يسعدنا ذلك! لقد حجزت لك موعداً مبدئياً ليوم الخميس القادم الساعة 16:00 زوالاً باسم أحمد منصور. هل يمكنك تأكيد رقم جوالك لاستكمال التأكيد؟", timestamp: new Date() }
+834: patientName: "منى الرويلي",
+836: topic: "سؤال عن ألم حاد في الضرس السفلي بعد الحشو",
+841: { id: "m-5", sender: "user", text: "السلام عليكم، دكتور عملت حشوة لضرسي السفلي قبل يومين والآن أشعر بألم شديد لا يطاق عند شرب الماء البارد، هل هذا طبيعي؟", timestamp: new Date() },
+842: { id: "m-6", sender: "bot", text: "وعليكم السلام ورحمة الله وبركاته. سلامتك ألف سلامة! بعد حشو العصب أو الحشو العميق، قد يحدث تحسس مؤقت للبارد والساخن يستمر لعدة أيام وهو أمر طبيعي نسبياً. ولكن، إذا كان الألم شديداً ومستمراً (نابضاً) ويمنعك من النوم، فقد يشير ذلك إلى حاجة السن لفحص إضافي أو تعديل في مستوى الحشوة. يرجى مراجعة طبيبك بالعيادة فوراً، ويمكنك تناول مسكن ألم معتدل مثل البروفين مؤقتاً لحين زيارتنا. هل تودين حجز موعد فحص طارئ اليوم؟", timestamp: new Date() },
+843: { id: "m-7", sender: "user", text: "شكراً جزيلاً، سأقوم بأخذ المسكن وإذا لم يتحسن سأتصل بكم غداً.", timestamp: new Date() }
+848: patientName: "رائد الحربي",
+850: topic: "قراءة أشعة سينية مرفقة وإفادة طبية",
+855: { id: "m-8", sender: "user", text: "أرفقت لكم صورة الأشعة لضرسي، هل يحتاج خلع أو علاج عصب فقط؟", timestamp: new Date() },
+856: { id: "m-9", sender: "bot", text: "أهلاً بك يا فندم. لقد اطلعت على صورة الأشعة المرفقة بكل دقة. يظهر من الصورة وجود تسوس عميق جداً يقترب كثيراً من حجرة العصب في الضرس المعني، مع وجود ظلال طفيفة حول جذر السن قد تشير إلى التهاب بسيط. الاحتمال الأكبر هو حاجتك لعلاج عصب (سحب عصب) مع حشوة وتلبيسة للمحافظة على السن وتجنب الخلع. ومع ذلك، لا يمكن إعطاء قرار نهائي إلا بالفحص السريري المباشر واختبار حيوية العصب بالعيادة. ننصح بزيارتنا بأقرب وقت لتجنب تفاقم الالتهاب. هل ترغب بحجز موعد لعلاج العصب؟", timestamp: new Date() }
+861: patientName: "فاطمة عسيري",
+863: topic: "استفسار عن تقويم الأسنان الشفاف والأقساط",
+868: { id: "m-10", sender: "user", text: "مرحبا.. هل يتوفر لديكم تقويم شفاف وبكم السعر؟ وهل فيه تقسيط؟", timestamp: new Date() },
+869: { id: "m-11", sender: "bot", text: "مرحباً بكِ أختي فاطمة! نعم، نوفر تقنية التقويم الشفاف (Invisalign) وهو الخيار التجميلي المفضل للكثيرين. تبدأ أسعار التقويم الشفاف من 90000 دج وتتفاوت حسب عدد القوالب المطلوبة ومدة العلاج. نعم، يسرنا تقديم خطة تقسيط مريحة لمرضانا: دفعة أولى 20000 دج، والباقي أقساط شهرية ميسرة تبدأ من 5000 دج فقط بدون أي فوائد. هل تحبين حجز موعد استشارة مجانية مع أخصائي التقويم لدينا لأخذ القياسات ووضع الخطة؟", timestamp: new Date() },
+870: { id: "m-12", sender: "user", text: "رائع جداً، سأحجز موعداً الأسبوع القادم إن شاء الله.", timestamp: new Date() }
+882: const [monthlyPrice, setMonthlyPrice] = useState<number>(4500); // DZD / د.ج
+900: const [flyerClinicName, setFlyerClinicName] = useState<string>("عيادة المدار لطب الأسنان");
+902: const [flyerWelcomeText, setFlyerWelcomeText] = useState<string>("امسح الكود للتحدث مع طبيبنا الافتراضي وحجز موعدك في دقيقة واحدة! 🦷");
+978: showNotification("يرجى تعبئة الاسم ورقم الجوال والخدمة لتسجيل حجزك.", "error");
+986: showNotification("عذراً، لا يمكن إتمام الحجز حالياً لأن العيادة خارج أوقات العمل الرسمية. 🕒", "error");
+991: showNotification("عذراً، لقد اكتمل الحد الأقصى للحجوزات اليومية المتاحة. 🔴", "error");
+1013: sendBrowserNotification("وصول طلب حجز جديد عبر الشات بوت! 📅", {
+1014: body: `المريض: ${chatBookingName}\nالخدمة المطلوبة: ${chatBookingService}\nالتوقيت: ${chatBookingTime || "12:00"} | ${chatBookingDate || ""}`,
+1026: text: `تم استقبال طلب حجزك المبدئي بنجاح! 🎉\n\n📝 تفاصيل طلب الحجز:\n• الاسم: ${chatBookingName}\n• الجوال: ${chatBookingPhone}\n• الخدمة: ${chatBookingService}\n• التاريخ: ${chatBookingDate || new Date().toISOString().split('T')[0]}\n• الوقت: ${chatBookingTime || "12:00"}\n\nالحالة الحالية للطلب: قيد المراجعة ⏳\n\nسنقوم بالاتصال بك فوراً لتأكيد الحجز النهائي. شكراً لثقتك بنا!`,
+1040: showNotification("تم إرسال طلب حجزك بنجاح للمراجعة! 📅", "success");
+1047: showNotification("يرجى تعبئة الاسم والهاتف والخدمة المطلوبة على الأقل.", "error");
+1076: showNotification("تم إضافة حجز المريض بنجاح! 📅", "success");
+1083: const defaultMsg = `تذكير بموعدك: عزيزي المريض ${booking.patientName}، نود تذكيرك بموعدك لـ (${booking.serviceName}) في عيادتنا يوم ${booking.bookingDate} الساعة ${booking.bookingTime}. نتطلع لرؤيتك ونتمنى لك دوام الصحة والعافية.`;
+1101: let label = "قبل الموعد بيوم واحد";
+1102: if (timeBefore === "30_mins") label = "قبل الموعد بـ 30 دقيقة";
+1103: else if (timeBefore === "2_hours") label = "قبل الموعد بساعتين";
+1104: else if (timeBefore === "2_days") label = "قبل الموعد بيومين";
+1116: scheduledTime: `مجدول (${label})`,
+1134: showNotification("تم تأكيد الحجز وجدولة تذكير تلقائي للمريض بنجاح! 🔔✅", "success");
+1136: showNotification("تم تأكيد الحجز بنجاح بدون جدولة تذكير. ✅", "success");
+1166: text: `🔔 [تذكير تلقائي مجدول للمريض ${booking.patientName}]\n\n${reminder.message}`,
+1171: showNotification("تم إرسال رسالة التذكير بنجاح وتنبيه المريض عبر الشات بوت! 🔔📲", "success");
+1178: showNotification("تم إلغاء الحجز بنجاح. ❌", "info");
+1185: showNotification("تم إعادة تنشيط الحجز وتعيينه كقيد الانتظار. 🔄", "info");
+1192: title: "تأكيد حذف الحجز",
+1193: message: `هل أنت متأكد من رغبتك في حذف حجز المريض "${booking?.patientName || ''}" نهائياً من قاعدة بيانات العيادة؟`,
+1198: showNotification("تم حذف الحجز نهائياً من قاعدة البيانات. 🗑️", "success");
+1222: const name = b.serviceName || "استشارة عامة";
+1242: showNotification("عذراً، هذه العيادة غير متوفرة حالياً.", "error");
+1255: workHours: tenant.workHours || "من 9:00 ص إلى 9:00 م",
+1278: showNotification(`أهلاً بك في الموقع الرسمي لـ ${tenant.clinicName} 👋`, "success");
+1284: showNotification("البريد الإلكتروني أو كلمة المرور غير صحيحة ❌", "error");
+1303: workHours: tenant.workHours || "من 9 ص إلى 9 م",
+1326: showNotification(`أهلاً بك يا دكتور ${tenant.doctorName}! تم تسجيل الدخول بنجاح 🔑`, "success");
+1343: showNotification("⚠️ عذراً، تم تفعيل الباقة التجريبية مسبقاً على هذا الجهاز! لمنع إساءة الاستخدام، يمكنك ترقية حسابك إلى باقة 'الانطلاق' أو 'الاحترافية' لتشغيل العيادة، أو تسجيل الدخول بحسابك السابق.", "error");
+1350: showNotification("هذا البريد الإلكتروني مسجل بالفعل! ❌", "error");
+1364: workHours: "من 9:00 صباحاً وحتى 9:00 مساءً",
+1365: dailyStatus: "العيادة تعمل بأوقاتها الطبيعية ونستقبل الحجوزات الطبية بشكل طبيعي.",
+1366: notes: "عيادة جديدة تم تفعيلها حديثاً على منصة شافي SaaS للذكاء الاصطناعي.",
+1385: { id: `s-1-${Date.now()}`, name: "استشارة الكشف الأولي", description: "فحص أولي مجاني لتحديد المشكلة ووضع الخطة العلاجية.", price: "كشف مجاني" }
+1388: { id: `g-1-${Date.now()}`, title: "إرشادات عامة للمرضى", content: "يرجى الحضور قبل الموعد بـ 15 دقيقة وإحضار الهوية الوطنية." }
+1391: { id: `q-1-${Date.now()}`, label: "📅 حجز موعد جديد", response: "أهلاً بك! يمكنك إرسال اسمك ورقم جوالك وتحديد الموعد المفضل ليتم الحجز فوراً." },
+1392: { id: `q-2-${Date.now()}`, label: "📍 موقع العيادة وأوقات العمل", response: `عنواننا: ${address}. ساعات العمل: من السبت إلى الخميس من 9 ص إلى 9 م.` }
+1440: showNotification(`مرحباً بك دكتور ${docName}! تم إنشاء حساب عيادتك وتفعيل باقة الاشتراك بنجاح 🎉`, "success");
+1449: showNotification("تم تسجيل الخروج بنظام SaaS بأمان. نراك قريباً دكتور! 👋", "info");
+1486: showNotification(`تمت ترقية الاشتراك للباقة ${newPlanId === "pro" ? "الاحترافية" : "الانطلاق"} بنجاح! شكراً لاشتراكك 💳✨`, "success");
+1528: doctorName: preset.id === "dental" ? "د. محمد بن يوسف" : preset.id === "general" ? "د. سارة حميدش" : "د. خالد بلعيدي",
+1533: workHours: preset.id === "dental" ? "من 9:00 ص إلى 9:00 م" : preset.id === "general" ? "من 2:00 ظ إلى 9:30 م" : "من 8:00 ص إلى 9:00 م",
+1535: notes: "عيادة معتمدة تقدم خدمات راقية لمرضاها بأحدث التقنيات.",
+1560: patientName: "أحمد منصور",
+1562: topic: "استشارة زراعة أسنان وتكلفة العلاج",
+1567: { id: "m-1", sender: "user", text: "مرحبا، أريد الاستفسار عن تكلفة زراعة السن الواحد في عيادتكم وما هي الإجراءات؟", timestamp: new Date() },
+1568: { id: "m-2", sender: "bot", text: "أهلاً بك يا فندم في عيادتنا! زراعة السن الواحد لدينا تتم بأحدث التقنيات السويسرية والألمانية. تكلفتها تبدأ من 35000 دج وتعتمد على نوع الغرسة وحالة عظام الفك. الإجراء يتضمن فحصاً أولياً، ثم زراعة وتثبيت الغرسة، تليها فترة شفاء قصيرة قبل وضع التاج النهائي. هل تود حجز موعد لفحص مجاني مع طبيب الزراعة؟", timestamp: new Date() }
+1603: workHours: latestTenant.workHours || "من 9 ص إلى 9 م",
+1670: showNotification("ألف مبروك! تم تثبيت لوحة تحكم العيادة بنجاح على جهازك كـ تطبيق أصلي 🎉", "success");
+1686: showNotification("ميزة التثبيت جاهزة! يرجى اتباع التعليمات اليدوية البسيطة لمتصفحك بالأسفل لتثبيت التطبيق فوراً. 📥", "info");
+1694: showNotification("تم البدء في تثبيت التطبيق بنجاح! يسعدنا استخدامك للنسخة الأصلية من المنصة. 🎉", "success");
+1698: showNotification("تم إلغاء تثبيت التطبيق. يمكنك دائمًا التثبيت لاحقًا بضغطة زر.", "info");
+1702: showNotification("حدث خطأ أثناء محاولة التثبيت التلقائي. يمكنك اتباع الخطوات اليدوية أدناه.", "error");
+1769: showNotification("عذراً، متصفحك الحالي لا يدعم إشعارات المتصفح المباشرة.", "error");
+1778: showNotification("رائع! تم تفعيل إشعارات المتصفح بنجاح لجذب انتباهك فوراً عند الحجوزات الجديدة 🔔", "success");
+1780: sendBrowserNotification("مرحباً بك في نظام الإشعارات المباشر! 🔔", {
+1781: body: "تم تفعيل إشعارات العيادة بنجاح. ستظهر هنا التحديثات المباشرة للحجوزات فوراً لتنبيهك.",
+1785: showNotification("تم رفض إذن الإشعارات. يرجى تفعيلها يدوياً من إعدادات المتصفح (أيقونة القفل بجانب الرابط).", "error");
+1789: showNotification("حدث خطأ أثناء طلب الإذن بالإشعارات.", "error");
+1796: showNotification("يرجى إدخال اسم القالب الجديد.", "error");
+1803: specialty: newPresetSpecialty || clinicInfo.specialty || "تخصص عام",
+1806: specialty: newPresetSpecialty || clinicInfo.specialty || "تخصص عام",
+1825: showNotification(`تم حفظ وتخزين قالبك المخصص الجديد: ${newPreset.name} بنجاح! 💾`, "success");
+1831: showNotification("يرجى إدخال اسم العيادة / القالب الجديد.", "error");
+1838: specialty: blankPresetSpecialty || "تخصص عام",
+1841: specialty: blankPresetSpecialty || "تخصص عام",
+1850: label: "📅 حجز موعد جديد",
+1851: response: "أهلاً بك! يرجى ملء نموذج حجز الموعد أدناه."
+1854: dailyStatus: "أهلاً بكم في عيادتنا اليوم."
+1868: showNotification(`تم إنشاء وتفعيل القالب الفارغ الجديد: ${newPreset.name} بنجاح! ✨`, "success");
+1878: showNotification(`تم حذف القالب "${presetToDelete?.name || ""}" بنجاح. 🗑️`, "info");
+1958: showNotification("تم حفظ البيانات وتحديث الشات بوت فورياً بنجاح! 💾", "success");
+2017: showNotification(`تم تحميل قالب عيادة: ${preset.name} بنجاح! ✨`, "success");
+2021: const fallbackClinic = currentLanguage === "ar" ? "عيادتنا" : currentLanguage === "fr" ? "notre clinique" : "our clinic";
+2060: showNotification("تم تصدير ملف النسخة الاحتياطية بنجاح! احتفظ به في مكان آمن 📥", "success");
+2098: showNotification("تم استيراد واسترجاع النسخة الاحتياطية وتحديث الشات بوت فورياً بنجاح! 🎉", "success");
+2100: showNotification("صيغة الملف غير صالحة. تأكد من رفع ملف نسخة احتياطية تم تصديره من هذا النظام.", "error");
+2103: showNotification("حدث خطأ أثناء قراءة الملف. يرجى التأكد من اختيار ملف .json صحيح.", "error");
+2128: if (action.id === "booking-trigger" || action.label.includes("حجز") || action.label.includes("موعد") || action.label.includes("احجز")) {
+2137: text: "عذراً، نحن حالياً خارج أوقات العمل الرسمية للعيادة. 🕒\n\nتفضل بترك تفاصيل طلبك أو رقم هاتفك وسيقوم فريق العيادة بالتواصل معك فور بدء ساعات العمل الرسمية القادمة لتنسيق وحجز موعدك!",
+2149: text: `نعتذر منك بشدة، لقد اكتمل الحد الأقصى للحجوزات المتاحة لليوم في العيادة (${maxBookingsCount} حجز). 🔴\n\nتفضل بالاتصال بنا مباشرة عبر الهاتف لتسجيل اسمك في قائمة الانتظار، أو يرجى المحاولة غداً لحجز موعد جديد. شكراً لتفهمك!`,
+2160: text: "مرحباً بك في نظام الحجز الذكي المباشر! 📅\nالرجاء ملء استمارة الحجز أدناه لتسجيل موعدك فوراً في لوحة تحكم الطبيب وسنتصل بك للتأكيد.",
+2188: showNotification("يرجى اختيار ملف صورة صالح (PNG, JPEG, etc.).", "error");
+2193: showNotification("حجم الصورة كبير جداً، يرجى اختيار صورة أقل من 5 ميجابايت.", "error");
+2207: showNotification("تم إرفاق الصورة بنجاح! جاهزة للإرسال مع رسالتك. 📸", "success");
+2210: showNotification("حدث خطأ أثناء قراءة ملف الصورة.", "error");
+2227: showNotification("فشل الوصول إلى الكاميرا. يرجى التحقق من الأذونات ومنح المتصفح حق الوصول.", "error");
+2258: showNotification("تم التقاط الصورة وإرفاقها بنجاح! 📸", "success");
+2297: showNotification("تم تسجيل وإرفاق المقطع الصوتي بنجاح! 🎙️", "success");
+2314: showNotification("فشل الوصول إلى الميكروفون لتسجيل الصوت. يرجى التحقق من الأذونات.", "error");
+2346: showNotification("تم إلغاء تسجيل الصوت.", "info");
+2370: text: userText || "مرفقات",
+2381: ? "عذراً، لقد انتهى اشتراك المساعد الذكي خارج المنصة لهذه العيادة. يرجى من الطبيب تجديد الاشتراك عبر لوحة التحكم 💳."
+2418: text: userText || (imgToSend ? "تحليل وقراءة الصورة المرفقة 📸" : "تحليل وسماع المقطع الصوتي المرفق 🎙️"),
+2438: lowercaseText.includes("حجز") ||
+2439: lowercaseText.includes("موعد") ||
+2440: lowercaseText.includes("احجز") ||
+2505: throw new Error("فشل في الحصول على رد من خادم الذكاء الاصطناعي");
+2513: text: data.reply || (currentLanguage === "ar" ? "عذراً، لم أستطع إجابتك بشكل سليم." : currentLanguage === "fr" ? "Désolé, je n'ai pas pu vous répondre correctement." : "Sorry, I could not answer you properly."),
+2525: ? `عذراً، حدث خطأ أثناء محاولة الاتصال بالذكاء الاصطناعي. يرجى التحقق من تفعيل مفتاح الـ API الخاص بـ Gemini في إعدادات العيادة هاتفياً عبر الرقم (${clinicInfo.phone}).`
+2541: showNotification("يرجى كتابة سؤال لفحصه!", "error");
+2568: throw new Error("حدث خطأ أثناء الاتصال بالخادم");
+2572: setBotTestAnswer(data.reply || "عذراً، لم أستطع إجابتك بشكل سليم.");
+2576: setBotTestAnswer(`[مُحاكاة محلية ذكية لعدم توفر الاتصال] 🤖
+2577: بناءً على معلومات عيادتك الحالية:
+2578: - الطبيب المسؤول: ${interactiveDocName} (${interactiveDocBio})
+2579: - الخدمات: ${interactiveServices}
+2580: - أوقات العمل: ${interactiveWorkHours}
+2581: - العطلة: ${interactiveWeekend}
+2583: سأجيب المريض كالتالي: "أهلاً بك! تحت إشراف الدكتور ${interactiveDocName} (${interactiveDocBio})، نقدم لك خدماتنا: ${interactiveServices} في أوقات العمل الرسمية: ${interactiveWorkHours}، وعطلتنا الأسبوعية: ${interactiveWeekend}."`);
+2598: price: newServicePrice || "غير محدد"
+2613: title: "تأكيد حذف الخدمة",
+2614: message: `هل أنت متأكد من رغبتك في حذف خدمة "${service?.name || ''}" نهائياً من قائمة الخدمات المتوفرة بالعيادة؟`,
+2619: showNotification("تم حذف الخدمة نهائياً من قاعدة البيانات. 🗑️", "success");
+2647: title: "تأكيد حذف التعليمات / الإرشادات",
+2648: message: `هل أنت متأكد من رغبتك في حذف الإرشاد الطبي "${guideline?.title || ''}" نهائياً؟`,
+2653: showNotification("تم حذف الإرشاد الطبي بنجاح. 🗑️", "success");
+2725: showNotification(`نجح استيراد عدد (${importPreview.length}) من السجلات لقاعدة البيانات! 📊`, "success");
+2856: {currentLanguage === "ar" ? "خطوة" : currentLanguage === "fr" ? "Étape" : "Step"} {getChatBookingProgress().filled}/{getChatBookingProgress().total}
+2915: <option value="استشارة وفحص طبي">{currentLanguage === "ar" ? "استشارة وفحص طبي" : currentLanguage === "fr" ? "Consultation & Examen médical" : "Medical Consultation & Examination"}</option>
+3147: lang === "ar" ? "تم تغيير لغة المنصة والتحكم إلى العربية بنجاح! 🇸🇦" :
+3254: {clinicInfo.name || (currentLanguage === "ar" ? "عيادتي الذكية" : currentLanguage === "fr" ? "Ma Clinique" : "My Clinic")}
+3256: <p className="text-[10px] text-teal-400 font-bold">{clinicInfo.specialty || (currentLanguage === "ar" ? "رعاية صحية واستشارات متميزة" : currentLanguage === "fr" ? "Soins et conseils d'excellence" : "Premium care and consultations")}</p>
+3274: showNotification(currentLanguage === "ar" ? "أهلاً بك! يمكنك الاستفسار أو حجز موعد فورياً مع مساعدنا الذكي الآن." : currentLanguage === "fr" ? "Bienvenue ! Vous pouvez poser des questions ou prendre rendez-vous instantanément avec notre assistant intelligent." : "Welcome! You can inquire or book an appointment instantly with our smart assistant now.", "info");
+3284: showNotification(currentLanguage === "ar" ? "أهلاً بك يا دكتور! تم الدخول للوحة التحكم الطبية بنجاح 🔑" : currentLanguage === "fr" ? "Bienvenue Docteur ! Vous êtes connecté avec succès au panneau d'administration médicale 🔑" : "Welcome Doctor! You have successfully logged in to the medical control panel 🔑", "success");
+3287: title={currentLanguage === "ar" ? "لوحة الإدارة وتدريب الشات بوت" : currentLanguage === "fr" ? "Panneau d'administration et formation du chatbot" : "Admin Panel & Chatbot Training"}
+3312: {clinicInfo.name || (currentLanguage === "ar" ? "عيادتنا الذكية المتطورة" : currentLanguage === "fr" ? "Notre Clinique Intelligente" : "Our Smart Clinic")} <br />
+3319: مرحباً بكم في عيادتنا المتميزة تحت إشراف <strong className="text-slate-200">د. {clinicInfo.doctorName || "الاستشاري المتخصص"}</strong>.
+3343: <span className="text-xs font-bold text-teal-400 line-clamp-1">{clinicInfo.specialty || (currentLanguage === "ar" ? "تخصص متميز وعلاج حديث" : currentLanguage === "fr" ? "Spécialité d'excellence" : "Premium Specialty")}</span>
+3347: <span className="text-xs font-bold text-slate-200" dir="ltr">{clinicInfo.phone || (currentLanguage === "ar" ? "متوفر بالداخل" : currentLanguage === "fr" ? "Disponible" : "Available")}</span>
+3351: <span className="text-xs font-bold text-slate-200 line-clamp-1">{clinicInfo.address || (currentLanguage === "ar" ? "العنوان المعتمد" : currentLanguage === "fr" ? "Adresse agréée" : "Approved Address")}</span>
+3355: <span className="text-xs font-bold text-slate-200 line-clamp-1">{clinicInfo.workHours || (currentLanguage === "ar" ? "من السبت للخميس" : currentLanguage === "fr" ? "Du samedi au jeudi" : "Saturday to Thursday")}</span>
+3385: {service.price} {isNaN(Number(service.price)) ? "" : (currentLanguage === "ar" ? "دج" : "DA")}
+3394: {service.description || (currentLanguage === "ar" ? "وصف الخدمة العلاجية المتاحة لمرضى العيادة. يرجى مراجعة الطبيب المعالج للحصول على خطتك المخصصة." : currentLanguage === "fr" ? "Description du service thérapeutique disponible pour les patients. Veuillez consulter le médecin traitant pour obtenir votre plan personnalisé." : "Description of the therapeutic service available to the clinic's patients. Please consult your treating physician for your customized plan.")}
+3404: label: currentLanguage === "ar" ? `📅 حجز: ${service.name}` : currentLanguage === "fr" ? `📅 Réserver : ${service.name}` : `📅 Book: ${service.name}`,
+3406: ? `أهلاً بك! لقد اخترت خدمة (${service.name}). يرجى إكمال نموذج الحجز أدناه للحصول على موعدك.`
+3413: ? `تم تحديد خدمة (${service.name}) وتنشيط استمارة الحجز في الشات بوت! 📅`
+3518: <span className="font-bold text-slate-200">{clinicInfo.address || (currentLanguage === "ar" ? "غير مدخل" : currentLanguage === "fr" ? "Non renseigné" : "Not entered")}</span>
+3525: <span className="font-bold text-slate-200" dir="ltr">{clinicInfo.phone || (currentLanguage === "ar" ? "غير مدخل" : currentLanguage === "fr" ? "Non renseigné" : "Not entered")}</span>
+3545: <span className="text-base font-black text-teal-400 block">{clinicInfo.workHours || (currentLanguage === "ar" ? "من 9:00 صباحاً إلى 9:00 مساءً" : currentLanguage === "fr" ? "De 9h00 à 21h00" : "From 9:00 AM to 9:00 PM")}</span>
+3560: <span className="font-bold text-teal-400" dir="ltr">{clinicInfo.emergencyPhone || clinicInfo.phone || (currentLanguage === "ar" ? "متوفر بالداخل" : currentLanguage === "fr" ? "Disponible" : "Available")}</span>
+3617: title={currentLanguage === "ar" ? "افتح المساعد الطبي الذكي" : currentLanguage === "fr" ? "Ouvrir l'assistant médical intelligent" : "Open smart medical assistant"}
+3621: {currentLanguage === "ar" ? "حجز موعد واستشارة طبية فورية 🤖" : currentLanguage === "fr" ? "Réservation et consultation médicale instantanée 🤖" : "Appointment booking & instant consultation 🤖"}
+3630: <span className="text-slate-300 font-bold block text-sm">{clinicInfo.name || (currentLanguage === "ar" ? "عيادتي الذكية" : currentLanguage === "fr" ? "Ma Clinique" : "My Clinic")}</span>
+3646: {currentLanguage === "ar" ? "الاتصال والموقع الجغرافي" : currentLanguage === "fr" ? "Contact & Localisation" : "Contact & Location"}
+3650: {currentLanguage === "ar" ? "📍 العنوان: " : currentLanguage === "fr" ? "📍 Adresse : " : "📍 Address: "}
+3651: {clinicInfo.address || (currentLanguage === "ar" ? "الجزائر العاصمة، الجزائر" : "Algiers, Algeria")}
+3654: {currentLanguage === "ar" ? "📞 الهاتف: " : currentLanguage === "fr" ? "📞 Téléphone : " : "📞 Phone: "}
+3655: {clinicInfo.phone || (currentLanguage === "ar" ? "غير مدخل" : "Not entered")}
+3658: {currentLanguage === "ar" ? "🕒 الطوارئ: " : currentLanguage === "fr" ? "🕒 Urgences : " : "🕒 Emergency: "}
+3659: {clinicInfo.emergencyPhone || clinicInfo.phone || (currentLanguage === "ar" ? "غير مدخل" : "Not entered")}
+3773: إلغاء
+3781: <span>تأكيد الحذف</span>
+3819: تأكيد الحجز وجدولة تذكير ذكي 🔔
+3822: قم بتأكيد موعد المريض وتحديد موعد إرسال التذكير التلقائي له عبر الشات بوت.
+3830: <span className="text-slate-500 block">اسم المريض:</span>
+3834: <span className="text-slate-500 block">الخدمة المطلوبة:</span>
+3838: <span className="text-slate-500 block">تاريخ الموعد:</span>
+3842: <span className="text-slate-500 block">وقت الموعد:</span>
+3857: <span className="text-xs font-bold text-slate-200 block">تفعيل التذكير التلقائي (تنبيه المريض)</span>
+3858: <span className="text-[10px] text-slate-400">سيقوم النظام بتنبيه المريض تلقائياً في الوقت المحدد.</span>
+3871: <label className="text-[11px] font-bold text-slate-300 block">وقت إرسال التذكير قبل الموعد:</label>
+3877: let label = "قبل الموعد بيوم واحد";
+3878: if (val === "30_mins") label = "قبل الموعد بـ 30 دقيقة";
+3879: else if (val === "2_hours") label = "قبل الموعد بساعتين";
+3880: else if (val === "2_days") label = "قبل الموعد بيومين";
+3882: const updatedMsg = `تذكير بموعدك: عزيزي المريض ${prev.patientName}، نود تذكيرك بموعدك لـ (${prev.serviceName}) في عيادتنا يوم ${prev.bookingDate} الساعة ${prev.bookingTime} (${label}). نتطلع لرؤيتك ونتمنى لك دوام الصحة والعافية.`;
+3888: <option value="30_mins">قبل الموعد بـ 30 دقيقة</option>
+3889: <option value="2_hours">قبل الموعد بساعتين</option>
+3890: <option value="1_day">قبل الموعد بيوم واحد (24 ساعة)</option>
+3891: <option value="2_days">قبل الموعد بيومين (48 ساعة)</option>
+3898: <span>نص رسالة التذكير:</span>
+3899: <span className="text-[10px] text-slate-500">قابلة للتعديل</span>
+3906: placeholder="أدخل نص التذكير المخصص هنا..."
+3920: إلغاء
+3928: <span>تأكيد الحجز {reminderModal.enableReminder ? "وجدولة التذكير" : "فقط"}</span>
+3945: عيادتي الذكية <span className="text-xs bg-teal-500/10 text-teal-400 border border-teal-500/20 px-2 py-0.5 rounded-full font-normal">منصة الأطباء الذكية للعيادات</span>
+3947: <p className="text-xs text-slate-400">لوحة التحكم السحابية وتخصيص شات بوت الذكاء الاصطناعي الحصري</p>
+3965: ? "الإشعارات المباشرة مفعلة بنجاح على هذا المتصفح"
+3967: ? "الإشعارات محظورة. اضغط على أيقونة القفل بجانب شريط العنوان في متصفحك لتفعيلها."
+3968: : "اضغط لتفعيل إشعارات المتصفح لتنبيهك فوراً عند وصول حجز جديد"
+3974: <span>الإشعارات نشطة 🟢</span>
+3979: <span>الإشعارات محجوبة 🔴</span>
+3984: <span>تفعيل الإشعارات 🔔</span>
+3992: <Sparkles className="w-3.5 h-3.5 text-teal-400" /> القوالب المتاحة:
+4004: {preset.id === "dental" ? "🦷 طب الأسنان" : preset.id === "general" ? "🩺 الطب العام" : "📅 إدارة المواعيد"}
+4025: title="حذف القالب"
+4054: {currentLanguage === "ar" ? "🚨 انتهى اشتراك الرسائل المساعد الذكي خارج المنصة!" : currentLanguage === "fr" ? "🚨 L'abonnement de l'assistant intelligent hors plateforme a expiré !" : "🚨 Smart Assistant Off-Platform subscription has expired!"}
+4058: ? "الشات بوت متوقف حالياً عن الرد على المرضى في موقعك الإلكتروني لانتهاء الرصيد المتاح. يرجى تجديد الاشتراك فوراً لتجنب فقدان الحجوزات والزبائن."
+4068: {currentLanguage === "ar" ? "تجديد الاشتراك الآن 💳" : currentLanguage === "fr" ? "Renouveler l'abonnement 💳" : "Renew Subscription 💳"}
+4087: {currentLanguage === "ar" ? "⚠️ رصيد الرسائل يقترب من النفاد (باقي أقل من 10%)!" : currentLanguage === "fr" ? "⚠️ Le solde de messages est presque épuisé (moins de 10% restants) !" : "⚠️ Message balance is running low (less than 10% remaining)!"}
+4091: ? `متبقي للعيادة فقط ${msgLimit - msgUsed} رسالة من أصل باقة ${msgLimit} رسالة خارج المنصة. يرجى شحن الرصيد لتفادي توقف الخدمة التلقائية.`
+4101: {currentLanguage === "ar" ? "شحن رصيد إضافي 💳" : currentLanguage === "fr" ? "Recharger le crédit 💳" : "Recharge Credit 💳"}
+4484: sendBrowserNotification("تجربة حجز عيادة جديد 📅", {
+4485: body: "هذا إشعار تجريبي يوضح كيف سيظهر لك اسم المريض والخدمة المطلوبة والوقت فوراً!",
+4489: showNotification("تم إرسال إشعار تجريبي ناجح لمتصفحك! 🔔", "success");
+4781: <span className="text-slate-400">إجمالي الحجوزات المحللة:</span>
+4788: <p className="text-xs text-slate-500">لا تتوفر بيانات حجوزات كافية لعرض الرسم البياني حالياً.</p>
+4836: <span>مؤشرات وإحصاءات سريعة</span>
+4853: <span className="text-slate-300 font-bold">{item.count} حجز ({percentage}%)</span>
+4877: placeholder="البحث بالاسم أو رقم الهاتف..."
+4896: {status === "all" && "الكل"}
+4897: {status === "pending" && "قيد الانتظار"}
+4898: {status === "confirmed" && "المؤكدة"}
+4899: {status === "cancelled" && "الملغاة"}
+4915: <h5 className="font-bold text-slate-400 text-sm">لا توجد حجوزات مسجلة تطابق بحثك حالياً</h5>
+4916: <p className="text-xs text-slate-500 mt-1">قم بتجربة الشات بوت على اليسار لحجز موعد ومراقبته هنا فورياً!</p>
+4947: {b.status === "confirmed" && "موعد مؤكد"}
+4948: {b.status === "cancelled" && "ملغي"}
+4949: {b.status === "pending" && "بانتظار التأكيد"}
+4955: <span className="text-slate-400">الخدمة:</span>
+4968: <span className="text-slate-400">رقم الهاتف:</span>
+4976: <span>تاريخ الطلب:</span>
+4994: <span>تنبيهات وتذكيرات الحجز المجدولة</span>
+4996: <span className="text-[9px] text-slate-500 font-medium">سجل التذكير</span>
+5004: <span className="text-slate-400 font-bold">التوقيت:</span>
+5015: <span>{rem.isSent ? `تم الإرسال للشات بوت (${rem.sentAt})` : "مجدول تلقائياً"}</span>
+5022: title="إرسال رسالة التذكير الآن إلى واجهة الشات بوت"
+5024: <span>إرسال الآن 📲</span>
+5049: <span>تأكيد ✅</span>
+5056: <span>إلغاء الحجز</span>
+5067: <span>إلغاء الحجز ❌</span>
+5077: <span>إعادة تفعيل 🔄</span>
+5084: title="حذف من السجلات"
+5107: <h4 className="font-bold text-slate-200 text-sm">مُشكل الأزرار السريعة والخيارات التلقائية ⚙️</h4>
+5108: <p className="text-xs text-slate-400">قم بإنشاء وتعديل الأزرار التي يراها الزبون في بداية المحادثة. النقر عليها يعطي إجابة فورية ومبرمجة ومضمونة 100% لتوفير وقت المحادثة.</p>
+5113: <h5 className="text-xs font-bold text-teal-400">إضافة زر خيار سريع جديد</h5>
+5118: placeholder="عنوان الزر (مثال: 📍 موقع العيادة)"
+5128: placeholder="الرد التلقائي والدقيق للزر عند النقر عليه..."
+5141: <span>إضافة</span>
+5149: <h5 className="text-xs font-bold text-slate-300">أزرار الخيارات السريعة الفعالة حالياً ({quickActions.length})</h5>
+5151: <p className="text-xs text-slate-500 italic py-4 text-center">لا توجد أزرار سريعة معرفة حالياً. أضف زراً في الأعلى لبناء الخيارات.</p>
+5168: title="حذف الزر"
+5194: <h4 className="font-bold text-slate-200 text-sm">جداول الخدمات والأسعار المتاحة 💎</h4>
+5195: <p className="text-xs text-slate-400">قائمة الخدمات التي يقدمها الطبيب مع السعر المبرمج ليسهل على البوت الاستعانة بها.</p>
+5204: placeholder="اسم الخدمة (مثال: تنظيف وتبييض)"
+5214: placeholder="تفاصيل ووصف الخدمة بدقة للمريض..."
+5223: placeholder="السعر (مثال: 5000 دج)"
+5235: <span>إضافة خدمة</span>
+5245: <th className="px-4 py-3">الخدمة</th>
+5246: <th className="px-4 py-3">الوصف والتفاصيل</th>
+5247: <th className="px-4 py-3">السعر</th>
+5248: <th className="px-4 py-3 text-center">إجراءات</th>
+5254: <td colSpan={4} className="px-4 py-6 text-center text-slate-500 italic">لا توجد خدمات معرفة في قاعدة البيانات حالياً. استخدم نموذج الاستيراد السريع لتعبئتها دفعة واحدة!</td>
+5281: <h4 className="font-bold text-slate-200 text-sm">الإرشادات والتعليمات الطبية اللازمة 📋</h4>
+5282: <p className="text-xs text-slate-400">التعليمات المطلوبة من المريض قبل حضوره للعيادة أو بعد إجراءات طبية محددة ليتلوها الشات بوت بصرامة.</p>
+5291: placeholder="عنوان الإرشاد (مثال: الصيام قبل فحص الدم)"
+5300: placeholder="اكتب الإرشادات والتعليمات الطبية اللازمة بالتفصيل وبشكل مبسط للمريض هنا..."
+5314: <span>إضافة تعليمات وإرشادات</span>
+5321: <p className="text-xs text-slate-500 italic py-4 text-center">لا توجد إرشادات أو تحضيرات مبرمجة حالياً.</p>
+5347: <span>التعريف الشامل بالعيادة، الخدمات، السيرة الذاتية وأوقات العمل 🏥</span>
+5350: <p className="text-xs text-slate-400 mt-1">تعديل وصياغة ملف العيادة الشامل للجزائر بشكل تفاعلي ذكي لمعاينة وضمان ردود دقيقة ومحكمة من البوت.</p>
+5356: <span className="text-xs font-bold text-slate-300">اكتب هنا التعريف التفصيلي لعيادتك:</span>
+5360: const suggestedText = `تلتزم عيادتنا المتواجدة بالجزائر بتقديم أرقى الخدمات الطبية والرعاية الصحية المتكاملة لمرضانا الكرام. يشرف على العيادة الدكتور أحمد بن يوسف، وهو طبيب أخصائي متخرج من كلية الطب بجامعة الجزائر وله خبرة تزيد عن 12 سنة في ممارسة وتطوير العلاجات الحديثة. تقدم العيادة مجموعة شاملة من الخدمات التشخيصية والعلاجية بأحدث الأجهزة الطبية المستوردة والمعقمة كلياً وفق المعايير الطبية الدولية.
+5362: ساعات العمل واستقبال المرضى تكون من الأحد إلى الخميس، من الساعة 08:30 صباحاً وحتى الساعة 16:30 مساءً. يوم السبت مخصص للحالات الطارئة والمتابعة الخفيفة من 09:00 صباحاً إلى 13:00 زوالاً، ويوم الجمعة هو يوم العطلة الأسبوعية للعيادة. نسعد دائماً بخدمتكم وتوفير استجابة فورية لاستفساراتكم عبر المساعد الذكي المتاح 24/7 لمرافقة مرضانا وتسهيل حجز المواعيد.`;
+5364: showNotification("تم تعبئة الفقرة النموذجية المقترحة! يمكنك تعديلها الآن وحفظ التغييرات 💡", "success");
+5369: <span>💡 اقتراح فقرة نموذجية جاهزة للتعديل</span>
+5376: placeholder="مثال: تلتزم عيادتنا بتقديم خدمات طبية متكاملة... (اضغط على الزر أعلاه لتنزيل مثال جاهز لتعديله فوراً)"
+5383: * يتم استخدام هذه الفقرة مباشرة بواسطة <strong>محرك الذكاء الاصطناعي</strong> للإجابة على المرضى حول خدمات العيادة وأوقات العمل والسيرة الذاتية للطبيب وضمان تقديم معلومات دقيقة ودائمة.
+5389: showNotification("تم حفظ التعريف الشامل للعيادة بنجاح! 💾", "success");
+5394: <span>حفظ التعريف الشامل</span>
+5412: <h4 className="font-bold text-slate-200 text-sm">استيراد البيانات الذكي والمباشر من إكسل (Excel / CSV) 📊</h4>
+5413: <p className="text-xs text-slate-400">بدلاً من الكتابة اليدوية المرهقة، ما عليك سوى نسخ جدولك من Excel ولصقه هنا فوراً! سيتعرف النظام الذكي على الأعمدة تلقائياً ويقوم بتحديث الشات بوت.</p>
+5418: <span className="text-xs font-bold text-slate-300 block">1. اختر وجهة الاستيراد:</span>
+5431: الخدمات والأسعار
+5444: التعليمات والإرشادات
+5450: <span className="text-xs font-bold text-slate-300 block">2. آلية العمل (بسيطة جداً):</span>
+5452: افتح ملف الإكسل الخاص بك، ظلل الجدول المطلوب (الاسم، الوصف، السعر)، اضغط <kbd className="bg-slate-850 border border-slate-700 px-1 rounded text-slate-200 text-[10px]">Ctrl+C</kbd> لنسخه، ثم الصقه بالأسفل باستخدام <kbd className="bg-slate-850 border border-slate-700 px-1 rounded text-slate-200 text-[10px]">Ctrl+V</kbd>.
+5460: <label className="text-xs font-bold text-slate-300">الصق الجدول المنسوخ من Excel أو ملف CSV هنا:</label>
+5468: showNotification("تم ملء نموذج لصق توضيحي! يمكنك الضغط على زر الاستيراد لحفظه 📋", "info");
+5473: <span>تحميل نموذج توضيحي للصق</span>
+5481: ? "مثال للصق من الإكسل:\nاسم الخدمة [فاصل Tab] تفاصيل الوصف [فاصل Tab] السعر بالدينار\nتبييض الأسنان بالليزر\tتبييض في العيادة في ساعة\t15000 دج\nتنظيف جير كاشف\tتلميع وإزالة ترسبات\t3000 دج"
+5482: : "مثال للصق من الإكسل:\nالعنوان [فاصل Tab] تعليمات المريض بالتفصيل\nصيام فحص الدم\tصيام تام 8 ساعات قبل التحليل\nما بعد تبييض الأسنان\tتجنب الشاي والقهوة والتدخين 48 ساعة"
+5493: <CheckCircle className="w-4 h-4" /> معاينة البيانات المستخرجة والجاهزة للاستيراد ({importPreview.length} سجل):
+5500: <span>اعتماد وحفظ بقاعدة البيانات</span>
+5509: <th className="px-3 py-2">الخدمة</th>
+5510: <th className="px-3 py-2">الوصف</th>
+5511: <th className="px-3 py-2">السعر</th>
+5515: <th className="px-3 py-2">الموضوع</th>
+5516: <th className="px-3 py-2">الإرشادات والتعليمات</th>
+5555: <h4 className="font-bold text-slate-200 text-sm">إدارة النسخ الاحتياطية وحفظ البيانات 💾</h4>
+5556: <p className="text-xs text-slate-400">تأمين كامل لتصميمك وبياناتك من الضياع، مع إمكانية تصديرها واستيرادها في أي وقت.</p>
+5566: <h5 className="font-bold text-xs text-slate-100">درع حماية البيانات: النسخ الاحتياطي والاستعادة الفورية 🛡️</h5>
+5567: <p className="text-[11px] text-slate-400">احمِ كل ما قمت بتصميمه اليوم من خدمات وأسعار وأزرار. قم بتنزيل قاعدة البيانات كملف على جهازك، ويمكنك استعادتها في أي وقت بثوانٍ معدودة وعلى أي متصفح!</p>
+5578: <span>تنزيل نسخة احتياطية كاملة (.json)</span>
+5595: <span>رفع واستعادة نسخة سابقة (.json)</span>
+5605: <span>دليلك الذهبي لبيع وتسييل هذا التطبيق للعيادات الطبية 💰</span>
+5608: هذا النموذج يعتبر من أفضل المنتجات المطلوبة للعيادات نظراً لأنه يوفر موظفي خدمة عملاء، ويجيب على الاستفسارات المتكررة بدقة 100%. إليك طريقة بيعه بخطة تجارية ذكية:
+5612: <span className="text-xs font-bold text-slate-200 block mb-1">1. عرض حي وسريع ⚡</span>
+5613: <p className="text-[10px] text-slate-400 leading-normal">اصنع قالباً سريعاً باسم عيادة معينة (مثلاً: طبيب العيون المحلي)، افتحه على هاتفك، واذهب لزيارتهم واجعلهم يتحدثون معه مباشرة!</p>
+5616: <span className="text-xs font-bold text-slate-200 block mb-1">2. أمان وحصانة طبية 🛡️</span>
+5617: <p className="text-[10px] text-slate-400 leading-normal">أكد لهم أن البوت آمن ومحكم تماماً بفضل "نظام الحصر المعرفي" الذي لا يهلوَس أو يعطي وصفات خاطئة، بل يجلب الزبائن للحجز.</p>
+5620: <span className="text-xs font-bold text-slate-200 block mb-1">3. اشتراك وإدارة دورية 💸</span>
+5621: <p className="text-[10px] text-slate-400 leading-normal">بعهم التطبيق برسم تنصيب أولي، ومبلغ شهري أو سنوي رمزي للتعديلات أو استخدام السيرفر. استخدام ملفات النسخ الاحتياطي يسهل حفظ وإرسال البيانات!</p>
+5639: <h4 className="font-bold text-slate-200 text-sm">صانع ومدير قوالب العيادات المخصصة ⚙️</h4>
+5640: <p className="text-xs text-slate-400">ابتكر وصمم قوالب عيادات مخصصة جديدة، أو احفظ تهيئتك الحالية بالكامل كقالب جاهز للاستخدام والتبديل في أي وقت!</p>
+5650: <h5 className="font-bold text-xs text-amber-300">حفظ الإعدادات الحالية كقالب جديد ⭐</h5>
+5651: <p className="text-[11px] text-slate-400">سيتم حفظ الملف الحالي للعيادة والخدمات والإرشادات والأزرار السريعة المدخلة حالياً في قالب مخصص يحمل الاسم والتخصص الذي تحدده.</p>
+5657: <label className="block text-[10px] text-slate-400 font-medium">اسم القالب الجديد</label>
+5660: placeholder="مثال: عيادة العيون والليزك التخصصية"
+5669: <label className="block text-[10px] text-slate-400 font-medium">التخصص</label>
+5672: placeholder="مثال: جراحة وتصحيح النظر"
+5686: <span>حفظ كقالب جديد</span>
+5699: <h5 className="font-bold text-xs text-slate-200">إنشاء قالب فارغ جديد تماماً 🆕</h5>
+5700: <p className="text-[11px] text-slate-400">البدء بلوحة فارغة وخالية تماماً لتهيئة عيادة جديدة من الصفر دون الاعتماد على بيانات العيادة الحالية.</p>
+5706: <label className="block text-[10px] text-slate-400 font-medium">اسم العيادة الجديدة</label>
+5709: placeholder="مثال: مجمع الشفاء لطب العظام"
+5718: <label className="block text-[10px] text-slate-400 font-medium">التخصص</label>
+5721: placeholder="مثال: العلاج الطبيعي وجراحة العظام"
+5735: <span>إنشاء قالب فارغ</span>
+5743: <h5 className="text-xs font-bold text-slate-300">قوالبك المخصصة التي قمت بإنشائها ({customPresets.length})</h5>
+5747: <p className="text-xs text-slate-500 italic">لا توجد قوالب مخصصة حالياً. قم بحفظ تهيئتك الحالية كقالب أو أنشئ قالباً فارغاً للبدء!</p>
+5768: مفعّل حالياً
+5772: <p className="text-[11px] text-slate-400">التخصص: {preset.specialty}</p>
+5776: <span>💎 {preset.services?.length || 0} خدمات</span>
+5777: <span>📋 {preset.guidelines?.length || 0} إرشادات</span>
+5778: <span>🔘 {preset.quickActions?.length || 0} أزرار</span>
+5794: <span>{selectedPresetId === preset.id ? "القالب المفعّل" : "تفعيل وتحميل القالب"}</span>
+5799: title="حذف القالب"
+5824: <h4 className="font-bold text-slate-200 text-sm">مراقبة محادثات المرضى وتحليلات الأداء الذكي 📊</h4>
+5825: <p className="text-xs text-slate-400">تتبع سجلات المحادثات الحية، قيم رضا المرضى، وتحكم بإعدادات وصمامات أمان الذكاء الاصطناعي.</p>
+5829: <span>معدل دقة الذكاء: 98.4%</span>
+5838: <span className="text-[10px] text-slate-400 block font-bold">إجمالي المحادثات (اليوم)</span>
+5841: <span className="text-[10px] text-emerald-400 font-bold">+18% من أمس</span>
+5843: <p className="text-[9px] text-slate-500">معدل استجابة فوري: 100% (0.4 ثانية)</p>
+5853: <span className="text-[10px] text-slate-400 block font-bold">معدل الحجز الذكي الناجح</span>
+5856: <span className="text-[10px] text-slate-400">33 حجز مؤكد</span>
+5858: <p className="text-[9px] text-slate-500">تمت بالكامل آلياً عبر محادثة البوت</p>
+5872: <span className="text-[10px] text-slate-400 block font-bold">مستوى رضا المرضى (AI)</span>
+5875: <span className="text-[10px] text-emerald-400">ممتاز (28 تقييم)</span>
+5877: <p className="text-[9px] text-slate-500">يقيس التفاعل الودي والمساعدة الذكية</p>
+5888: <span>مركز ضبط محرك الذكاء الاصطناعي وتجنب المخاطر ⚙️</span>
+5896: <label className="text-[11px] text-slate-300 font-bold">درجة إبداع البوت (Temperature)</label>
+5911: <span>منضبط وآمن (0.0)</span>
+5912: <span>متوازن</span>
+5913: <span>إبداعي مرن (0.6)</span>
+5919: <label className="text-[11px] text-slate-300 font-bold block">مستوى القيود وصمامات الأمان الطبية</label>
+5930: حصر مطلق 🔒
+5941: متوازن ومقيد ⚖️
+5946: ? "يحظر تماماً أي نصائح علاجية ويلتزم فقط بقائمة الخدمات ومعلومات الاتصال"
+5947: : "يسمح بتقديم نصائح صحية عامة ووقائية مع تنبيه بضرورة مراجعة الطبيب"}
+5953: <label className="text-[11px] text-slate-300 font-bold block">نبرة الحديث والأسلوب اللغوي</label>
+5959: <option value="formal">مهني ورسمي وقور 💼</option>
+5960: <option value="friendly">ودي، مرحب ولطيف 🌸</option>
+5961: <option value="simple">مبسط، سريع ومباشر ⚡</option>
+5963: <p className="text-[9px] text-slate-500">يغير أسلوب صياغة الردود الطبية الفورية الموجهة للمرضى.</p>
+5970: onClick={() => showNotification("تم حفظ وتحديث إعدادات محرك الذكاء الاصطناعي بنجاح! ⚙️", "success")}
+5974: <span>تطبيق الإعدادات على المحرك فوراً</span>
+5990: عرض ملء الصفحة لجميع الجلسات
+5993: <h5 className="text-xs font-bold text-slate-300">جلسات المحادثات الحالية والمحفوظة ({conversations.length})</h5>
+6013: بانتظار المراجعة ⚠️
+6017: تمت مراجعته ✓
+6023: <span>راضي 😊</span>
+6028: <span>محايد 😐</span>
+6046: <span>💬 {session.messages.length} رسائل متبادلة</span>
+6049: <span>افتح التفاصيل</span>
+6066: <h5 className="font-bold text-slate-200 text-sm">محادثة المريض: {selectedSession.patientName}</h5>
+6068: <p className="text-[11px] text-slate-400 mt-0.5">الموضوع: {selectedSession.topic}</p>
+6069: <p className="text-[10px] text-slate-500 font-mono">رقم الهاتف: {selectedSession.patientPhone} | تاريخ الجلسة: {selectedSession.date}</p>
+6081: showNotification("تم وضع علامة 'تمت المراجعة' بنجاح! ✓", "success");
+6085: تحديد كمقروء ومكتمل ✓
+6090: const summary = `[ملخص محادثة عيادة الأسنان الذكية]
+6091: اسم المريض: ${selectedSession.patientName}
+6092: رقم الجوال: ${selectedSession.patientPhone}
+6093: موضوع الاستشارة: ${selectedSession.topic}
+6094: تاريخ الجلسة: ${selectedSession.date}
+6095: مستوى الرضا المتوقع: ${selectedSession.aiSentiment === "satisfied" ? "ممتاز 😊" : "محايد 😐"}
+6097: [ملخص النصائح والحجوزات المتولدة]:
+6098: تم حجز موعد مبدئي وافتراضي للمريض واستعراض الخدمات الملائمة لحالته. يرجى تواصل السكرتارية لتأكيد وحفظ الموعد المباشر.`;
+6100: showNotification("تم نسخ التقرير الطبي وموجز الحالة إلى الحافظة! 📋", "success");
+6103: title="نسخ ملخص الحالة"
+6105: نسخ الملخص 📋
+6113: title="تصدير سجل المحادثة والتحليلات كتقرير طبي رسمي PDF"
+6116: <span>التقرير الطبي الرسمي (PDF) 📄</span>
+6132: {msg.sender === "user" ? selectedSession.patientName : msg.sender === "bot" ? "الشات بوت (الذكاء الاصطناعي)" : "طبيب العيادة مباشرة"}
+6145: <strong className="text-amber-400 block mb-0.5 text-[9px]">تدخل طبيب العيادة مباشرة 🧑‍⚕️:</strong>
+6155: <label className="text-[10px] text-amber-400 font-bold block">التدخل المباشر كطبيب وإرسال رد للمريض 🧑‍⚕️</label>
+6186: showNotification("تم إرسال رد الطبيب المباشر للمريض بنجاح! 💬", "success");
+6193: placeholder="اكتب ردك المباشر كطبيب (مثال: أهلاً بك يا أحمد، اطلعت على حالتك وسأكون بانتظارك)..."
+6201: إرسال الرد
+6224: <h4 className="font-bold text-slate-200 text-sm">مركز التنزيل ونشر التطبيق في السوق التجاري 🚀</h4>
+6225: <p className="text-xs text-slate-400">حول مشروعك إلى تطبيق حقيقي للهواتف المحمولة والكمبيوتر، اربطه بـ WhatsApp و Telegram، وابدأ بجني الأرباح.</p>
+6229: <span>جاهز للإطلاق التجاري الكامل</span>
+6240: <span>تحميل التطبيق كنسخة هاتف حقيقية 📱</span>
+6243: <p className="text-[10px] text-slate-400">التطبيق مجهز بالكامل بتقنية PWA (Progressive Web App). يمكن تثبيته فورياً على أي جهاز ليعمل كتطبيق أصلي منفصل.</p>
+6259: {device === "android" && "أندرويد / سامسونج"}
+6260: {device === "ios" && "آيفون / iOS"}
+6261: {device === "pc" && "كمبيوتر / Windows"}
+6276: <h6 className="font-bold text-slate-200 text-xs">ثبّت لوحة تحكم العيادة على جهازك</h6>
+6278: استمتع بتشغيل التطبيق بملء الشاشة، بدون شريط المتصفح، مع سرعة تشغيل مضاعفة ودعم غير محدود للعمل في وضع عدم الاتصال.
+6289: <span>تنزيل وتثبيت التطبيق الآن</span>
+6295: <span className="font-bold text-slate-300 text-right block">طريقة التثبيت اليدوية على أندرويد (Chrome):</span>
+6297: <li>افتح رابط التطبيق في متصفح <strong className="text-teal-400">Google Chrome</strong>.</li>
+6298: <li>اضغط على رمز <strong className="text-slate-200">النقاط الثلاث (⋮)</strong> في الزاوية العلوية للمتصفح.</li>
+6299: <li>اختر <strong className="text-slate-200">"تثبيت التطبيق" (Install App)</strong> أو "إضافة إلى الشاشة الرئيسية".</li>
+6300: <li>سيظهر التطبيق كأيقونة حقيقية على هاتفك فوراً!</li>
+6307: <span className="font-bold text-slate-300 text-right block">طريقة التثبيت على آيفون وآيباد (Safari):</span>
+6309: <li>افتح رابط التطبيق عبر متصفح <strong className="text-teal-400">Safari</strong> الافتراضي للآيفون.</li>
+6310: <li>اضغط على زر <strong className="text-slate-200">"مشاركة" (Share - ⎋)</strong> في الأسفل.</li>
+6311: <li>اسحب لأسفل واضغط على خيار <strong className="text-slate-200">"إضافة إلى الشاشة الرئيسية" (Add to Home Screen)</strong>.</li>
+6312: <li>اضغط <strong className="text-slate-200">"إضافة" (Add)</strong> في الأعلى. سيصبح لديك تطبيق آيفون متكامل!</li>
+6319: <span className="font-bold text-slate-300 text-right block">طريقة التثبيت على الكمبيوتر والماك:</span>
+6321: <li>افتح التطبيق في متصفح Chrome أو Edge على جهازك المحمول أو المكتبي.</li>
+6322: <li>ستلاحظ ظهور أيقونة <strong className="text-teal-400">"كمبيوتر محمول صغير مع سهم تنزيل"</strong> في شريط العنوان بالأعلى.</li>
+6323: <li>اضغط عليها ثم اختر <strong className="text-slate-200">"تثبيت" (Install)</strong> لتشغيله كبرنامج مستقل على سطح المكتب.</li>
+6335: <span>ربط محرك الذكاء بقنوات التواصل الشهيرة 🔗</span>
+6338: <p className="text-[10px] text-slate-400">قم بربط الشات بوت مباشرة بقنوات تواصل عيادتك الحقيقية ليتفاعل مع المرضى تلقائياً على مدار الساعة.</p>
+6354: {tab === "whatsapp" && "واتساب WhatsApp"}
+6355: {tab === "messenger" && "ماسنجر Messenger"}
+6356: {tab === "instagram" && "إنستغرام Instagram"}
+6357: {tab === "telegram" && "تيليجرام Telegram"}
+6358: {tab === "embed" && "تضمين بموقعك Widget"}
+6372: الحالة: {integrationStatus.whatsapp === "connected" ? "متصل ومفعل" : "جاهز للربط"}
+6374: <span className="text-[10px] text-slate-300 font-bold">ربط واتساب السحابي (WhatsApp Cloud API)</span>
+6378: تتيح لك هذه البوابة ربط الشات بوت برقم هاتف عيادتك الرسمي على واتساب عبر منصة Meta للمطورين. سيقوم الذكاء الاصطناعي بالرد فورياً على استفسارات وحجوزات المرضى على مدار الساعة.
+6383: <label className="text-[9px] text-slate-400 font-bold">معرف رقم هاتف واتساب (Phone Number ID)</label>
+6388: placeholder="مثال: 10938502934812"
+6393: <label className="text-[9px] text-slate-400 font-bold">رمز الوصول الدائم (Permanent Access Token)</label>
+6398: placeholder="الصق رمز الوصول الدائم من فيسبوك..."
+6405: <label className="text-[9px] text-teal-400 font-bold">رابط خطاف الويب للعيادة (Webhook URL) لإدخاله في Meta Developer Console:</label>
+6416: showNotification("⚠️ يرجى تعبئة كافة الحقول المطلوبة (معرف الهاتف ورمز الوصول) أولاً!", "error");
+6420: showNotification("🎉 تم التحقق وربط واتساب الأعمال بنجاح! الشات بوت الآن نشط ويستجيب للمرضى.", "success");
+6424: <span>تفعيل واختبار اتصال واتساب السحابي ⚡</span>
+6435: الحالة: {integrationStatus.messenger === "connected" ? "متصل ومفعل" : "جاهز للربط"}
+6437: <span className="text-[10px] text-slate-300 font-bold">ربط ماسنجر (Facebook Messenger API)</span>
+6441: اربط الشات بوت مباشرة بصفحة عيادتك الرسمية على فيسبوك. سيتولى المساعد الذكي الرد على جميع رسائل المتابعين وحجز المواعيد وتنظيم الاستفسارات مباشرة على Messenger.
+6446: <label className="text-[9px] text-slate-400 font-bold">معرف صفحة فيسبوك (Facebook Page ID)</label>
+6451: placeholder="مثال: 102938475610293"
+6456: <label className="text-[9px] text-slate-400 font-bold">مفتاح الصفحة (Page Access Token)</label>
+6461: placeholder="الصق رمز الوصول لصفحة فيسبوك..."
+6468: <label className="text-[9px] text-blue-400 font-bold">رابط خطاف الويب لماسنجر (Webhook URL):</label>
+6479: showNotification("⚠️ يرجى كتابة معرف الصفحة ورمز الوصول أولاً!", "error");
+6483: showNotification("🎉 تم تفعيل ربط فيسبوك ماسنجر بنجاح! الشات بوت الآن يستقبل ويرد على كافة رسائل الصفحة تلقائياً.", "success");
+6488: <span>تفعيل واختبار اتصال ماسنجر ⚡</span>
+6499: الحالة: {integrationStatus.instagram === "connected" ? "متصل ومفعل" : "جاهز للربط"}
+6501: <span className="text-[10px] text-slate-300 font-bold">ربط رسائل إنستغرام (Instagram DM API)</span>
+6505: فعّل ميزة الرد التلقائي وحجز المواعيد على حساب عيادتك الرسمي على Instagram. سيقوم المساعد الذكي بالاستجابة لرسائل الدايركت والتعليقات وتوجيه المرضى لحجز مواعيدهم.
+6510: <label className="text-[9px] text-slate-400 font-bold">معرف حساب إنستغرام للأعمال (Instagram Business ID)</label>
+6515: placeholder="مثال: 17841400000000000"
+6520: <label className="text-[9px] text-slate-400 font-bold">رمز الوصول (Access Token)</label>
+6525: placeholder="الصق رمز وصول إنستغرام المعتمد..."
+6532: <label className="text-[9px] text-pink-400 font-bold">رابط خطاف الويب لإنستغرام (Webhook URL):</label>
+6543: showNotification("⚠️ يرجى إدخال معرف إنستغرام للأعمال ورمز الوصول أولاً!", "error");
+6547: showNotification("🎉 تم ربط وتفعيل حساب إنستغرام للأعمال بنجاح! المساعد الذكي سيتولى الرد على رسائل الدايركت.", "success");
+6552: <span>تفعيل واختبار اتصال إنستغرام ⚡</span>
+6563: الحالة: {integrationStatus.telegram === "connected" ? "متصل ومفعل" : "جاهز للربط"}
+6565: <span className="text-[10px] text-slate-300 font-bold">توصيل بوت تيليجرام مجاني (Telegram Bot)</span>
+6569: أنشئ بوت تيليجرام خاص بعيادتك عبر التحدث مع <strong className="text-slate-200">@BotFather</strong> على تيليجرام، ثم الصق مفتاح Token هنا ليرد الذكاء الاصطناعي مباشرة على جميع استفسارات وتساؤلات المرضى.
+6573: <label className="text-[9px] text-slate-400 font-bold">مفتاح توكين البوت (Bot API Token)</label>
+6579: placeholder="الصق المفتاح هنا (مثال: 783921389:AAH_f9x...)"
+6586: showNotification("⚠️ يرجى إدخال مفتاح توكين البوت الخاص بـ @BotFather!", "error");
+6590: showNotification("🎉 تم حفظ مفتاح تيليجرام وتفعيل البوت بنجاح! البوت الآن يستقبل الرسائل ويرد عليها بالكامل.", "success");
+6594: حفظ وربط البوت
+6600: <span className="font-bold text-slate-300 block">خطوات الربط في دقيقة واحدة:</span>
+6602: <li>افتح تطبيق تيليجرام وابحث عن <strong className="text-sky-400">@BotFather</strong>.</li>
+6603: <li>أرسل الأمر <strong className="text-slate-200">/newbot</strong> واصنع اسماً للبوت (مثال: عيادة الشفاء لطب الأسنان).</li>
+6604: <li>انسخ الـ <strong className="text-slate-200">API Token</strong> والصقه بالأعلى لتشغيل محرك الذكاء عليه فوراً.</li>
+6614: <span className="text-[10px] text-slate-300 font-bold">أيقونة الشات العائمة بموقع العيادة الافتراضي</span>
+6618: هل تمتلك العيادة موقعاً إلكترونياً خاصاً بها؟ يمكنك إضافة أيقونة شات عائمة أنيقة ومحترفة في الزاوية السفلى من موقعهم عن طريق نسخ سطر البرمجة التالي ولصقه في وسم <code className="text-emerald-400 font-mono">&lt;body&gt;</code> بموقع العيادة.
+6622: <label className="text-[9px] text-slate-400 font-bold block text-right">كود التضمين بلغة JavaScript:</label>
+6631: title: "مساعد الطبيب الافتراضي",
+6632: subtitle: "متصل للرد على استفساراتك وحجوزاتك"
+6642: navigator.clipboard.writeText(`<script src="https://cdn.shafi-ai.com/widget.js" defer></script>\n<script>\n  window.addEventListener('load', () => {\n    initClinicAiWidget({ clinicId: "cl_73892a0", themeColor: "#0d9488", title: "مساعد الطبيب الافتراضي" });\n  });\n</script>`);
+6643: showNotification("تم نسخ كود التضمين للموقع بنجاح! 📋", "success");
+6648: <span>نسخ كود التضمين للموقع الالكتروني 📋</span>
+6665: <span>آلة احتساب أرباح بيع الخدمة للعيادات 💰</span>
+6668: <p className="text-[10px] text-slate-400">ادخل عدد العيادات المستهدفة وسعر الاشتراك الشهري لترى العائد المالي المتكرر المتوقع من تقديم لوحة التحكم والذكاء الاصطناعي كخدمة.</p>
+6675: <span className="text-slate-300 font-bold">عدد العيادات المشتركة</span>
+6676: <span className="text-teal-400 font-black">{targetClinics} عيادات</span>
+6692: <span className="text-slate-300 font-bold">سعر الاشتراك الشهري للعيادة الواحدة</span>
+6693: <span className="text-emerald-400 font-black">{monthlyPrice} د.ج / شهرياً</span>
+6709: <span className="text-[9px] text-slate-500 block font-bold">الدخل الشهري المتكرر (MRR)</span>
+6710: <span className="text-lg font-black text-teal-400">{(targetClinics * monthlyPrice).toLocaleString()} د.ج</span>
+6711: <p className="text-[8px] text-slate-500">متدفق شهرياً بشكل ثابت</p>
+6714: <span className="text-[9px] text-slate-500 block font-bold">الدخل السنوي الإجمالي (ARR)</span>
+6715: <span className="text-lg font-black text-amber-400">{(targetClinics * monthlyPrice * 12).toLocaleString()} د.ج</span>
+6716: <p className="text-[8px] text-slate-500">معدل العائد من الاستثمار</p>
+6722: <span className="font-bold text-teal-300 block">💡 توصية باقات تسويق لوحة التحكم للعيادات بالجزائر:</span>
+6724: <li><strong className="text-slate-200">الباقة الأساسية (4,500 د.ج/شهر):</strong> تشمل الشات بوت الذكي وتأكيد المواعيد وسجل محادثات الويب.</li>
+6725: <li><strong className="text-slate-200">الباقة المتقدمة (9,000 د.ج/شهر):</strong> ربط واتساب السحابي + أرقام حجز حرة + تدريب مخصص على أسعار خدمات العيادة.</li>
+6726: <li><strong className="text-slate-200">باقة المؤسسات (18,000 د.ج/شهر):</strong> دمج وتزامن كامل مع نظام سجلات المرضى الخاص بالعيادة ودعم فني على مدار الساعة.</li>
+6736: <span>مولد بطاقة الاستقبال والمطبوعات الترويجية للعيادة 🖨️</span>
+6739: <p className="text-[10px] text-slate-400">قم بتوليد بطاقة الطاولة الترحيبية للعيادة مع رمز الاستجابة السريعة (QR Code). يمكن للعيادة طباعتها ووضعها في صالة الاستقبال ليمسحها المرضى بهواتفهم ويتواصلوا مع الشات بوت فورياً.</p>
+6745: <label className="text-[9px] text-slate-400 font-bold">اسم العيادة المطبوع</label>
+6754: <label className="text-[9px] text-slate-400 font-bold">هاتف التواصل للمواعيد الطارئة</label>
+6763: <label className="text-[9px] text-slate-400 font-bold">نص الدعوة الموجه للمرضى في صالة الانتظار</label>
+6783: <span>مساعد طبيب الأسنان الافتراضي بالذكاء الاصطناعي</span>
+6826: حجز فوري للمواعيد | استفسار عن تكلفة العلاج وأسعار الحشو والزراعة والتقويم | متوفر على مدار 24 ساعة
+6832: <span>📞 للتواصل الطارئ: {flyerClinicPhone}</span>
+6833: <span className="text-teal-600">طور بواسطة ClinicAI</span>
+6847: <span>طباعة كرت استقبال العيادة مباشرة 🖨️</span>
+6852: showNotification("تم حفظ وتصدير الصورة لملف PNG مخصص للطباعة! 🖼️", "success");
+6856: تنزيل كصورة عالية الجودة 📥
+6882: <p className="text-xs text-slate-400 mt-1">تتبع استهلاك الشات بوت خارج المنصة وشحن باقات الرسائل الإضافية للمرضى.</p>
+6954: <span>اشتراكك خارج المنصة نشط وفي وضع الاستعداد المستمر للرد على زبائن عيادتك. 🟢</span>
+6964: <span className="text-xs text-slate-400 font-normal">رسالة متبقية</span>
+6966: <p className="text-xs text-slate-500 mt-1">من رصيد استهلاك المرضى خارج المنصة</p>
+6974: showNotification("🔔 تم إعادة ضبط الاستهلاك لنسق المحاكاة (متبقي 10% من الرسائل لتجربة التنبيه)!", "info");
+6977: title="يضبط الاستهلاك ليكون متبقي 10% لتجربة التنبيه"
+6979: محاكاة متبقي 10% ⚠️
+6986: showNotification("🔔 تم محاكاة انتهاء رصيد الباقة بالكامل لتجربة توقف الشات بوت!", "error");
+6989: title="يضبط الاستهلاك ليكون 100% لتجربة التوقف التام"
+6991: محاكاة نفاد الرصيد 🚨
+7002: <span>رسم بياني لعدد الرسائل اليومية 📊 (Dashboard)</span>
+7004: <p className="text-xs text-slate-400">إحصائيات تفاعل المرضى والرسائل اليومية الصادرة والواردة خارج المنصة لآخر 7 أيام.</p>
+7008: إجمالي رسائل الأسبوع: {dailyMessagesData.reduce((acc, d) => acc + d.count, 0)} رسالة
+7030: <Area type="monotone" dataKey="count" name="عدد الرسائل" stroke="#2dd4bf" strokeWidth={2} fillOpacity={1} fill="url(#colorCount)" />
+7041: 🌐 تدعم جميع الباقات الربط المباشر بـ (واتساب، تليجرام، فيسبوك ماسنجر، وإنستغرام)
+7049: <span className="text-[10px] bg-slate-800 text-slate-300 font-bold px-2 py-0.5 rounded-full">باقة البداية 🆓</span>
+7051: <div className="text-2xl font-black text-white pt-1">0$ <span className="text-xs text-slate-400 font-normal">/ 7 أيام</span></div>
+7052: <p className="text-[11px] text-slate-400 leading-relaxed pt-2">فترة تجريبية مجانية بالكامل لاستكشاف ميزات الشات بوت الذكي خارج المنصة.</p>
+7058: showNotification("🎉 تم تفعيل الفترة التجريبية الـ 7 أيام المجانية بنجاح!", "success");
+7064: {msgSubPlan === "trial" ? "نشط حالياً ✓" : "تفعيل الباقة مجاناً"}
+7071: <span className="text-[10px] bg-emerald-500/10 text-emerald-400 font-bold px-2 py-0.5 rounded-full">الباقة الفضية 🥈</span>
+7073: <div className="text-2xl font-black text-white pt-1">10$ <span className="text-xs text-slate-400 font-normal">/ دفعة</span></div>
+7074: <p className="text-[11px] text-slate-400 leading-relaxed pt-2">شحن رصيد 1500 رسالة تفاعل صالحة للاستخدام في أي وقت دون انتهاء الصلاحية.</p>
+7080: showNotification("🎉 تم الاشتراك بنجاح في باقة 1500 رسالة بقيمة 10$!", "success");
+7086: {msgSubPlan === "msg1500" ? "نشط حالياً ✓" : "شراء الباقة بـ 10$"}
+7093: <span className="text-[10px] bg-amber-500/10 text-amber-400 font-bold px-2 py-0.5 rounded-full">الباقة الذهبية 🥇</span>
+7095: <div className="text-2xl font-black text-white pt-1">20$ <span className="text-xs text-slate-400 font-normal">/ دفعة</span></div>
+7096: <p className="text-[11px] text-slate-400 leading-relaxed pt-2">شحن رصيد 4000 رسالة كاملة للعيادات المزدحمة لضمان بقاء الروبوت مستيقظاً.</p>
+7102: showNotification("🎉 تم الاشتراك بنجاح في باقة 4000 رسالة بقيمة 20$!", "success");
+7108: {msgSubPlan === "msg4000" ? "نشط حالياً ✓" : "شراء الباقة بـ 20$"}
+7115: <span className="text-[10px] bg-teal-400 text-slate-950 font-black px-2 py-0.5 rounded-full">الباقة اللانهائية 🔥</span>
+7117: <div className="text-2xl font-black text-white pt-1">35$ <span className="text-xs text-slate-300 font-normal">/ شهرياً</span></div>
+7118: <p className="text-[11px] text-slate-300 leading-relaxed pt-2">كل شيء غير محدود بالكامل! لا تقلق أبداً بشأن رصيد الرسائل أو التنبيهات.</p>
+7124: showNotification("🎉 تم الاشتراك بنجاح في الباقة غير المحدودة بقيمة 35$/شهرياً!", "success");
+7128: {msgSubPlan === "unlimited" ? "نشط حالياً ✓" : "تفعيل اللامحدود بـ 35$"}
+7138: <span>باقة الشحن المرنة المخصصة (1$ = 100 رسالة) 🎚️</span>
+7140: <p className="text-xs text-slate-400">تحكم بقيمة الفاتورة الدقيقة! اشحن بأي مبلغ تريده لتقابل كل 1$ شحن 100 رسالة للمرضى خارج المنصة.</p>
+7146: <span className="text-slate-300 font-bold">مبلغ الشحن المخصص</span>
+7147: <span className="text-teal-400 font-black">{customPaymentAmount}$ دولار</span>
+7159: <span>1$ (100 رسالة)</span>
+7160: <span>100$ (10,000 رسالة)</span>
+7167: <span className="text-xs font-normal text-slate-400">رسالة إضافية</span>
+7169: <p className="text-[10px] text-slate-500 mt-1">مقابل دفع {customPaymentAmount}$</p>
+7179: showNotification(`🎉 تم شحن رصيدك بنجاح بمقدار +${addMsgs} رسالة إضافية مقابل دفع ${customPaymentAmount}$!`, "success");
+7183: شحن الرصيد الآن 💳
+7222: showNotification("تم تغيير لغة المنصة والتحكم إلى العربية بنجاح! 🇸🇦", "success");
+7230: {currentLanguage === "ar" && <span className="bg-teal-500 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded-full">نشط ✓</span>}
+7312: <h4 className="font-bold text-xs text-slate-100 line-clamp-1">{clinicInfo.name || "مساعد العيادة الذكي"}</h4>
+7313: <p className="text-[10px] text-slate-400 line-clamp-1">{clinicInfo.specialty || "شات بوت الاستفسارات والحجوزات"}</p>
+7318: مستعد للرد 🤖
+7327: <span className="font-bold text-teal-400">تحديث اليوم من العيادة:</span>
+7328: <p className="line-clamp-2" title={dailyStatus || "لا توجد تحديثات خاصة لليوم"}>
+7329: {dailyStatus || "العيادة تعمل بمواعيدها الرسمية ونرحب بكم في أي وقت!"}
+7403: <p className="font-bold text-white text-xs">تم إرسال طلب الحجز بنجاح! 🎉</p>
+7405: لقد تم تدوين طلبك فورياً في لوحة تحكم الطبيب. شات بوت العيادة استقبل الحجز بنجاح وسنتصل بك للتأكيد.
+7413: <h5 className="font-bold text-teal-400 text-xs">استمارة الحجز الفوري الذكي</h5>
+7416: خطوة {getChatBookingProgress().filled}/{getChatBookingProgress().total}
+7423: <span className="text-slate-400 font-medium">مستوى اكتمال البيانات:</span>
+7425: {getChatBookingProgress().percentage}% {getChatBookingProgress().percentage === 100 && "جاهز! ✨"}
+7439: <label className="block text-[10px] text-slate-400 font-medium">اسم المريض بالكامل</label>
+7444: placeholder="مثال: أحمد عبد الله"
+7451: <label className="block text-[10px] text-slate-400 font-medium">رقم الجوال للتأكيد</label>
+7463: <label className="block text-[10px] text-slate-400 font-medium">الخدمة المرغوبة</label>
+7470: <option value="">-- اختر الخدمة المطلوبة --</option>
+7475: <option value="استشارة وفحص طبي">استشارة وفحص طبي</option>
+7482: <label className="block text-[10px] text-slate-400 font-medium">تاريخ الموعد</label>
+7491: <label className="block text-[10px] text-slate-400 font-medium">الوقت المفضل</label>
+7502: <label className="block text-[10px] text-slate-400 font-medium">الأعراض أو ملاحظات إضافية</label>
+7507: placeholder="ملاحظات اختيارية للطبيب..."
+7517: <span>إرسال طلب حجز فوري 📅</span>
+7552: <Sparkles className="w-3 h-3 text-teal-400" /> خيارات سريعة مبرمجة ومتاحة:
+7559: label: "📅 حجز موعد ذكي",
+7560: response: "أهلاً بك! يرجى ملء نموذج حجز الموعد أدناه."
+7564: <span>📅 حجز موعد ذكي</span>
+7591: <span className="font-bold text-teal-400 block">صورة مرفقة جاهزة للإرسال 📸</span>
+7592: <span className="text-[9px] opacity-70">سيقوم البوت بقراءتها وتحليلها فور الإرسال</span>
+7599: title="إلغاء المرفق"
+7614: <span className="font-bold text-teal-400 block">مقطع صوتي جاهز للإرسال 🎙️</span>
+7615: <span className="text-[9px] opacity-70 block">سيقوم البوت بسماع المقطع وتحليله فور الإرسال</span>
+7622: title="إلغاء التسجيل"
+7640: البث المباشر
+7651: <span>التقاط الصورة 📸</span>
+7659: <span>إلغاء</span>
+7688: title="إرفاق صورة"
+7703: title="التقاط بالكاميرا"
+7718: title="تسجيل صوتي"
+7731: <span className="text-[9px] text-slate-400">جاري تسجيل رسالتك الصوتية...</span>
+7739: title="تأكيد وحفظ"
+7747: title="إلغاء"
+7756: placeholder="اسأل الشات بوت أو أرفق صورة أو تسجيلاً صوتياً..."
+7786: <span className="text-xs text-slate-400 block font-bold mb-1">💡 كيف تقوم بالتسويق والعرض للعيادات؟</span>
+7788: 1. اختر قالباً جاهزاً من الأعلى (مثلاً: الأسنان) لملء البيانات فوراً.<br />
+7789: 2. اكتب نصاً يومياً في خانة "الحالة اليومية السريعة" في لوحة التحكم واحفظه.<br />
+7790: 3. انقر على أي زر خيار سريع في محاكاة الهاتف لتجربة الرد التلقائي السريع.<br />
+7791: 4. جرب كتابة سؤال عام (مثلاً: "ما هي تكلفة تنظيف الأسنان؟" أو "ماذا أفعل قبل زراعة الأسنان؟").<br />
+7792: 5. جرب كتابة سؤال طبي معقد (مثلاً: "أشعر بألم شديد، أي مضاد حيوي آخذ؟") لتشاهد كيف يحميك الشات بوت ويرفض الإجابة ويوجهك لحجز موعد والاتصال هاتفياً بالعيادة!
+7817: <h3 className="text-sm font-bold text-slate-100">معاينة ومراجعة التقرير الطبي الرسمي والتحليلات</h3>
+7848: <h4 className="text-lg font-black text-teal-800">{clinicInfo.name || "العيادة الطبية الذكية"}</h4>
+7849: <p className="text-xs font-bold text-slate-600">{clinicInfo.specialty || "استشارات عامة ورعاية ذكية"}</p>
+7850: <p className="text-[10px] text-slate-500">تحت إشراف: د. {clinicInfo.doctorName || "الاستشاري المسؤول"}</p>
+7851: <p className="text-[10px] text-slate-500">الهاتف: {clinicInfo.phone} | العنوان: {clinicInfo.address}</p>
+7874: تقرير استشارة طبية أولية وتتبع تفاعل المريض
+7882: <span className="text-slate-500 block">اسم المريض الكامل:</span>
+7886: <span className="text-slate-500 block">رقم الاتصال الموثق:</span>
+7892: <span className="text-slate-500 block">تاريخ وتوقيت الاستشارة:</span>
+7896: <span className="text-slate-500 block">موضوع الاستشارة المبدئي:</span>
+7904: <h5 className="text-xs font-bold text-slate-800 border-r-2 border-teal-600 pr-2">أولاً: تحليلات الجلسة ومؤشرات الذكاء الاصطناعي الطبية 📊</h5>
+7907: <span className="text-[10px] text-slate-500 block">مستوى الرضا المتوقع</span>
+7909: {pdfSession.aiSentiment === "satisfied" ? "مرتفع جداً (راضي 😊)" : "متوسط (محايد 😐)"}
+7913: <span className="text-[10px] text-slate-500 block">التصنيف والاستعجال</span>
+7915: {pdfSession.topic.match(/(ألم|وجع|نزيف|خلع|كسر|طوارئ)/) ? "طارئ وعاجل ⚠️" : "استفسار اعتيادي 🟢"}
+7919: <span className="text-[10px] text-slate-500 block">الالتزام بالصمامات الآمنة</span>
+7920: <strong className="text-xs text-slate-800 block mt-0.5">مجتاز ومعتمد بنسبة 100% ✓</strong>
+7925: <span className="font-bold text-slate-800 block mb-1">💡 ملخص التوصية الطبية والتحليل الفوري للمشرف:</span>
+7926: {pdfSession.topic.match(/(ألم|وجع|نزيف|خلع|كسر|طوارئ)/) ? (
+7927: <span>يشكو المريض من أعراض حادة ومتعلقة بالألم أو النزيف. تم حظر الإجابات الدوائية العشوائية تماماً بواسطة نظام الصمامات الطبي. يوصى بقيام موظفي الاستقبال بالاتصال الهاتفي فوراً لتسجيل موعد فحص سريري عاجل.</span>
+7929: <span>الاستشارة تتعلق باستفسار خدمي أو معرفي عام (مثل الأسعار أو الإجراءات الشائعة). تم تزويد المريض بالمعلومات الدقيقة وحجز موعد مبدئي بنجاح لضمان استمرارية المتابعة التجارية والطبية داخل العيادة.</span>
+7936: <h5 className="text-xs font-bold text-slate-800 border-r-2 border-teal-600 pr-2">ثانياً: سجل المحادثة الطبي الموثق 💬</h5>
+7941: <div className="col-span-3">المرسل</div>
+7942: <div className="col-span-9 text-right">محتوى الرسالة الاستشارية بالتفصيل</div>
+7959: {isUser ? "👤 المريض" : isDoc ? "🧑‍⚕️ طبيب معالج" : "🤖 المساعد الذكي"}
+7979: <strong className="text-slate-700 block">إخلاء مسؤولية طبي معتمد:</strong>
+7981: هذا التقرير يمثل تلخيصاً آلياً دقيقاً للمحادثة الاستكشافية الأولية التي تمت عبر مساعد العيادة المعتمد على الذكاء الاصطناعي. لا يغني هذا التقرير ولا يمثل بديلاً عن الفحص السريري المباشر والأشعة التشخيصية داخل العيادة. أي وصفات علاجية يجب أن تتم سريرياً وتوقع يدوياً من الطبيب المعالج.
+7996: <span className="text-[8px] text-slate-400 mt-1">ختم العيادة الرسمي</span>
+8001: <span className="text-[10px] text-slate-400 block">توقيع الطبيب المشرف:</span>
+8003: د. {clinicInfo.doctorName || "الاستشاري"}
+8023: إغلاق المعاينة
+8029: const textToCopy = `[تقرير طبي معتمد - عيادة ${clinicInfo.name || "الأسنان"}]
+8030: رقم التقرير: REP-2026-${pdfSession.id.toUpperCase()}
+8031: المريض: ${pdfSession.patientName}
+8032: الجوال: ${pdfSession.patientPhone}
+8033: موضوع الاستشارة: ${pdfSession.topic}
+8034: تاريخها: ${pdfSession.date}
+8035: معدل الرضا المتوقع: ${pdfSession.aiSentiment === "satisfied" ? "ممتاز 😊" : "محايد 😐"}
+8037: [موجز المحادثة]:
+8038: ${pdfSession.messages.map(m => `- ${m.sender === "user" ? "المريض" : m.sender === "doctor" ? "الطبيب المعالج" : "المساعد الذكي"}: ${m.text}`).join("\n")}
+8041: showNotification("تم نسخ التقرير الطبي الكامل بنجاح! 📋", "success");
+8045: نسخ النص بالكامل 📋
+8057: <span>تحميل كملف PDF / طباعة التقرير 🖨️</span>
+8076: <h4 className="text-xl font-black text-teal-800">{clinicInfo.name || "العيادة الطبية الذكية"}</h4>
+8077: <p className="text-sm font-bold text-slate-600">{clinicInfo.specialty || "استشارات عامة ورعاية ذكية"}</p>
+8078: <p className="text-xs text-slate-500">تحت إشراف: د. {clinicInfo.doctorName || "الاستشاري المسؤول"}</p>
+8079: <p className="text-xs text-slate-500">الهاتف: {clinicInfo.phone} | العنوان: {clinicInfo.address}</p>
+8102: تقرير استشارة طبية أولية وتتبع تفاعل المريض
+8110: <span className="text-slate-500 block">اسم المريض الكامل:</span>
+8114: <span className="text-slate-500 block">رقم الاتصال الموثق:</span>
+8120: <span className="text-slate-500 block">تاريخ وتوقيت الاستشارة:</span>
+8124: <span className="text-slate-500 block">موضوع الاستشارة المبدئي:</span>
+8132: <h5 className="text-sm font-bold text-slate-800 border-r-2 border-teal-600 pr-2">أولاً: تحليلات الجلسة ومؤشرات الذكاء الاصطناعي الطبية 📊</h5>
+8135: <span className="text-[10px] text-slate-500 block">مستوى الرضا المتوقع</span>
+8137: {pdfSession.aiSentiment === "satisfied" ? "مرتفع جداً (راضي 😊)" : "متوسط (محايد 😐)"}
+8141: <span className="text-[10px] text-slate-500 block">التصنيف والاستعجال</span>
+8143: {pdfSession.topic.match(/(ألم|وجع|نزيف|خلع|كسر|طوارئ)/) ? "طارئ وعاجل ⚠️" : "استفسار اعتيادي 🟢"}
+8147: <span className="text-[10px] text-slate-500 block">الالتزام بالصمامات الآمنة</span>
+8148: <strong className="text-xs text-slate-800 block mt-0.5">مجتاز ومعتمد بنسبة 100% ✓</strong>
+8153: <span className="font-bold text-slate-800 block mb-1">💡 ملخص التوصية الطبية والتحليل الفوري للمشرف:</span>
+8154: {pdfSession.topic.match(/(ألم|وجع|نزيف|خلع|كسر|طوارئ)/) ? (
+8155: <span>يشكو المريض من أعراض حادة ومتعلقة بالألم أو النزيف. تم حظر الإجابات الدوائية العشوائية تماماً بواسطة نظام الصمامات الطبي لضمان سلامته التامة. يوصى بقيام موظفي الاستقبال بالاتصال الهاتفي فوراً لتأكيد الحجز وتنسيق الكشف العاجل.</span>
+8157: <span>الاستشارة تتعلق باستفسار خدمي أو معرفي عام (مثل الأسعار أو الإجراءات الشائعة). تم تزويد المريض بالمعلومات الدقيقة وحجز موعد مبدئي بنجاح لضمان المتابعة والاستفادة التامة من خدمات العيادة.</span>
+8164: <h5 className="text-sm font-bold text-slate-800 border-r-2 border-teal-600 pr-2">ثانياً: سجل المحادثة المعتمد والموثق للتقرير الطارئ 💬</h5>
+8169: <div className="col-span-3">المرسل</div>
+8170: <div className="col-span-9 text-right">محتوى الرسالة الاستشارية بالتفصيل</div>
+8187: {isUser ? "👤 المريض" : isDoc ? "🧑‍⚕️ طبيب معالج" : "🤖 المساعد الذكي"}
+8207: <strong className="text-slate-700 block">إخلاء مسؤولية طبي معتمد:</strong>
+8209: هذا التقرير يمثل تلخيصاً آلياً دقيقاً للمحادثة الاستكشافية الأولية التي تمت عبر مساعد العيادة المعتمد على الذكاء الاصطناعي لـ {clinicInfo.name}. لا يغني هذا التقرير ولا يمثل بديلاً عن الفحص السريري المباشر والأشعة التشخيصية داخل العيادة. أي وصفات علاجية يجب أن تتم سريرياً وتوقع يدوياً من الطبيب الاستشاري المعالج.
+8223: <span className="text-[8px] text-slate-400 mt-1">ختم العيادة الرسمي</span>
+8228: <span className="text-[10px] text-slate-400 block">توقيع الطبيب المشرف:</span>
+8230: د. {clinicInfo.doctorName || "الاستشاري"}
