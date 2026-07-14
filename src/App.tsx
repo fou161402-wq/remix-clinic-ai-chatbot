@@ -85,119 +85,7 @@ import SaasPortal from "./components/SaasPortal";
 import { I18nextProvider, useTranslation } from "react-i18next";
 import i18n, { translations } from "./i18n";
 
-const pdfTranslations: Record<string, any> = {
-  ar: {
-    previewTitle: "معاينة ومراجعة التقرير الطبي الرسمي والتحليلات",
-    reportTitle: "تقرير استشارة طبية أولية وتتبع تفاعل المريض",
-    patientNameLabel: "اسم المريض الكامل:",
-    contactPhoneLabel: "رقم الاتصال الموثق:",
-    consultationDateLabel: "تاريخ وتوقيت الاستشارة:",
-    consultationTopicLabel: "موضوع الاستشارة المبدئي:",
-    section1Title: "أولاً: تحليلات الجلسة ومؤشرات الذكاء الاصطناعي الطبية 📊",
-    satisfactionLevel: "مستوى الرضا المتوقع",
-    satisfiedStatus: "مرتفع جداً (راضي 😊)",
-    neutralStatus: "متوسط (محايد 😐)",
-    classificationUrgency: "التصنيف والاستعجال",
-    urgentStatus: "طارئ وعاجل ⚠️",
-    normalStatus: "استفسار اعتيادي 🟢",
-    safetyCommitment: "الالتحام بالصمامات الآمنة",
-    safetyPassed: "مجتاز ومعتمد بنسبة 100% ✓",
-    recommendationSummary: "💡 ملخص التوصية الطبية والتحليل الفوري للمشرف:",
-    urgentRecommendation: "يشكو المريض من أعراض حادة ومتعلقة بالألم أو النزيف. تم حظر الإجابات الدوائية العشوائية تماماً بواسطة نظام الصمامات الطبي لضمان سلامته التامة. يوصى بقيام موظفي الاستقبال بالاتصال الهاتفي فوراً لتأكيد الحجز وتنسيق الكشف العاجل.",
-    normalRecommendation: "الاستشارة تتعلق باستفسار خدمي أو معرفي عام (مثل الأسعار أو الإجراءات الشائعة). تم تزويد المريض بالمعلومات الدقيقة وحجز موعد مبدئي بنجاح لضمان المتابعة والاستفادة التامة من خدمات العيادة.",
-    section2Title: "ثانياً: سجل المحادثة الطبي الموثق 💬",
-    section2TitlePrint: "ثانياً: سجل المحادثة المعتمد والموثق للتقرير الطارئ 💬",
-    senderLabel: "المرسل",
-    messageContentLabel: "محتوى الرسالة الاستشارية بالتفصيل",
-    patient: "👤 المريض",
-    doctor: "🧑‍⚕️ طبيب معالج",
-    assistant: "🤖 المساعد الذكي",
-    disclaimerTitle: "إخلاء مسؤولية طبي معتمد:",
-    disclaimerText: "هذا التقرير يمثل تلخيصاً آلياً دقيقاً للمحادثة الاستكشافية الأولية التي تمت عبر مساعد العيادة المعتمد على الذكاء الاصطناعي. لا يغني هذا التقرير ولا يمثل بديلاً عن الفحص السريري المباشر والأشعة التشخيصية داخل العيادة. أي وصفات علاجية يجب أن تتم سريرياً وتوقع يدوياً من الطبيب المعالج.",
-    officialStamp: "ختم العيادة الرسمي",
-    doctorSignatureLabel: "توقيع الطبيب المشرف:",
-    closePreview: "إغلاق المعاينة",
-    copyFullText: "نسخ النص بالكامل 📋",
-    downloadPrintPdf: "تحميل كملف PDF / طباعة التقرير 🖨️",
-    defaultClinicName: "العيادة الطبية الذكية",
-    defaultSpecialty: "استشارات عامة ورعاية ذكية",
-    defaultDoctor: "الاستشاري المسؤول"
-  },
-  en: {
-    previewTitle: "Preview and Review of the Official Medical Report & Analysis",
-    reportTitle: "Preliminary Medical Consultation & Patient Interaction Report",
-    patientNameLabel: "Patient Full Name:",
-    contactPhoneLabel: "Verified Phone Number:",
-    consultationDateLabel: "Date & Time of Consultation:",
-    consultationTopicLabel: "Initial Consultation Topic:",
-    section1Title: "First: Session Analysis & Medical AI Indicators 📊",
-    satisfactionLevel: "Expected Satisfaction Level",
-    satisfiedStatus: "Very High (Satisfied 😊)",
-    neutralStatus: "Medium (Neutral 😐)",
-    classificationUrgency: "Classification & Urgency",
-    urgentStatus: "Urgent & Critical ⚠️",
-    normalStatus: "Standard Inquiry 🟢",
-    safetyCommitment: "Adherence to Safety Guards",
-    safetyPassed: "Passed and Verified 100% ✓",
-    recommendationSummary: "💡 Medical Recommendation Summary & Supervisor Analysis:",
-    urgentRecommendation: "The patient complains of acute symptoms related to pain or bleeding. Random drug advice has been strictly blocked by the medical safeguard system to guarantee safety. Reception staff are recommended to call immediately to confirm and coordinate urgent clinical checkup.",
-    normalRecommendation: "The consultation relates to general service or educational inquiry (e.g., prices or common procedures). The patient was provided with accurate details and has booked an initial appointment successfully to ensure continued care.",
-    section2Title: "Second: Documented Medical Chat Transcript 💬",
-    section2TitlePrint: "Second: Verified Chat Transcript for Emergency Report 💬",
-    senderLabel: "Sender",
-    messageContentLabel: "Detailed Consultation Message Content",
-    patient: "👤 Patient",
-    doctor: "🧑‍⚕️ Treating Doctor",
-    assistant: "🤖 Smart Assistant",
-    disclaimerTitle: "Certified Medical Disclaimer:",
-    disclaimerText: "This report represents a precise automated summary of the initial exploratory conversation conducted via the AI-powered clinic assistant. It does not replace or substitute for direct clinical examination or diagnostic radiology. Any prescriptions must be clinically issued and signed manually by the treating physician.",
-    officialStamp: "Official Clinic Stamp",
-    doctorSignatureLabel: "Supervisor Doctor Signature:",
-    closePreview: "Close Preview",
-    copyFullText: "Copy Full Text 📋",
-    downloadPrintPdf: "Download PDF / Print Report 🖨️",
-    defaultClinicName: "Smart Medical Clinic",
-    defaultSpecialty: "General Consultations & Smart Care",
-    defaultDoctor: "Chief Consultant"
-  },
-  fr: {
-    previewTitle: "Prévisualisation et Révision du Rapport Médical Officiel & Analyses",
-    reportTitle: "Rapport de Consultation Médicale Préliminaire & Interaction Patient",
-    patientNameLabel: "Nom complet du patient :",
-    contactPhoneLabel: "Numéro de téléphone vérifié :",
-    consultationDateLabel: "Date et heure de la consultation :",
-    consultationTopicLabel: "Sujet initial de consultation :",
-    section1Title: "Premièrement : Analyse de session & indicateurs IA médicaux 📊",
-    satisfactionLevel: "Niveau de satisfaction attendu",
-    satisfiedStatus: "Très élevé (Satisfait 😊)",
-    neutralStatus: "Moyen (Neutre 😐)",
-    classificationUrgency: "Classification & Urgence",
-    urgentStatus: "Urgent & Critique ⚠️",
-    normalStatus: "Enquête standard 🟢",
-    safetyCommitment: "Respect des valves de sécurité",
-    safetyPassed: "Réussi et vérifié à 100% ✓",
-    recommendationSummary: "💡 Synthèse de recommandation médicale & analyse du superviseur :",
-    urgentRecommendation: "Le patient se plaint de symptômes aigus liés à la douleur ou à un saignement. Les conseils de médication aléatoires ont été strictement bloqués par le système médical de sécurité. Il est recommandé à la réception d'appeler immédiatement pour coordonner un examen clinique urgent.",
-    normalRecommendation: "La consultation concerne une demande d'information générale ou administrative (tarifs, procédures). Le patient a reçu des détails précis et a réservé un rendez-vous initial avec succès pour garantir la continuité des soins.",
-    section2Title: "Deuxièmement : Transcription de la discussion médicale 💬",
-    section2TitlePrint: "Deuxièmement : Transcription validée pour rapport d'urgence 💬",
-    senderLabel: "Émetteur",
-    messageContentLabel: "Détail du contenu du message de consultation",
-    patient: "👤 Patient",
-    doctor: "🧑‍⚕️ Médecin traitant",
-    assistant: "🤖 Assistant virtuel",
-    disclaimerTitle: "Avis de non-responsabilité médicale certifié :",
-    disclaimerText: "Ce rapport représente un résumé automatisé précis de la conversation exploratoire initiale menée via l'assistant virtuel de la clinique. Il ne remplace ni ne dispense d'un examen clinique direct ou de radiologie diagnostique. Toute prescription médicale doit être émise cliniquement et signée manuellement par le médecin traitant.",
-    officialStamp: "Timbre officiel de la clinique",
-    doctorSignatureLabel: "Signature du médecin superviseur :",
-    closePreview: "Fermer la prévisualisation",
-    copyFullText: "Copier tout le texte 📋",
-    downloadPrintPdf: "Télécharger en PDF / Imprimer le rapport 🖨️",
-    defaultClinicName: "Clinique Médicale Intelligente",
-    defaultSpecialty: "Consultations Générales & Soins Intelligents",
-    defaultDoctor: "Consultant en Chef"
-  }
-};
+const pdfTranslations: Record<string, any> = {};
 
 // translations loaded from ./i18n.ts
 
@@ -205,7 +93,451 @@ const localizeDynamicText = (text: string, lang: "ar" | "en" | "fr"): string => 
   if (!text) return text;
   
   const dict: Record<string, Record<"ar" | "en" | "fr", string>> = {
-    // Patient Names
+    "طب وجراحة الأسنان والتجميل": {
+      ar: "طب وجراحة الأسنان والتجميل",
+      en: "Dentistry, Oral Surgery & Cosmetics",
+      fr: "Chirurgie Dentaire et Esthétique"
+    },
+    "الطب العام، التشخيص، والفحص السريري": {
+      ar: "الطب العام، التشخيص، والفحص السريري",
+      en: "General Medicine, Diagnosis & Clinical Exam",
+      fr: "Médecine Générale, Diagnostic et Examen Clinique"
+    },
+    "تنسيق المواعيد وإدارة الاستشارات الطبية والدعم الإداري": {
+      ar: "تنسيق المواعيد وإدارة الاستشارات الطبية والدعم الإداري",
+      en: "Appointment Coordination & Consultation Management",
+      fr: "Coordination des rendez-vous et gestion des consultations"
+    },
+    "عيادة دنتال كير لطب الأسنان": {
+      ar: "عيادة دنتال كير لطب الأسنان",
+      en: "Dental Care Clinic",
+      fr: "Clinique Dental Care"
+    },
+    "عيادة الشفاء للطب العام والفحص الشامل": {
+      ar: "عيادة الشفاء للطب العام والفحص الشامل",
+      en: "Al-Shifa Clinic for General Medicine & Comprehensive Checkup",
+      fr: "Clinique Al-Shifa pour la médecine générale"
+    },
+    "مكتب تنظيم وحجز المواعيد الطبي الموحد": {
+      ar: "مكتب تنظيم وحجز المواعيد الطبي الموحد",
+      en: "Unified Medical Appointment & Scheduling Office",
+      fr: "Bureau Unifié de Coordination des Rendez-vous Médicaux"
+    },
+    "الجزائر العاصمة، شارع ديدوش مراد، عمارة السلام، الطابق الثاني": {
+      ar: "الجزائر العاصمة، شارع ديدوش مراد، عمارة السلام، الطابق الثاني",
+      en: "Algiers, Didouche Mourad Street, Peace Building, 2nd Floor",
+      fr: "Alger, Rue Didouche Mourad, Immeuble de la Paix, 2e Étage"
+    },
+    "الجزائر العاصمة، حي باب الواد، شارع الاستقلال، الطابق الأول": {
+      ar: "الجزائر العاصمة، حي باب الواد، شارع الاستقلال، الطابق الأول",
+      en: "Algiers, Bab El Oued, Independence Street, 1st Floor",
+      fr: "Alger, Bab El Oued, Rue de l'Indépendance, 1er Étage"
+    },
+    "قسنطينة، حي سيدي مبروك، شارع المستشفى، مجمع الشفاء الطبي، الطابق الأرضي": {
+      ar: "قسنطينة، حي سيدي مبروك، شارع المستشفى، مجمع الشفاء الطبي، الطابق الأرضي",
+      en: "Constantine, Sidi Mabrouk, Hospital Street, Al-Shifa Medical Complex, Ground Floor",
+      fr: "Constantine, Sidi Mabrouk, Rue de l'Hôpital, Complexe Médical Al-Shifa, Rez-de-chaussée"
+    },
+    "اليوم الطبيب متواجد من الساعة 08:30 صباحاً وحتى 16:30 زوالاً. يوجد ازدحام طفيف في فترة المساء، وننصح بالحضور قبل الموعد بـ 15 دقيقة لتأكيد الحجز.": {
+      ar: "اليوم الطبيب متواجد من الساعة 08:30 صباحاً وحتى 16:30 زوالاً. يوجد ازدحام طفيف في فترة المساء، وننصح بالحضور قبل الموعد بـ 15 دقيقة لتأكيد الحجز.",
+      en: "The doctor is available today from 08:30 AM to 04:30 PM. There is slight congestion in the afternoon, we recommend arriving 15 minutes before your slot to confirm.",
+      fr: "Le médecin est disponible aujourd'hui de 08h30 à 16h30. Il y a un léger encombrement l'après-midi, nous conseillons d'arriver 15 minutes à l'avance."
+    },
+    "طبيب الطب العام متواجد اليوم من الساعة 09:00 صباحاً وحتى 18:30 مساءً. تتوفر اليوم خدمات قياس الضغط، فحص السكر، وفحص الوزن والنمو الشامل والاطمئنان على الصحة العامة للجميع.": {
+      ar: "طبيب الطب العام متواجد اليوم من الساعة 09:00 صباحاً وحتى 18:30 مساءً. تتوفر اليوم خدمات قياس الضغط، فحص السكر، وفحص الوزن والنمو الشامل والاطمئنان على الصحة العامة للجميع.",
+      en: "The general practitioner is available today from 09:00 AM to 06:30 PM. Blood pressure check, glucose monitoring, growth assessment, and comprehensive wellness checkups are available today.",
+      fr: "Le médecin généraliste est présent aujourd'hui de 09h00 à 18h30. Les services de mesure de tension, de glycémie et de bilan général de bien-être sont disponibles."
+    },
+    "مكتب تنظيم المواعيد يعمل بشكل اعتيادي اليوم من الساعة 08:00 صباحاً وحتى 20:00 مساءً. جميع مواعيد العيادات الخارجية ومتابعات الأطباء يتم تنظيمها وحجزها في غضون دقائق معدودة.": {
+      ar: "مكتب تنظيم المواعيد يعمل بشكل اعتيادي اليوم من الساعة 08:00 صباحاً وحتى 20:00 مساءً. جميع مواعيد العيادات الخارجية ومتابعات الأطباء يتم تنظيمها وحجزها في غضون دقائق معدودة.",
+      en: "The scheduling office is working normally today from 08:00 AM to 08:00 PM. All outpatient appointments and physician follow-ups are coordinated in a matter of minutes.",
+      fr: "Le bureau de coordination est ouvert aujourd'hui de 08h00 à 20h00. Tous les rendez-vous ambulatoires et suivis médicaux sont organisés en quelques minutes."
+    },
+    "تنظيف الأسنان وإزالة الجير": {
+      ar: "تنظيف الأسنان وإزالة الجير",
+      en: "Teeth Cleaning & Scaling",
+      fr: "Nettoyage des dents et détartrage"
+    },
+    "تبييض الأسنان بالليزر (زوم)": {
+      ar: "تبييض الأسنان بالليزر (زوم)",
+      en: "Laser Teeth Whitening (Zoom)",
+      fr: "Blanchiment des dents au laser (Zoom)"
+    },
+    "حشوة تجميلية ضوئية (كومبوزيت)": {
+      ar: "حشوة تجميلية ضوئية (كومبوزيت)",
+      en: "Cosmetic Composite Filling",
+      fr: "Obturation composite esthétique"
+    },
+    "زراعة الأسنان الألمانية": {
+      ar: "زراعة الأسنان الألمانية",
+      en: "German Dental Implant",
+      fr: "Implant dentaire allemand"
+    },
+    "تقويم الأسنان الشفاف": {
+      ar: "تقويم الأسنان الشفاف",
+      en: "Clear Aligners",
+      fr: "Alignement dentaire transparent"
+    },
+    "الفحص السريري العام والاستشارة الطبية": {
+      ar: "الفحص السريري العام والاستشارة الطبية",
+      en: "General Clinical Exam & Consultation",
+      fr: "Examen clinique général et consultation"
+    },
+    "فحص وتخطيط القلب الكهربائي (ECG)": {
+      ar: "فحص وتخطيط القلب الكهربائي (ECG)",
+      en: "Electrocardiogram (ECG) Exam",
+      fr: "Examen et électrocardiogramme (ECG)"
+    },
+    "الفحص الدوري والتحاليل الطبية الأساسية": {
+      ar: "الفحص الدوري والتحاليل الطبية الأساسية",
+      en: "Periodic Checkup & Basic Medical Analyses",
+      fr: "Bilan périodique et analyses médicales de base"
+    },
+    "استشارة التغذية وعلاج السمنة والنحافة": {
+      ar: "استشارة التغذية وعلاج السمنة والنحافة",
+      en: "Nutrition Consultation & Weight Management",
+      fr: "Consultation nutritionnelle et traitement de l'obésité"
+    },
+    "الكشف الطبي المنزلي للحالات الخاصة": {
+      ar: "الكشف الطبي المنزلي للحالات الخاصة",
+      en: "Home Medical Visit for Special Cases",
+      fr: "Visite médicale à domicile pour cas particuliers"
+    },
+    "حجز وتأكيد المواعيد العادية والطارئة": {
+      ar: "حجز وتأكيد المواعيد العادية والطارئة",
+      en: "Regular & Emergency Appointment Booking",
+      fr: "Réservation et confirmation des rendez-vous standards et urgents"
+    },
+    "الاستشارة الطبية عن بُعد (مرئية / هاتفية)": {
+      ar: "الاستشارة الطبية عن بُعد (مرئية / هاتفية)",
+      en: "Remote Tele-Consultation (Video / Phone)",
+      fr: "Téléconsultation médicale (Vidéo / Téléphone)"
+    },
+    "تنظيم مواعيد الفحوصات الخارجية والتحاليل": {
+      ar: "تنظيم مواعيد الفحوصات الخارجية والتحاليل",
+      en: "Outsource Diagnostic & Lab Appointments",
+      fr: "Coordination des examens externes et analyses"
+    },
+    "جلسة تنظيف عميق لتلميع الأسنان وإزالة التصبغات والترسبات الجيرية باستخدام الأمواج فوق الصوتية.": {
+      ar: "جلسة تنظيف عميق لتلميع الأسنان وإزالة التصبغات والترسبات الجيرية باستخدام الأمواج فوق الصوتية.",
+      en: "Deep cleaning session to polish teeth and remove stains and calculus deposits using ultrasound.",
+      fr: "Séance de nettoyage en profondeur pour polir les dents et éliminer les taches et le tartre par ultrasons."
+    },
+    "تبييض احترافي في العيادة للحصول على ابتسامة ناصعة البياض خلال ساعة واحدة فقط.": {
+      ar: "تبييض احترافي في العيادة للحصول على ابتسامة ناصعة البياض خلال ساعة واحدة فقط.",
+      en: "Professional in-office whitening to get a bright white smile in just one hour.",
+      fr: "Blanchiment professionnel au cabinet pour un sourire éclatant en seulement une heure."
+    },
+    "حشوة أسنان بلون السن الطبيعي متينة وتدوم طويلاً لترميم الأسنان الأمامية والخلفية.": {
+      ar: "حشوة أسنان بلون السن الطبيعي متينة وتدوم طويلاً لترميم الأسنان الأمامية والخلفية.",
+      en: "Tooth-colored, durable dental filling for restoring anterior and posterior teeth.",
+      fr: "Obturation de la couleur de la dent, durable pour restaurer les dents antérieures et postérieures."
+    },
+    "زراعة الأسنان المفقودة بأحدث التقنيات وبنسبة نجاح تفوق 98% شاملة التلبيسة الزركونية.": {
+      ar: "زراعة الأسنان المفقودة بأحدث التقنيات وبنسبة نجاح تفوق 98% شاملة التلبيسة الزركونية.",
+      en: "Replacing missing teeth with the latest technologies and a success rate over 98%, including zircon crown.",
+      fr: "Remplacement des dents manquantes avec les dernières technologies et un taux de réussite de plus de 98%, couronne en zircone incluse."
+    },
+    "تقويم أسنان غير مرئي متحرك لعلاج اعوجاج الأسنان بدون أسلاك معدنية.": {
+      ar: "تقويم أسنان غير مرئي متحرك لعلاج اعوجاج الأسنان بدون أسلاك معدنية.",
+      en: "Removable invisible orthodontic treatment to align teeth without metal wires.",
+      fr: "Traitement orthodontique invisible amovible pour aligner les dents sans fils métalliques."
+    },
+    "كشف طبي شامل يشمل قياس الضغط والنبض وفحص العلامات الحيوية مع تقديم استشارة طبية وتوجيه للعلاج المناسب والمتابعة.": {
+      ar: "كشف طبي شامل يشمل قياس الضغط والنبض وفحص العلامات الحيوية مع تقديم استشارة طبية وتوجيه للعلاج المناسب والمتابعة.",
+      en: "Comprehensive medical checkup including blood pressure, pulse, and vital signs monitoring, with a tailored consultation and treatment path.",
+      fr: "Examen médical complet comprenant tension, pouls et constantes vitales, avec consultation et orientation thérapeutique."
+    },
+    "إجراء تخطيط للقلب بأحدث الأجهزة للكشف عن صحة القلب ووظائفه بدقة وعناية فائقة مع تقديم التقرير الطبي فوراً.": {
+      ar: "إجراء تخطيط للقلب بأحدث الأجهزة للكشف عن صحة القلب ووظائفه بدقة وعناية فائقة مع تقديم التقرير الطبي فوراً.",
+      en: "Electrocardiogram (ECG) using state-of-the-art equipment to accurately assess heart health with an immediate report.",
+      fr: "Réalisation d'un électrocardiogramme (ECG) avec des équipements modernes pour évaluer la santé cardiaque, rapport immédiat."
+    },
+    "فحص روتيني شامل للدم والسكري والوظائف الحيوية للجسم للاطمئنان العام وتفادي المشاكل الصحية والمضاعفات.": {
+      ar: "فحص روتيني شامل للدم والسكري والوظائف الحيوية للجسم للاطمئنان العام وتفادي المشاكل الصحية والمضاعفات.",
+      en: "Routine screening of blood, glucose, and key biological functions for general wellness and early risk prevention.",
+      fr: "Dépistage de routine comprenant bilan sanguin, glycémie et fonctions vitales pour un suivi préventif complet."
+    },
+    "تحليل بنية الجسم ومكونات الدهون والكتلة العضلية مع وضع نظام غذائي صحي علاجي ومتابعة دورية متخصصة ومستمرة.": {
+      ar: "تحليل بنية الجسم ومكونات الدهون والكتلة العضلية مع وضع نظام غذائي صحي علاجي ومتابعة دورية متخصصة ومستمرة.",
+      en: "Body composition analysis of fat and muscle mass with a tailored nutritional plan and continuous expert follow-up.",
+      fr: "Analyse de la composition corporelle (masse grasse/musculaire) avec programme diététique sur mesure et suivi spécialisé."
+    },
+    "زيارة منزلية وفحص طبي شامل للمرصى كبار السن أو الحالات التي يصعب نقلها للعيادة في محيط العاصمة وضواحيها.": {
+      ar: "زيارة منزلية وفحص طبي شامل للمرصى كبار السن أو الحالات التي يصعب نقلها للعيادة في محيط العاصمة وضواحيها.",
+      en: "Home visit and thorough medical checkup for elderly patients or cases with restricted mobility in Algiers and its suburbs.",
+      fr: "Visite à domicile et examen médical complet pour les patients âgés ou à mobilité réduite à Alger et ses environs."
+    },
+    "تنسيق وحجز موعد طبي مباشر في أي من التخصصات المتاحة وتلقي التأكيد الفوري عبر رسائل الجوال لتنظيم دخولك للطبيب المختص.": {
+      ar: "تنسيق وحجز موعد طبي مباشر في أي من التخصصات المتاحة وتلقي التأكيد الفوري عبر رسائل الجوال لتنظيم دخولك للطبيب المختص.",
+      en: "Coordinating a direct medical slot in any available specialty with immediate confirmation via mobile to organize your visit.",
+      fr: "Coordination et réservation directe dans les spécialités disponibles avec confirmation SMS immédiate pour organiser votre entrée."
+    },
+    "جدولة وتنسيق اتصال مباشر وآمن مع الطبيب المختص للحالات التي لا تستدعي الحضور الفعلي للعيادة وتوفير التقارير الرقمية.": {
+      ar: "جدولة وتنسيق اتصال مباشر وآمن مع الطبيب المختص للحالات التي لا تستدعي الحضور الفعلي للعيادة وتوفير التقارير الرقمية.",
+      en: "Scheduling a secure direct call with the specialist doctor for cases that do not require physical presence, with digital reports provided.",
+      fr: "Planification d'un appel direct sécurisé avec le spécialiste pour les cas ne nécessitant pas de déplacement physique, compte-rendu numérique."
+    },
+    "تنسيق مواعيد الفحوصات المتقدمة مثل الرنين المغناطيسي، الأشعة السينية، والتحاليل المخبرية المعقدة مع أفضل المراكز الطبية الشريكة بأفضل الأسعار.": {
+      ar: "تنسيق مواعيد الفحوصات المتقدمة مثل الرنين المغناطيسي، الأشعة السينية، والتحاليل المخبرية المعقدة مع أفضل المراكز الطبية الشريكة بأفضل الأسعار.",
+      en: "Coordinating advanced examinations like MRI, X-ray, and complex laboratory tests with partner medical centers at special rates.",
+      fr: "Planification d'examens avancés (IRM, radiographie, analyses complexes) avec des centres partenaires aux meilleurs tarifs."
+    },
+    "3000 دج": {
+      ar: "3000 دج",
+      en: "3,000 DZD",
+      fr: "3 000 DA"
+    },
+    "15000 دج": {
+      ar: "15000 دج",
+      en: "15,000 DZD",
+      fr: "15 000 DA"
+    },
+    "4000 دج للسن": {
+      ar: "4000 دج للسن",
+      en: "4,000 DZD per tooth",
+      fr: "4 000 DA par dent"
+    },
+    "35000 دج": {
+      ar: "35000 دج",
+      en: "35,000 DZD",
+      fr: "35 000 DA"
+    },
+    "90000 دج (أقساط ميسرة)": {
+      ar: "90000 دج (أقساط ميسرة)",
+      en: "90,000 DZD (Easy Installments)",
+      fr: "90 000 DA (Facilités de paiement)"
+    },
+    "2000 دج": {
+      ar: "2000 دج",
+      en: "2,000 DZD",
+      fr: "2 000 DA"
+    },
+    "3500 دج": {
+      ar: "3500 دج",
+      en: "3,500 DZD",
+      fr: "3 500 DA"
+    },
+    "5000 دج": {
+      ar: "5000 دج",
+      en: "5,000 DZD",
+      fr: "5 000 DA"
+    },
+    "8000 دج": {
+      ar: "8000 دج",
+      en: "8,000 DZD",
+      fr: "8 000 DA"
+    },
+    "خدمة إدارية مجانية": {
+      ar: "خدمة إدارية مجانية",
+      en: "Free Administrative Service",
+      fr: "Service administratif gratuit"
+    },
+    "1500 دج (خدمة تنسيق)": {
+      ar: "1500 دج (خدمة تنسيق)",
+      en: "1,500 DZD (Coordination Fee)",
+      fr: "1 500 DA (Frais de coordination)"
+    },
+    "تعليمات ما قبل زراعة الأسنان": {
+      ar: "تعليمات ما قبل زراعة الأسنان",
+      en: "Pre-Dental Implant Instructions",
+      fr: "Instructions pré-implant dentaire"
+    },
+    "تعليمات ما بعد خلع السن": {
+      ar: "تعليمات ما بعد خلع السن",
+      en: "Post-Tooth Extraction Instructions",
+      fr: "Instructions post-extraction dentaire"
+    },
+    "إرشادات تبييض الأسنان": {
+      ar: "إرشادات تبييض الأسنان",
+      en: "Teeth Whitening Instructions",
+      fr: "Instructions post-blanchiment des dents"
+    },
+    "تعليمات ما قبل فحص الدم الشامل": {
+      ar: "تعليمات ما قبل فحص الدم الشامل",
+      en: "Instructions Before Comprehensive Blood Test",
+      fr: "Consignes avant un bilan sanguin complet"
+    },
+    "إرشادات قياس ضغط الدم بدقة": {
+      ar: "إرشادات قياس ضغط الدم بدقة",
+      en: "Guidelines for Accurate Blood Pressure Measurement",
+      fr: "Instructions pour mesurer précisément la tension"
+    },
+    "الوقاية من نزلات البرد الموسمية": {
+      ar: "الوقاية من نزلات البرد الموسمية",
+      en: "Seasonal Cold Prevention Tips",
+      fr: "Prévention des rhumes saisonniers"
+    },
+    "سياسة إلغاء وتعديل المواعيد": {
+      ar: "سياسة إلغاء وتعديل المواعيد",
+      en: "Appointment Cancellation & Rescheduling Policy",
+      fr: "Politique d'annulation et de modification des rendez-vous"
+    },
+    "المستندات المطلوبة في أول زيارة": {
+      ar: "المستندات المطلوبة في أول زيارة",
+      en: "Documents Required for Your First Visit",
+      fr: "Documents requis pour la première visite"
+    },
+    "يرجى تناول وجبة خفيفة قبل المجيء بساعتين. يرجى تجنب مميعات الدم مثل الأسبرين قبل 3 أيام من الموعد بالتنسيق مع طبيبك المعالج. تأكد من إحضار الأشعة البانورامية المحدثة إن وجدت.": {
+      ar: "يرجى تناول وجبة خفيفة قبل المجيء بساعتين. يرجى تجنب مميعات الدم مثل الأسبرين قبل 3 أيام من الموعد بالتنسيق مع طبيبك المعالج. تأكد من إحضار الأشعة البانورامية المحدثة إن وجدت.",
+      en: "Please eat a light meal two hours before coming. Avoid blood thinners like Aspirin 3 days before the appointment in coordination with your treating doctor. Bring your updated panoramic X-ray if available.",
+      fr: "Veuillez manger un repas léger deux heures avant de venir. Évitez les anticoagulants comme l'Aspirine 3 jours avant le rendez-vous en coordination avec votre médecin traitant. Apportez votre radiographie panoramique si disponible."
+    },
+    "أبقِ قطعة القطن مكان الخلع بالضغط عليها لمدة ساعة كاملة. تجنب المشروبات الساخنة والمأكولات الصلبة لمدة 24 ساعة. تجنب البصق أو غسل الفم بقوة أو التدخين لضمان تخثر الدم بالشكل السليم وتفادي الالتهابات.": {
+      ar: "أبقِ قطعة القطن مكان الخلع بالضغط عليها لمدة ساعة كاملة. تجنب المشروبات الساخنة والمأكولات الصلبة لمدة 24 ساعة. تجنب البصق أو غسل الفم بقوة أو التدخين لضمان تخثر الدم بالشكل السليم وتفادي الالتهابات.",
+      en: "Keep the cotton pack on the extraction site and press for a full hour. Avoid hot drinks and hard food for 24 hours. Avoid spitting, vigorous rinsing, or smoking to ensure proper blood clotting and prevent infections.",
+      fr: "Gardez la compresse de coton sur le site d'extraction et appuyez pendant une heure entière. Évitez les boissons chaudes et les aliments durs pendant 24 heures. Évitez de cracher, de rincer vigoureusement ou de fumer pour assurer une bonne coagulation et prévenir les infections."
+    },
+    "بعد جلسة التبييض بـ 48 ساعة، يرجى الامتناع التام عن التدخين والمشروبات الملونة كالقهوة والشاي والبيبسي والصلصات الحمراء للحفاظ على النتيجة المثالية.": {
+      ar: "بعد جلسة التبييض بـ 48 ساعة، يرجى الامتناع التام عن التدخين والمشروبات الملونة كالقهوة والشاي والبيبسي والصلصات الحمراء للحفاظ على النتيجة المثالية.",
+      en: "For 48 hours after the whitening session, please completely abstain from smoking and colored beverages like coffee, tea, Pepsi, and red sauces to maintain the perfect result.",
+      fr: "Pendant 48 heures après la séance de blanchiment, veuillez vous abstenir complètement de fumer et de consommer des boissons colorées comme le café, le thé, le Pepsi et les sauces rouges pour maintenir un résultat parfait."
+    },
+    "يرجى الصيام عن الطعام والشراب (ما عدا الماء) لمدة تتراوح بين 8 إلى 12 ساعة قبل موعد سحب عينة الدم لضمان دقة نتائج فحص السكر والدهون والكلسترول.": {
+      ar: "يرجى الصيام عن الطعام والشراب (ما عدا الماء) لمدة تتراوح بين 8 إلى 12 ساعة قبل موعد سحب عينة الدم لضمان دقة نتائج فحص السكر والدهون والكلسترول.",
+      en: "Please fast from food and drinks (except water) for 8 to 12 hours before the blood draw to ensure accurate results for glucose, lipids, and cholesterol.",
+      fr: "Veuillez rester à jeun (sauf eau) de 8 à 12 heures avant le prélèvement sanguin pour garantir l'exactitude de la glycémie, des lipides et du cholestérol."
+    },
+    "تجنب تناول المشروبات التي تحتوي على الكافيين (مثل القهوة والشاي) أو التدخين لمدة 30 دقيقة قبل القياس. اجلس بهدوء واسترخِ لمدة 5 دقائق قبل بدء الفحص والقياس الفعلي.": {
+      ar: "تجنب تناول المشروبات التي تحتوي على الكافيين (مثل القهوة والشاي) أو التدخين لمدة 30 دقيقة قبل القياس. اجلس بهدوء واسترخِ لمدة 5 دقائق قبل بدء الفحص والقياس الفعلي.",
+      en: "Avoid caffeine (coffee/tea) or smoking for 30 minutes before measurement. Sit quietly and relax for 5 minutes before the exam starts.",
+      fr: "Évitez le café, le thé ou le tabac 30 minutes avant la mesure. Asseyez-vous calmement et détendez-vous 5 minutes avant le début de l'examen."
+    },
+    "احرص على غسل اليدين بانتظام بالماء والصابون، تناول الأغذية الغنية بالفيتامينات مثل البرتقال والليمون، والحصول على قسط كافٍ من النوم والراحة لتقوية جهاز المناعة ومواجهة الفيروسات.": {
+      ar: "احرص على غسل اليدين بانتظام بالماء والصابون، تناول الأغذية الغنية بالفيتامينات مثل البرتقال والليمون، والحصول على قسط كافٍ من النوم والراحة لتقوية جهاز المناعة ومواجهة الفيروسات.",
+      en: "Wash hands regularly with soap, eat vitamin-rich foods like oranges and lemons, and get sufficient sleep to strengthen your immune system.",
+      fr: "Lavez-vous les mains régulièrement, mangez des aliments riches en vitamines (oranges, citrons) et dormez suffisamment pour renforcer vos défenses."
+    },
+    "يرجى تعديل الموعد أو إلغاؤه قبل 24 ساعة على الأقل من الوقت المحدد. يساعد هذا في تنظيم العمل وإتاحة الفرصة لمرضى آخرين بحاجة للرعاية الطبية العاجلة والاستفادة من الوقت.": {
+      ar: "يرجى تعديل الموعد أو إلغاؤه قبل 24 ساعة على الأقل من الوقت المحدد. يساعد هذا في تنظيم العمل وإتاحة الفرصة لمرضى آخرين بحاجة للرعاية الطبية العاجلة والاستفادة من الوقت.",
+      en: "Please reschedule or cancel your appointment at least 24 hours prior. This helps reorganize and allocate slots to patients in urgent need of care.",
+      fr: "Veuillez modifier ou annuler votre rendez-vous au moins 24 heures à l'avance. Cela aide à réattribuer les créneaux aux patients qui en ont un besoin urgent."
+    },
+    "يرجى إحضار بطاقة الهوية الوطنية أو بطاقة التأمين الصحي، بالإضافة إلى أي تقارير طبية سابقة أو صور أشعة وتحاليل تم إجراؤها مؤخراً لمساعدتنا في تقديم أفضل تشخيص متكامل.": {
+      ar: "يرجى إحضار بطاقة الهوية الوطنية أو بطاقة التأمين الصحي، بالإضافة إلى أي تقارير طبية سابقة أو صور أشعة وتحاليل تم إجراؤها مؤخراً لمساعدتنا في تقديم أفضل تشخيص متكامل.",
+      en: "Please bring your national ID or health insurance card, as well as any prior medical reports, X-rays, or recent blood tests to help us provide an integrated diagnosis.",
+      fr: "Veuillez apporter votre carte d'identité ou d'assurance, ainsi que vos anciens comptes-rendus, radiographies ou analyses pour nous aider dans le diagnostic."
+    },
+    "📅 حجز موعد جديد": {
+      ar: "📅 حجز موعد جديد",
+      en: "📅 Book a New Appointment",
+      fr: "📅 Réserver un nouveau rendez-vous"
+    },
+    "📍 موقع العيادة وأوقات العمل": {
+      ar: "📍 موقع العيادة وأوقات العمل",
+      en: "📍 Clinic Location & Working Hours",
+      fr: "📍 Emplacement et heures d'ouverture"
+    },
+    "🦷 تكلفة زراعة وتجميل الأسنان": {
+      ar: "🦷 تكلفة زراعة وتجميل الأسنان",
+      en: "🦷 Cost of Dental Implants & Cosmetics",
+      fr: "🦷 Tarifs des implants et cosmétiques"
+    },
+    "🚑 حالات الطوارئ والآلام الشديدة": {
+      ar: "🚑 حالات الطوارئ والآلام الشديدة",
+      en: "🚑 Emergencies & Severe Pain",
+      fr: "🚑 Urgences et douleurs intenses"
+    },
+    "📅 حجز كشف طبي عام": {
+      ar: "📅 حجز كشف طبي عام",
+      en: "📅 Book a General Checkup",
+      fr: "📅 Réserver une consultation générale"
+    },
+    "📍 عنوان العيادة وساعات العمل": {
+      ar: "📍 عنوان العيادة وساعات العمل",
+      en: "📍 Clinic Location & Hours",
+      fr: "📍 Adresse et horaires d'ouverture"
+    },
+    "🏥 خدمات الفحص السريري والتحاليل": {
+      ar: "🏥 خدمات الفحص السريري والتحاليل",
+      en: "🏥 Clinical Services & Lab Tests",
+      fr: "🏥 Examens cliniques et analyses"
+    },
+    "🚑 الرعاية الطارئة والاستشارات": {
+      ar: "🚑 الرعاية الطارئة والاستشارات",
+      en: "🚑 Emergency Care & Inquiries",
+      fr: "🚑 Urgences et consultations d'orientation"
+    },
+    "📅 طلب حجز موعد فوري جديد": {
+      ar: "📅 طلب حجز موعد فوري جديد",
+      en: "📅 Request Instant New Appointment",
+      fr: "📅 Demander une réservation immédiate"
+    },
+    "📍 موقع مكتب المواعيد والتواصل": {
+      ar: "📍 موقع مكتب المواعيد والتواصل",
+      en: "📍 Appointment Office Location",
+      fr: "📍 Bureau des rendez-vous et contact"
+    },
+    "🕒 مواعيد وأوقات العمل الرسمية": {
+      ar: "🕒 مواعيد وأوقات العمل الرسمية",
+      en: "🕒 Official Working Hours",
+      fr: "🕒 Heures officielles d'ouverture"
+    },
+    "أهلاً بك! يمكنك حجز موعدك فوراً بإرسال اسمك الثلاثي، التخصص المطلوب، والوقت المفضل (صباحي/مسائي)، وسيقوم منسق العيادة بتأكيد الموعد معك هاتفياً أو عبر الواتساب في غضون دقائق.": {
+      ar: "أهلاً بك! يمكنك حجز موعدك فوراً بإرسال اسمك الثلاثي، التخصص المطلوب، والوقت المفضل (صباحي/مسائي)، وسيقوم منسق العيادة بتأكيد الموعد معك هاتفياً أو عبر الواتساب في غضون دقائق.",
+      en: "Welcome! You can book your appointment instantly by sending your full name, desired specialty, and preferred time (morning/evening). The coordinator will confirm your appointment within minutes.",
+      fr: "Bienvenue ! Vous pouvez réserver votre rendez-vous instantanément en envoyant votre nom complet, la spécialité souhaitée et l'heure préférée (matin/soir). Le coordinateur confirmera dans quelques minutes."
+    },
+    "موقعنا: الجزائر العاصمة، شارع ديدوش مراد، عمارة السلام، الطابق الثاني. أوقات العمل: من الأحد إلى الخميس، من الساعة 8:30 صباحاً وحتى 16:30 زوالاً.": {
+      ar: "موقعنا: الجزائر العاصمة، شارع ديدوش مراد، عمارة السلام، الطابق الثاني. أوقات العمل: من الأحد إلى الخميس، من الساعة 8:30 صباحاً وحتى 16:30 زوالاً.",
+      en: "Our Location: Algiers, Didouche Mourad Street, Peace Building, 2nd Floor. Hours: Sunday to Thursday, 8:30 AM to 4:30 PM.",
+      fr: "Notre emplacement : Alger, Rue Didouche Mourad, Immeuble de la Paix, 2e Étage. Horaires : Dimanche au Jeudi, de 8h30 à 16h30."
+    },
+    "لدينا عروض مميزة: زراعة السن الألماني تبدأ من 35000 دج، وتبييض الأسنان زووم بالليزر بـ 15000 دج فقط. كما يتوفر تقويم الأسنان الشفاف بأقساط شهرية مريحة.": {
+      ar: "لدينا عروض مميزة: زراعة السن الألماني تبدأ من 35000 دج، وتبييض الأسنان زووم بالليزر بـ 15000 دج فقط. كما يتوفر تقويم الأسنان الشفاف بأقساط شهرية مريحة.",
+      en: "We have special offers: German dental implants start from 35,000 DZD, laser Zoom whitening is only 15,000 DZD. Clear aligners are also available in comfortable monthly installments.",
+      fr: "Offres spéciales : l'implant allemand commence à 35 000 DA, le blanchiment laser Zoom est à seulement 15 000 DA. Aligneurs transparents disponibles avec facilités de paiement."
+    },
+    "إذا كنت تعاني من ألم أسنان شديد ومفاجئ، يرجى التوجه للعيادة فوراً دون موعد مسبق، أو الاتصال بالرقم السريع للعيادة +213 550 12 34 56 لنوجهك للإجراء السليم ونستقبلك بالحال.": {
+      ar: "إذا كنت تعاني من ألم أسنان شديد ومفاجئ، يرجى التوجه للعيادة فوراً دون موعد مسبق، أو الاتصال بالرقم السريع للعيادة +213 550 12 34 56 لنوجهك للإجراء السليم ونستقبلك بالحال.",
+      en: "If you suffer from severe, sudden toothache, please proceed to the clinic immediately without an appointment, or call the clinic hotline +213 550 12 34 56 for immediate guidance and care.",
+      fr: "Si vous souffrez d'un mal de dents soudain et intense, veuillez vous rendre directement à la clinique sans rendez-vous, ou appeler la hotline +213 550 12 34 56 pour être pris en charge."
+    },
+    "أهلاً بك! لحجز موعد كشف أو فحص شامل، يرجى كتابة اسمك، رقم جوالك، والوقت المفضل (صباحاً/مساءً)، وسيقوم فريق الاستقبال بحجز أقرب موعد وتأكيده معك فوراً وبسرعة.": {
+      ar: "أهلاً بك! لحجز موعد كشف أو فحص شامل، يرجى كتابة اسمك، رقم جوالك، والوقت المفضل (صباحاً/مساءً)، وسيقوم فريق الاستقبال بحجز أقرب موعد وتأكيده معك فوراً وبسرعة.",
+      en: "Welcome! To book a consultation or checkup, please send your name, phone number, and preferred time (morning/evening). The team will book and confirm your slot shortly.",
+      fr: "Bienvenue ! Pour réserver une consultation, veuillez saisir votre nom, numéro de téléphone et heure préférée (matin/soir). Notre équipe prendra contact rapidement."
+    },
+    "موقعنا: الجزائر العاصمة، حي باب الواد، شارع الاستقلال، الطابق الأول. نعمل من الأحد إلى الخميس من الساعة 09:00 صباحاً وحتى 18:30 مساءً بشكل مستمر لخدمتكم.": {
+      ar: "موقعنا: الجزائر العاصمة، حي باب الواد، شارع الاستقلال، الطابق الأول. نعمل من الأحد إلى الخميس من الساعة 09:00 صباحاً وحتى 18:30 مساءً بشكل مستمر لخدمتكم.",
+      en: "Location: Algiers, Bab El Oued, Independence Street, 1st Floor. We are open Sunday to Thursday, 09:00 AM to 06:30 PM.",
+      fr: "Emplacement : Alger, Bab El Oued, Rue de l'Indépendance, 1er Étage. Ouvert du dimanche au jeudi de 09h00 à 18h30."
+    },
+    "نقدم كشفاً طبياً عاماً بـ 2000 دج، فحص وتخطيط قلب بـ 3500 دج، وباقات تحاليل دورية شاملة بـ 5000 دج للاطمئنان على صحتك وعافيتك على مدار السنة.": {
+      ar: "نقدم كشفاً طبياً عاماً بـ 2000 دج، فحص وتخطيط قلب بـ 3500 دج، وباقات تحاليل دورية شاملة بـ 5000 دج للاطمئنان على صحتك وعافيتك على مدار السنة.",
+      en: "We offer general clinical checkup for 2,000 DZD, ECG test for 3,500 DZD, and periodic screening packages for 5,000 DZD for your health all year round.",
+      fr: "Nous proposons l'examen clinique à 2 000 DA, l'ECG à 3 500 DA et des bilans périodiques complets à 5 000 DA pour prendre soin de votre santé toute l'année."
+    },
+    "في الحالات الطارئة جداً، يرجى الاتصال فوراً بالرقم +213 560 76 54 32 أو التوجه إلى أقرب مستشفى. إذا كان هناك استفسار طبي مستعجل، أرسله هنا وسيوجهك الطبيب الإداري فوراً وبأعلى أمان.": {
+      ar: "في الحالات الطارئة جداً، يرجى الاتصال فوراً بالرقم +213 560 76 54 32 أو التوجه إلى أقرب مستشفى. إذا كان هناك استفسار طبي مستعجل، أرسله هنا وسيوجهك الطبيب الإداري فوراً وبأعلى أمان.",
+      en: "In extreme emergencies, call +213 560 76 54 32 immediately or go to the nearest hospital. For urgent inquiries, send them here for instant safe guidance.",
+      fr: "En cas d'extrême urgence, appelez immédiatement le +213 560 76 54 32 ou rendez-vous à l'hôpital. Pour toute question urgente, écrivez-la ici pour une réponse rapide."
+    },
+    "مرحباً بك! لجدولة موعدك الجديد، يرجى تزويدنا بالاسم الثلاثي، رقم الهاتف، التخصص الطبي المطلوب، والوقت المفضل (صباحاً/مساءً)، وسيقوم فريق الاستقبال بحجز الموعد وإرسال رسالة للتأكيد.": {
+      ar: "مرحباً بك! لجدولة موعدك الجديد، يرجى تزويدنا بالاسم الثلاثي، رقم الهاتف، التخصص الطبي المطلوب، والوقت المفضل (صباحاً/مساءً)، وسيقوم فريق الاستقبال بحجز الموعد وإرسال رسالة للتأكيد.",
+      en: "Welcome! To schedule your appointment, please provide your full name, phone number, medical specialty, and preferred slot (morning/evening). Our team will book it and notify you.",
+      fr: "Bienvenue ! Pour planifier, veuillez renseigner votre nom complet, numéro de téléphone, spécialité et créneau souhaité (matin/soir). Nous vous confirmerons rapidement."
+    },
+    "موقعنا: قسنطينة، حي سيدي مبروك، شارع المستشفى، مجمع الشفاء الطبي، الطابق الأرضي. يمكنك الاتصال بنا على الرقم: +213 555 11 22 33.": {
+      ar: "موقعنا: قسنطينة، حي سيدي مبروك، شارع المستشفى، مجمع الشفاء الطبي، الطابق الأرضي. يمكنك الاتصال بنا على الرقم: +213 555 11 22 33.",
+      en: "Our Location: Constantine, Sidi Mabrouk, Hospital Street, Al-Shifa Medical Complex, Ground Floor. You can call us at: +213 555 11 22 33.",
+      fr: "Emplacement : Constantine, Sidi Mabrouk, Rue de l'Hôpital, Complexe Médical Al-Shifa, Rez-de-chaussée. Contactez-nous au : +213 555 11 22 33."
+    },
+    "مكتب تنظيم المواعيد يسعد بخدمتكم طيلة أيام الأسبوع ما عدا الجمعة، من الساعة 08:00 صباحاً وحتى الساعة 20:00 مساءً بشكل مستمر لراحة المرضى وتنسيق المتابعات.": {
+      ar: "مكتب تنظيم المواعيد يسعد بخدمتكم طيلة أيام الأسبوع ما عدا الجمعة، من الساعة 08:00 صباحاً وحتى الساعة 20:00 مساءً بشكل مستمر لراحة المرضى وتنسيق المتابعات.",
+      en: "The scheduling office is pleased to serve you Saturday to Thursday, 08:00 AM to 08:00 PM, helping coordinate follow-ups and patient checkups.",
+      fr: "Le bureau de coordination est heureux de vous servir du samedi au jeudi de 08h00 à 20h00 pour le confort des patients et la coordination des suivis."
+    },
+    "تخصص عام": {
+      ar: "تخصص عام",
+      en: "General Specialty",
+      fr: "Spécialité Générale"
+    },
+    "الكل": {
+      ar: "الكل",
+      en: "All",
+      fr: "Tous"
+    },
     "أحمد منصور": {
       ar: "أحمد منصور",
       en: "Ahmed Mansour",
@@ -261,103 +593,6 @@ const localizeDynamicText = (text: string, lang: "ar" | "en" | "fr"): string => 
       en: "Dr. Khaled Belaidi",
       fr: "Dr Khaled Belaidi"
     },
-    "عيادة دنتال كير لطب الأسنان": {
-      ar: "عيادة دنتال كير لطب الأسنان",
-      en: "Dental Care Clinic",
-      fr: "Clinique Dental Care"
-    },
-    "طب وجراحة الأسنان والتجميل": {
-      ar: "طب وجراحة الأسنان والتجميل",
-      en: "Dentistry, Oral Surgery & Cosmetics",
-      fr: "Chirurgie Dentaire et Esthétique"
-    },
-    "الجزائر العاصمة، شارع ديدوش مراد، عمارة السلام، الطابق الثاني": {
-      ar: "الجزائر العاصمة، شارع ديدوش مراد، عمارة السلام، الطابق الثاني",
-      en: "Algiers, Didouche Mourad Street, Peace Building, 2nd Floor",
-      fr: "Alger, Rue Didouche Mourad, Immeuble de la Paix, 2e Étage"
-    },
-    "عيادة الشفاء للطب العام والفحص الشامل": {
-      ar: "عيادة الشفاء للطب العام والفحص الشامل",
-      en: "Al-Shifa Clinic for General Medicine & Comprehensive Checkup",
-      fr: "Clinique Al-Shifa pour la médecine générale"
-    },
-    "الطب العام، التشخيص، والفحص السريري": {
-      ar: "الطب العام، التشخيص، والفحص السريري",
-      en: "General Medicine, Diagnosis & Clinical Exam",
-      fr: "Médecine Générale, Diagnostic et Examen Clinique"
-    },
-    "الجزائر العاصمة، حي باب الواد، شارع الاستقلال، الطابق الأول": {
-      ar: "الجزائر العاصمة، حي باب الواد، شارع الاستقلال، الطابق الأول",
-      en: "Algiers, Bab El Oued, Independence Street, 1st Floor",
-      fr: "Alger, Bab El Oued, Rue de l'Indépendance, 1er Étage"
-    },
-    "مكتب تنظيم وحجز المواعيد الطبي الموحد": {
-      ar: "مكتب تنظيم وحجز المواعيد الطبي الموحد",
-      en: "Unified Medical Appointment & Scheduling Office",
-      fr: "Bureau Unifié de Coordination des Rendez-vous Médicaux"
-    },
-    "تنسيق المواعيد وإدارة الاستشارات الطبية والدعم الإداري": {
-      ar: "تنسيق المواعيد وإدارة الاستشارات الطبية والدعم الإداري",
-      en: "Appointment Coordination & Consultation Management",
-      fr: "Coordination des rendez-vous et gestion des consultations"
-    },
-    "قسنطينة، حي سيدي مبروك، شارع المستشفى، مجمع الشفاء الطبي، الطابق الأرضي": {
-      ar: "قسنطينة، حي سيدي مبروك، شارع المستشفى، مجمع الشفاء الطبي، الطابق الأرضي",
-      en: "Constantine, Sidi Mabrouk, Hospital Street, Al-Shifa Medical Complex, Ground Floor",
-      fr: "Constantine, Sidi Mabrouk, Rue de l'Hôpital, Complexe Médical Al-Shifa, Rez-de-chaussée"
-    },
-    "تنظيف الأسنان وإزالة الجير": {
-      ar: "تنظيف الأسنان وإزالة الجير",
-      en: "Teeth Cleaning & Scaling",
-      fr: "Nettoyage des dents et détartrage"
-    },
-    "تبييض الأسنان بالليزر (زوم)": {
-      ar: "تبييض الأسنان بالليزر (زوم)",
-      en: "Laser Teeth Whitening (Zoom)",
-      fr: "Blanchiment des dents au laser (Zoom)"
-    },
-    "حشوة تجميلية ضوئية (كومبوزيت)": {
-      ar: "حشوة تجميلية ضوئية (كومبوزيت)",
-      en: "Cosmetic Composite Filling",
-      fr: "Obturation composite esthétique"
-    },
-    "زراعة الأسنان الألمانية": {
-      ar: "زراعة الأسنان الألمانية",
-      en: "German Dental Implant",
-      fr: "Implant dentaire allemand"
-    },
-    "تقويم الأسنان الشفاف": {
-      ar: "تقويم الأسنان الشفاف",
-      en: "Clear Aligners",
-      fr: "Alignement dentaire transparent"
-    },
-    "الفحص السريري العام والاستشارة الطبية": {
-      ar: "الفحص السريري العام والاستشارة الطبية",
-      en: "General Clinical Exam & Consultation",
-      fr: "Examen clinique général et consultation"
-    },
-    "فحص وتخطيط القلب الكهربائي (ECG)": {
-      ar: "فحص وتخطيط القلب الكهربائي (ECG)",
-      en: "Electrocardiogram (ECG) Exam",
-      fr: "Examen et électrocardiogramme (ECG)"
-    },
-    "الفحص الدوري والتحاليل الطبية الأساسية": {
-      ar: "الفحص الدوري والتحاليل الطبية الأساسية",
-      en: "Periodic Checkup & Basic Medical Analyses",
-      fr: "Bilan périodique et analyses médicales de base"
-    },
-    "استشارة التغذية وعلاج السمنة والنحافة": {
-      ar: "استشارة التغذية وعلاج السمنة والنحافة",
-      en: "Nutrition Consultation & Weight Management",
-      fr: "Consultation nutritionnelle et traitement de l'obésité"
-    },
-    "الكشف الطبي المنزلي للحالات الخاصة": {
-      ar: "الكشف الطبي المنزلي للحالات الخاصة",
-      en: "Home Medical Visit for Special Cases",
-      fr: "Visite médicale à domicile pour cas particuliers"
-    },
-
-    // Topics & Services
     "تنظيف وتبييض الأسنان بالليزر": {
       ar: "تنظيف وتبييض الأسنان بالليزر",
       en: "Laser Teeth Cleaning & Whitening",
@@ -413,18 +648,6 @@ const localizeDynamicText = (text: string, lang: "ar" | "en" | "fr"): string => 
       en: "Please arrive 15 minutes before the appointment and bring your national ID.",
       fr: "Veuillez arriver 15 minutes avant le rendez-vous et apporter votre pièce d'identité."
     },
-    "📅 حجز موعد جديد": {
-      ar: "📅 حجز موعد جديد",
-      en: "📅 Book a New Appointment",
-      fr: "📅 Réserver un nouveau rendez-vous"
-    },
-    "📍 موقع العيادة وأوقات العمل": {
-      ar: "📍 موقع العيادة وأوقات العمل",
-      en: "📍 Clinic Location & Working Hours",
-      fr: "📍 Emplacement et heures d'ouverture"
-    },
-
-    // Notes & Messages
     "أرغب بزيارة عاجلة صباحاً لتنظيف الأسنان قبل السفر.": {
       ar: "أرغب بزيارة عاجلة صباحاً لتنظيف الأسنان قبل السفر.",
       en: "I would like an urgent morning visit for teeth cleaning before traveling.",
@@ -677,10 +900,17 @@ function InnerApp() {
   }, [currentLanguage]);
 
   // 🌐 Comprehensive translation update function that listens to currentLanguage state
-  const t = (key: string, defaultArabic?: string): string => {
-    const result = translate(key);
+  const t = (key: string, defaultArabicOrOptions?: any, options?: any): string => {
+    let finalOptions = options;
+    let fallback = key;
+    if (typeof defaultArabicOrOptions === "string") {
+      fallback = defaultArabicOrOptions;
+    } else if (defaultArabicOrOptions && typeof defaultArabicOrOptions === "object") {
+      finalOptions = defaultArabicOrOptions;
+    }
+    const result = translate(key, finalOptions) as string;
     if (result !== key) return result;
-    return defaultArabic !== undefined ? defaultArabic : key;
+    return fallback;
   };
 
   // Message plan and limits outside platform (SaaS requirements)
@@ -1092,39 +1322,41 @@ function InnerApp() {
     const reminderMsg: ChatMessage = {
       id: `rem-sent-${Date.now()}`,
       sender: "bot",
-      text: `🔔 [تذكير تلقائي مجدول للمريض ${booking.patientName}]\n\n${reminder.message}`,
+      text: `🔔 [${t("notif_reminder_scheduled", "تذكير تلقائي مجدول للمريض")} ${booking.patientName}]
+
+${reminder.message}`,
       timestamp: new Date()
     };
     setChatMessages(prev => [...prev, reminderMsg]);
     
-    showNotification("تم إرسال رسالة التذكير بنجاح وتنبيه المريض عبر الشات بوت! 🔔📲", "success");
+    showNotification(t("notif_reminder_sent"), "success");
   };
 
   const handleCancelBooking = (id: string) => {
     const updated = bookings.map(b => b.id === id ? { ...b, status: "cancelled" as const } : b);
     setBookings(updated);
     saveToLocalStorage(clinicInfo, dailyStatus, services, guidelines, quickActions, updated);
-    showNotification("تم إلغاء الحجز بنجاح. ❌", "info");
+    showNotification(t("notif_booking_cancelled"), "info");
   };
 
   const handleReactivateBooking = (id: string) => {
     const updated = bookings.map(b => b.id === id ? { ...b, status: "pending" as const } : b);
     setBookings(updated);
     saveToLocalStorage(clinicInfo, dailyStatus, services, guidelines, quickActions, updated);
-    showNotification("تم إعادة تنشيط الحجز وتعيينه كقيد الانتظار. 🔄", "info");
+    showNotification(t("notif_booking_reactivated"), "info");
   };
 
   const handleDeleteBooking = (id: string) => {
     const booking = bookings.find(b => b.id === id);
     setDeleteConfirm({
       isOpen: true,
-      title: "تأكيد حذف الحجز",
-      message: `هل أنت متأكد من رغبتك في حذف حجز المريض "${booking?.patientName || ''}" نهائياً من قاعدة بيانات العيادة؟`,
+      title: t("notif_delete_confirm_title"),
+      message: t("notif_delete_confirm_msg", { name: booking?.patientName || '' }),
       onConfirm: () => {
         const updated = bookings.filter(b => b.id !== id);
         setBookings(updated);
         saveToLocalStorage(clinicInfo, dailyStatus, services, guidelines, quickActions, updated);
-        showNotification("تم حذف الحجز نهائياً من قاعدة البيانات. 🗑️", "success");
+        showNotification(t("notif_booking_deleted"), "success");
         setDeleteConfirm(prev => ({ ...prev, isOpen: false }));
       }
     });
@@ -1164,11 +1396,114 @@ function InnerApp() {
     };
   };
 
+  // Calculate waiting time and morning/evening period distribution analytics
+  const getWaitingAndPeriodAnalytics = () => {
+    // Filter out cancelled bookings as they don't wait
+    const activeBookings = bookings.filter(b => b.status !== "cancelled");
+    
+    let morningCount = 0;
+    let eveningCount = 0;
+    
+    let morningWaitTotal = 0;
+    let eveningWaitTotal = 0;
+    
+    // Group by date to check congestion
+    const dateCongestion: { [date: string]: number } = {};
+    activeBookings.forEach(b => {
+      if (b.bookingDate) {
+        dateCongestion[b.bookingDate] = (dateCongestion[b.bookingDate] || 0) + 1;
+      }
+    });
+
+    // We analyze specific hour blocks
+    const hourBlocks = ["08:00", "10:00", "12:00", "14:00", "16:00", "18:00", "20:00"];
+    const hourlyCounts = hourBlocks.map(h => ({ hour: h, count: 0, waitTime: 12 }));
+
+    activeBookings.forEach(b => {
+      let isMorning = true;
+      if (b.bookingTime) {
+        const hour = parseInt(b.bookingTime.split(":")[0]) || 12;
+        if (hour >= 13) {
+          isMorning = false;
+        }
+      }
+      
+      // Calculate realistic waiting time: Base 12 mins + congestion delay
+      const dayCongestionCount = b.bookingDate ? (dateCongestion[b.bookingDate] || 1) : 1;
+      let calculatedWait = 12 + (dayCongestionCount - 1) * 6;
+      
+      // Natural variance based on name length
+      const variance = (b.patientName.length * 3) % 8;
+      calculatedWait += variance;
+
+      if (b.status === "pending") {
+        calculatedWait += 4; // Pending status might need some check-in validation
+      }
+
+      if (isMorning) {
+        morningCount++;
+        morningWaitTotal += calculatedWait;
+      } else {
+        eveningCount++;
+        eveningWaitTotal += calculatedWait;
+      }
+
+      // Map to closest hourly block
+      if (b.bookingTime) {
+        const hourVal = parseInt(b.bookingTime.split(":")[0]) || 12;
+        let closestIndex = 0;
+        let minDiff = 24;
+        hourBlocks.forEach((hStr, idx) => {
+          const blockH = parseInt(hStr.split(":")[0]);
+          const diff = Math.abs(hourVal - blockH);
+          if (diff < minDiff) {
+            minDiff = diff;
+            closestIndex = idx;
+          }
+        });
+        hourlyCounts[closestIndex].count++;
+        hourlyCounts[closestIndex].waitTime = Math.round((hourlyCounts[closestIndex].waitTime * hourlyCounts[closestIndex].count + calculatedWait) / (hourlyCounts[closestIndex].count + 1));
+      }
+    });
+
+    const totalCount = morningCount + eveningCount;
+    const morningAvgWait = morningCount > 0 ? Math.round(morningWaitTotal / morningCount) : 15;
+    const eveningAvgWait = eveningCount > 0 ? Math.round(eveningWaitTotal / eveningCount) : 25;
+    const overallAvgWait = totalCount > 0 ? Math.round((morningWaitTotal + eveningWaitTotal) / totalCount) : 18;
+
+    const morningPercent = totalCount > 0 ? Math.round((morningCount / totalCount) * 100) : 40;
+    const eveningPercent = totalCount > 0 ? Math.round((eveningCount / totalCount) * 100) : 60;
+
+    const periodData = [
+      { name: currentLanguage === "ar" ? "الفترة الصباحية" : currentLanguage === "fr" ? "Matin" : "Morning", value: morningCount || 1, color: "#2dd4bf" },
+      { name: currentLanguage === "ar" ? "الفترة المسائية" : currentLanguage === "fr" ? "Après-midi/Soir" : "Evening/PM", value: eveningCount || 1, color: "#0ea5e9" }
+    ];
+
+    const hourlyTrend = hourlyCounts.map(block => ({
+      ...block,
+      hourLabel: currentLanguage === "ar" 
+        ? (parseInt(block.hour) < 12 ? `${block.hour} ص` : `${block.hour} م`)
+        : block.hour
+    }));
+
+    return {
+      morningCount,
+      eveningCount,
+      morningPercent,
+      eveningPercent,
+      morningAvgWait,
+      eveningAvgWait,
+      overallAvgWait,
+      periodData,
+      hourlyTrend
+    };
+  };
+
   // SaaS Multi-Tenant and Auth Helper Functions
   const openPatientPortal = (tenantId: string) => {
     const tenant = tenants.find(t => t.id === tenantId);
     if (!tenant) {
-      showNotification("عذراً، هذه العيادة غير متوفرة حالياً.", "error");
+      showNotification(t("notif_clinic_unavailable"), "error");
       return;
     }
     
@@ -1204,13 +1539,13 @@ function InnerApp() {
     );
     
     setViewMode("website");
-    showNotification(`أهلاً بك في الموقع الرسمي لـ ${tenant.clinicName} 👋`, "success");
+    showNotification(t("notif_welcome_clinic", { name: tenant.clinicName }), "success");
   };
 
   const handleDoctorLogin = (email: string, pass: string) => {
     const tenant = tenants.find(t => t.email.toLowerCase() === email.toLowerCase() && t.password === pass);
     if (!tenant) {
-      showNotification("البريد الإلكتروني أو كلمة المرور غير صحيحة ❌", "error");
+      showNotification(t("notif_invalid_login"), "error");
       return false;
     }
     
@@ -1252,7 +1587,7 @@ function InnerApp() {
     
     setViewMode("admin");
     setPortalTenantId(null);
-    showNotification(`أهلاً بك يا دكتور ${tenant.doctorName}! تم تسجيل الدخول بنجاح 🔑`, "success");
+    showNotification(t("notif_doctor_logged_in", { name: tenant.doctorName }), "success");
     return true;
   };
 
@@ -1269,14 +1604,14 @@ function InnerApp() {
     if (planId === "free") {
       const freeClaimed = localStorage.getItem("shafi_free_plan_claimed");
       if (freeClaimed === "true") {
-        showNotification("⚠️ عذراً، تم تفعيل الباقة التجريبية مسبقاً على هذا الجهاز! لمنع إساءة الاستخدام، يمكنك ترقية حسابك إلى باقة 'الانطلاق' أو 'الاحترافية' لتشغيل العيادة، أو تسجيل الدخول بحسابك السابق.", "error");
+        showNotification(t("notif_trial_abused"), "error");
         return false;
       }
       localStorage.setItem("shafi_free_plan_claimed", "true");
     }
 
     if (tenants.some(t => t.email.toLowerCase() === email.toLowerCase())) {
-      showNotification("هذا البريد الإلكتروني مسجل بالفعل! ❌", "error");
+      showNotification(t("notif_email_registered"), "error");
       return false;
     }
     
@@ -1366,7 +1701,7 @@ function InnerApp() {
     
     setViewMode("admin");
     setPortalTenantId(null);
-    showNotification(`مرحباً بك دكتور ${docName}! تم إنشاء حساب عيادتك وتفعيل باقة الاشتراك بنجاح 🎉`, "success");
+    showNotification(t("notif_clinic_created", { name: docName }), "success");
     return true;
   };
 
@@ -1375,7 +1710,7 @@ function InnerApp() {
     localStorage.removeItem("shafi_current_tenant");
     setViewMode("website"); // return to SaaS landing page
     setPortalTenantId(null);
-    showNotification("تم تسجيل الخروج بنظام SaaS بأمان. نراك قريباً دكتور! 👋", "info");
+    showNotification(t("notif_logged_out"), "info");
   };
 
   const handleSubscriptionUpgrade = (newPlanId: "starter" | "pro") => {
@@ -1412,7 +1747,7 @@ function InnerApp() {
     localStorage.setItem("shafi_saas_tenants", JSON.stringify(updatedTenants));
     localStorage.setItem("shafi_current_tenant", JSON.stringify(updatedTenant));
     
-    showNotification(`تمت ترقية الاشتراك للباقة ${newPlanId === "pro" ? "الاحترافية" : "الانطلاق"} بنجاح! شكراً لاشتراكك 💳✨`, "success");
+    showNotification(t("notif_subscription_upgraded", { plan: newPlanId === "pro" ? t("planProShort", "الاحترافية") : t("planStarterShort", "الانطلاق") }), "success");
   };
 
   // Initialize from LocalStorage or Seed Default SaaS Tenants
@@ -1596,7 +1931,7 @@ function InnerApp() {
 
     // Also listen to appinstalled event
     const handleAppInstalled = () => {
-      showNotification("ألف مبروك! تم تثبيت لوحة تحكم العيادة بنجاح على جهازك كـ تطبيق أصلي 🎉", "success");
+      showNotification(t("notif_install_success"), "success");
       setDeferredPrompt(null);
       setShowInstallBtn(false);
     };
@@ -1612,7 +1947,7 @@ function InnerApp() {
     if (!deferredPrompt) {
       // Guide the user and switch to installation tab
       setActiveTab("market");
-      showNotification("ميزة التثبيت جاهزة! يرجى اتباع التعليمات اليدوية البسيطة لمتصفحك بالأسفل لتثبيت التطبيق فوراً. 📥", "info");
+      showNotification(t("notif_install_manual"), "info");
       return;
     }
     try {
@@ -1620,15 +1955,15 @@ function InnerApp() {
       const { outcome } = await deferredPrompt.userChoice;
       console.log(`User response to PWA install outcome: ${outcome}`);
       if (outcome === "accepted") {
-        showNotification("تم البدء في تثبيت التطبيق بنجاح! يسعدنا استخدامك للنسخة الأصلية من المنصة. 🎉", "success");
+        showNotification(t("notif_install_started"), "success");
         setDeferredPrompt(null);
         setShowInstallBtn(false);
       } else {
-        showNotification("تم إلغاء تثبيت التطبيق. يمكنك دائمًا التثبيت لاحقًا بضغطة زر.", "info");
+        showNotification(t("notif_install_cancelled"), "info");
       }
     } catch (err) {
       console.error("PWA installation trigger error:", err);
-      showNotification("حدث خطأ أثناء محاولة التثبيت التلقائي. يمكنك اتباع الخطوات اليدوية أدناه.", "error");
+      showNotification(t("notif_install_error"), "error");
     }
   };
 
@@ -1695,7 +2030,7 @@ function InnerApp() {
 
   const requestNotificationPermission = async () => {
     if (!("Notification" in window)) {
-      showNotification("عذراً، متصفحك الحالي لا يدعم إشعارات المتصفح المباشرة.", "error");
+      showNotification(t("notif_notifications_not_supported"), "error");
       return;
     }
 
@@ -1704,35 +2039,35 @@ function InnerApp() {
       setNotificationPermission(permission);
       
       if (permission === "granted") {
-        showNotification("رائع! تم تفعيل إشعارات المتصفح بنجاح لجذب انتباهك فوراً عند الحجوزات الجديدة 🔔", "success");
+        showNotification(t("notif_notifications_enabled"), "success");
         // Trigger a test notification
-        sendBrowserNotification("مرحباً بك في نظام الإشعارات المباشر! 🔔", {
-          body: "تم تفعيل إشعارات العيادة بنجاح. ستظهر هنا التحديثات المباشرة للحجوزات فوراً لتنبيهك.",
+        sendBrowserNotification(t("notif_notif_welcome"), {
+          body: t("notif_notif_desc"),
           tag: "test-notification"
         });
       } else if (permission === "denied") {
-        showNotification("تم رفض إذن الإشعارات. يرجى تفعيلها يدوياً من إعدادات المتصفح (أيقونة القفل بجانب الرابط).", "error");
+        showNotification(t("notif_notif_denied"), "error");
       }
     } catch (err) {
       console.error("Error requesting notification permission:", err);
-      showNotification("حدث خطأ أثناء طلب الإذن بالإشعارات.", "error");
+      showNotification(t("notif_notif_error"), "error");
     }
   };
 
   const handleSaveCurrentAsPreset = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newPresetName.trim()) {
-      showNotification("يرجى إدخال اسم القالب الجديد.", "error");
+      showNotification(t("notif_enter_preset_name"), "error");
       return;
     }
     const newPresetId = `custom-${Date.now()}`;
     const newPreset: ClinicPreset = {
       id: newPresetId,
       name: newPresetName,
-      specialty: newPresetSpecialty || clinicInfo.specialty || "تخصص عام",
+      specialty: newPresetSpecialty || clinicInfo.specialty || t("general_specialty", "تخصص عام"),
       info: { 
         name: newPresetName, 
-        specialty: newPresetSpecialty || clinicInfo.specialty || "تخصص عام",
+        specialty: newPresetSpecialty || clinicInfo.specialty || t("general_specialty", "تخصص عام"),
         phone: clinicInfo.phone,
         address: clinicInfo.address
       },
@@ -1751,23 +2086,23 @@ function InnerApp() {
     setNewPresetName("");
     setNewPresetSpecialty("");
     
-    showNotification(`تم حفظ وتخزين قالبك المخصص الجديد: ${newPreset.name} بنجاح! 💾`, "success");
+    showNotification(t("notif_preset_saved", { name: newPreset.name }), "success");
   };
 
   const handleCreateBlankPreset = (e: React.FormEvent) => {
     e.preventDefault();
     if (!blankPresetName.trim()) {
-      showNotification("يرجى إدخال اسم العيادة / القالب الجديد.", "error");
+      showNotification(t("notif_enter_blank_preset_name"), "error");
       return;
     }
     const newPresetId = `custom-${Date.now()}`;
     const newPreset: ClinicPreset = {
       id: newPresetId,
       name: blankPresetName,
-      specialty: blankPresetSpecialty || "تخصص عام",
+      specialty: blankPresetSpecialty || t("general_specialty", "تخصص عام"),
       info: { 
         name: blankPresetName, 
-        specialty: blankPresetSpecialty || "تخصص عام",
+        specialty: blankPresetSpecialty || t("general_specialty", "تخصص عام"),
         phone: "",
         address: ""
       },
@@ -2624,16 +2959,16 @@ function InnerApp() {
   useEffect(() => {
     if (importTypeText.trim()) {
       if (importTarget === "services") {
-        const parsed = parseExcelOrCsvToServices(importTypeText);
+        const parsed = parseExcelOrCsvToServices(importTypeText, currentLanguage);
         setImportPreview(parsed);
       } else {
-        const parsed = parseExcelOrCsvToGuidelines(importTypeText);
+        const parsed = parseExcelOrCsvToGuidelines(importTypeText, currentLanguage);
         setImportPreview(parsed);
       }
     } else {
       setImportPreview([]);
     }
-  }, [importTypeText, importTarget]);
+  }, [importTypeText, importTarget, currentLanguage]);
 
   // Execute actual database import
   const handleCommitImport = () => {
@@ -4797,74 +5132,275 @@ function InnerApp() {
                     )}
                   </div>
 
-                  {/* Filter and Search Section */}
-                  <div className="flex flex-col md:flex-row gap-3 items-center justify-between bg-slate-900/40 p-4 rounded-xl border border-slate-800/80">
-                    {/* Search Input */}
-                    <div className="relative w-full md:w-80">
-                      <Search className="absolute right-3 top-2.5 w-4 h-4 text-slate-400" />
-                      <input
-                        type="text"
-                        placeholder={currentLanguage === "ar" ? "البحث بالاسم أو رقم الهاتف..." : currentLanguage === "fr" ? "Rechercher par nom ou téléphone..." : "Search by name or phone..."}
-                        value={bookingSearchQuery}
-                        onChange={(e) => setBookingSearchQuery(e.target.value)}
-                        className="w-full bg-slate-950 border border-slate-800 rounded-lg pr-9 pl-3 py-2 text-slate-200 text-xs focus:ring-1 focus:ring-teal-500 focus:outline-none"
-                      />
-                    </div>
-
-                    {/* Status filter buttons */}
-                    <div className="flex gap-1.5 bg-slate-950/80 p-1 rounded-lg border border-slate-800 overflow-x-auto w-full md:w-auto">
-                      {(["all", "pending", "confirmed", "cancelled"] as const).map((status) => (
-                        <button
-                          key={status}
-                          onClick={() => setBookingFilterStatus(status)}
-                          className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
-                            bookingFilterStatus === status
-                              ? "bg-slate-800 text-white border border-slate-700 shadow-sm"
-                              : "text-slate-400 hover:text-slate-200"
-                          }`}
-                        >
-                          {status === "all" && (currentLanguage === "ar" ? "الكل" : currentLanguage === "fr" ? "Tous" : "All")}
-                          {status === "pending" && (currentLanguage === "ar" ? "قيد الانتظار" : currentLanguage === "fr" ? "En attente" : "Pending")}
-                          {status === "confirmed" && (currentLanguage === "ar" ? "المؤكدة" : currentLanguage === "fr" ? "Confirmés" : "Confirmed")}
-                          {status === "cancelled" && (t('cancelled'))}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Bookings List */}
-                  <div className="space-y-3">
-                    {bookings.filter(b => {
-                      const matchesSearch = b.patientName.toLowerCase().includes(bookingSearchQuery.toLowerCase()) ||
-                                            b.patientPhone.includes(bookingSearchQuery);
-                      const matchesStatus = bookingFilterStatus === "all" ? true : b.status === bookingFilterStatus;
-                      return matchesSearch && matchesStatus;
-                    }).length === 0 ? (
-                      <div className="bg-slate-900/20 border border-slate-800 rounded-xl py-12 px-4 text-center">
-                        <Calendar className="w-12 h-12 text-slate-600 mx-auto mb-3 animate-pulse" />
-                        <h5 className="font-bold text-slate-400 text-sm">
-                          {t('noBookingsMatch')}
-                        </h5>
-                        <p className="text-xs text-slate-500 mt-1">
-                          {t('tryChatbotLeft')}
+                  {/* Wait Time & Time Slot Distribution Analytics Card */}
+                  <div className="bg-slate-900/40 border border-slate-800 rounded-xl p-5 space-y-5">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
+                      <div>
+                        <h4 className="font-bold text-white text-sm flex items-center gap-2">
+                          <Clock className="w-4 h-4 text-teal-400" />
+                          <span>{t("avgWaitingTimeCardTitle", "تحليل أوقات الانتظار وتوزيع فترات الحجز 🕒📈")}</span>
+                        </h4>
+                        <p className="text-[11px] text-slate-400 mt-0.5">
+                          {t("avgWaitingTimeCardDesc", "مؤشرات تفصيلية لمراقبة سلاسة تدفق المرضى، وتحليل فترات الازدحام ومقارنة معدلات الانتظار بين الصباح والمساء لتجويد تخطيط المواعيد.")}
                         </p>
                       </div>
-                    ) : (
-                      bookings
-                        .filter(b => {
-                          const matchesSearch = b.patientName.toLowerCase().includes(bookingSearchQuery.toLowerCase()) ||
-                                                b.patientPhone.includes(bookingSearchQuery);
-                          const matchesStatus = bookingFilterStatus === "all" ? true : b.status === bookingFilterStatus;
-                          return matchesSearch && matchesStatus;
-                        })
-                        .map((b) => {
-                          return (
-                            <motion.div
-                              key={b.id}
-                              initial={{ opacity: 0, y: 10 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              className="bg-slate-900/40 border border-slate-800 rounded-xl p-4 md:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-slate-700 transition-all duration-300 relative group"
-                            >
+                    </div>
+
+                    <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-stretch">
+                      {/* Left Block: Waiting stats & Advice (Span 5) */}
+                      <div className="xl:col-span-5 flex flex-col justify-between bg-slate-950/60 border border-slate-800/85 rounded-xl p-5 space-y-4">
+                        <div className="space-y-3">
+                          <p className="text-xs text-slate-400 font-medium">{t("overallAvgWaitTime", "متوسط وقت الانتظار العام")}</p>
+                          <div className="flex items-baseline gap-2">
+                            <span className="text-4xl font-extrabold text-teal-400 font-mono tracking-tight">
+                              {getWaitingAndPeriodAnalytics().overallAvgWait}
+                            </span>
+                            <span className="text-sm text-slate-400 font-medium">{t("minutesUnit", "دقيقة")}</span>
+                          </div>
+                          
+                          {/* Flow Status bar */}
+                          <div className="pt-2">
+                            <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-1">
+                              {t("patientFlowStatus", "حالة تدفق المرضى وسلاسة العيادة")}
+                            </span>
+                            <div className="flex items-center gap-2 bg-slate-900 px-3 py-2 rounded-lg border border-slate-800/60">
+                              <span className={`w-2.5 h-2.5 rounded-full ${
+                                getWaitingAndPeriodAnalytics().overallAvgWait > 20 
+                                  ? "bg-rose-500 animate-pulse" 
+                                  : getWaitingAndPeriodAnalytics().overallAvgWait > 15 
+                                  ? "bg-amber-500" 
+                                  : "bg-emerald-500"
+                              }`} />
+                              <span className="text-xs font-bold text-slate-200">
+                                {getWaitingAndPeriodAnalytics().overallAvgWait > 20 
+                                  ? t("flowStatusCongested", "ازدحام مكثف ⚠️") 
+                                  : getWaitingAndPeriodAnalytics().overallAvgWait > 15 
+                                  ? t("flowStatusNormal", "سلس ومتزن 🟢") 
+                                  : t("flowStatusExcellent", "سريع وممتاز ✨")}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Morning & Evening Wait metrics */}
+                        <div className="grid grid-cols-2 gap-3 border-t border-b border-slate-850 py-3">
+                          <div className="space-y-1">
+                            <span className="text-[10px] text-slate-500 font-medium block">{t("avgWaitMorning", "معدل انتظار الصباح")}</span>
+                            <span className="text-sm font-bold text-teal-300 font-mono">{getWaitingAndPeriodAnalytics().morningAvgWait} {t("minutesUnit", "دقيقة")}</span>
+                            <span className="text-[9px] text-slate-500 block">{getWaitingAndPeriodAnalytics().morningCount} {t("bookingUnit", "حجز")}</span>
+                          </div>
+                          <div className="space-y-1 border-r border-slate-800/80 pr-3">
+                            <span className="text-[10px] text-slate-500 font-medium block">{t("avgWaitEvening", "معدل انتظار المساء")}</span>
+                            <span className="text-sm font-bold text-sky-400 font-mono">{getWaitingAndPeriodAnalytics().eveningAvgWait} {t("minutesUnit", "دقيقة")}</span>
+                            <span className="text-[9px] text-slate-500 block">{getWaitingAndPeriodAnalytics().eveningCount} {t("bookingUnit", "حجز")}</span>
+                          </div>
+                        </div>
+
+                        {/* Recommendation */}
+                        <div className="bg-slate-900/60 p-3.5 rounded-xl border border-slate-850 text-xs space-y-1">
+                          <span className="font-extrabold text-teal-400 flex items-center gap-1">
+                            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                            <span>{t("waitingTimeRecommendation", "توصية تنظيمية مخصصة")}</span>
+                          </span>
+                          <p className="text-slate-300 leading-relaxed text-[11px]">
+                            {getWaitingAndPeriodAnalytics().overallAvgWait > 20 
+                              ? t("recHighWait", "الانتظار مرتفع نسبياً بسبب تزايد الطلبات وضغط المواعيد. نقترح توسيع الفاصل الزمني بين الخدمات بمقدار 5 دقائق إضافية.") 
+                              : getWaitingAndPeriodAnalytics().overallAvgWait > 15 
+                              ? t("recMediumWait", "الانتظار مقبول وضمن الحدود الآمنة. نوصي بالتنبيه على المرضى عبر الشات بوت بالحضور قبل موعدهم بـ 5 دقائق لتجنب أي تداخل.") 
+                              : t("recLowWait", "الوضع ممتاز جداً! تدفق المرضى يسير بسلاسة وسرعة فائقة، ومعدل تنظيم الفواصل الزمنية للمواعيد مثالي.")}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Right Block: Charts (Span 7) */}
+                      <div className="xl:col-span-7 grid grid-cols-1 md:grid-cols-12 gap-4 items-center bg-slate-950/60 border border-slate-800/80 rounded-xl p-4">
+                        {/* Morning vs Evening distribution (Pie chart) (Span 5) */}
+                        <div className="md:col-span-5 flex flex-col items-center justify-center p-2 space-y-3">
+                          <h5 className="text-[11px] font-bold text-slate-400 text-center w-full">
+                            {currentLanguage === "ar" ? "توزيع الحجوزات (صباحاً / مساءً)" : currentLanguage === "fr" ? "Distribution Matin / Soir" : "Morning vs Evening Distribution"}
+                          </h5>
+                          
+                          <div className="h-40 w-full flex items-center justify-center relative">
+                            <ResponsiveContainer width="100%" height="100%">
+                              <PieChart>
+                                <Pie
+                                  data={getWaitingAndPeriodAnalytics().periodData}
+                                  cx="50%"
+                                  cy="50%"
+                                  innerRadius={45}
+                                  outerRadius={60}
+                                  paddingAngle={5}
+                                  dataKey="value"
+                                >
+                                  {getWaitingAndPeriodAnalytics().periodData.map((entry, index) => (
+                                    <Cell key={`cell-${index}`} fill={entry.color} />
+                                  ))}
+                                </Pie>
+                                <Tooltip formatter={(value) => [`${value} ${t("bookingUnit", "حجز")}`]} />
+                              </PieChart>
+                            </ResponsiveContainer>
+                            <div className="absolute flex flex-col items-center justify-center">
+                              <span className="text-xl font-extrabold text-white font-mono">{bookings.filter(b => b.status !== "cancelled").length}</span>
+                              <span className="text-[8px] text-slate-500">{t("active", "نشط")}</span>
+                            </div>
+                          </div>
+
+                          <div className="flex flex-col gap-1 w-full px-2">
+                            <div className="flex items-center justify-between text-[10px]">
+                              <div className="flex items-center gap-1.5 text-slate-400">
+                                <span className="w-2.5 h-2.5 rounded bg-[#2dd4bf] shrink-0" />
+                                <span>{t("morningPeriod", "الفترة الصباحية")}</span>
+                              </div>
+                              <span className="font-bold text-slate-200 font-mono">{getWaitingAndPeriodAnalytics().morningPercent}% ({getWaitingAndPeriodAnalytics().morningCount})</span>
+                            </div>
+                            <div className="flex items-center justify-between text-[10px]">
+                              <div className="flex items-center gap-1.5 text-slate-400">
+                                <span className="w-2.5 h-2.5 rounded bg-[#0ea5e9] shrink-0" />
+                                <span>{t("eveningPeriod", "الفترة المسائية")}</span>
+                              </div>
+                              <span className="font-bold text-slate-200 font-mono">{getWaitingAndPeriodAnalytics().eveningPercent}% ({getWaitingAndPeriodAnalytics().eveningCount})</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Expected Wait Time by Hour Trend (Area chart) (Span 7) */}
+                        <div className="md:col-span-7 flex flex-col p-2 space-y-3 border-t md:border-t-0 md:border-r border-slate-800/80 md:pr-4">
+                          <h5 className="text-[11px] font-bold text-slate-400 text-center md:text-right w-full">
+                            {t("trafficTrendByHour", "تحليل حركة الازدحام ومتوسط الانتظار المتوقع بساعات العمل 📊")}
+                          </h5>
+
+                          <div className="h-44 w-full">
+                            <ResponsiveContainer width="100%" height="100%">
+                              <AreaChart
+                                data={getWaitingAndPeriodAnalytics().hourlyTrend}
+                                margin={{ top: 5, right: 5, left: -25, bottom: 5 }}
+                              >
+                                <defs>
+                                  <linearGradient id="colorWait" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="5%" stopColor="#0d9488" stopOpacity={0.4}/>
+                                    <stop offset="95%" stopColor="#0d9488" stopOpacity={0}/>
+                                  </linearGradient>
+                                </defs>
+                                <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+                                <XAxis 
+                                  dataKey="hourLabel" 
+                                  stroke="#64748b" 
+                                  fontSize={9}
+                                  tickLine={false}
+                                  axisLine={false}
+                                />
+                                <YAxis 
+                                  stroke="#64748b" 
+                                  fontSize={9}
+                                  tickLine={false}
+                                  axisLine={false}
+                                />
+                                <Tooltip 
+                                  content={({ active, payload }: any) => {
+                                    if (active && payload && payload.length) {
+                                      const data = payload[0].payload;
+                                      return (
+                                        <div className="bg-slate-950 border border-slate-800 p-2.5 rounded-lg shadow-xl text-[10px]">
+                                          <p className="font-bold text-slate-300 mb-1">{currentLanguage === "ar" ? `الساعة ${data.hourLabel}` : `Hour ${data.hour}`}</p>
+                                          <p className="text-teal-400 flex justify-between gap-4">
+                                            <span>{t("waitChartLabel", "متوسط الانتظار المتوقع (دقيقة)")}:</span>
+                                            <span className="font-bold">{data.waitTime} {t("minutesUnit")}</span>
+                                          </p>
+
+                                           <p className="text-sky-400 flex justify-between gap-4">
+                                             <span>{t("bookingsChartLabel", "عدد الحجوزات النشطة")}:</span>
+                                             <span className="font-bold">{data.count}</span>
+                                           </p>
+                                         </div>
+                                       );
+                                     }
+                                     return null;
+                                   }}
+                                 />
+                                 <Area 
+                                   type="monotone" 
+                                   dataKey="waitTime" 
+                                   stroke="#0d9488" 
+                                   strokeWidth={2}
+                                   fillOpacity={1} 
+                                   fill="url(#colorWait)" 
+                                 />
+                               </AreaChart>
+                             </ResponsiveContainer>
+                           </div>
+                         </div>
+                       </div>
+                     </div>
+                   </div>
+
+                   {/* Filter and Search Section */}
+                   <div className="flex flex-col md:flex-row gap-3 items-center justify-between bg-slate-900/40 p-4 rounded-xl border border-slate-800/80">
+                     {/* Search Input */}
+                     <div className="relative w-full md:w-80">
+                       <Search className="absolute right-3 top-2.5 w-4 h-4 text-slate-400" />
+                       <input
+                         type="text"
+                         placeholder={currentLanguage === "ar" ? "البحث بالاسم أو رقم الهاتف..." : currentLanguage === "fr" ? "Rechercher par nom ou téléphone..." : "Search by name or phone..."}
+                         value={bookingSearchQuery}
+                         onChange={(e) => setBookingSearchQuery(e.target.value)}
+                         className="w-full bg-slate-950 border border-slate-800 rounded-lg pr-9 pl-3 py-2 text-slate-200 text-xs focus:ring-1 focus:ring-teal-500 focus:outline-none"
+                       />
+                     </div>
+
+                     {/* Status filter buttons */}
+                     <div className="flex gap-1.5 bg-slate-950/80 p-1 rounded-lg border border-slate-800 overflow-x-auto w-full md:w-auto">
+                       {(["all", "pending", "confirmed", "cancelled"] as const).map((status) => (
+                         <button
+                           key={status}
+                           onClick={() => setBookingFilterStatus(status)}
+                           className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
+                             bookingFilterStatus === status
+                               ? "bg-slate-800 text-white border border-slate-700 shadow-sm"
+                               : "text-slate-400 hover:text-slate-200"
+                           }`}
+                         >
+                           {status === "all" && (currentLanguage === "ar" ? "الكل" : currentLanguage === "fr" ? "Tous" : "All")}
+                           {status === "pending" && (currentLanguage === "ar" ? "قيد الانتظار" : currentLanguage === "fr" ? "En attente" : "Pending")}
+                           {status === "confirmed" && (currentLanguage === "ar" ? "المؤكدة" : currentLanguage === "fr" ? "Confirmés" : "Confirmed")}
+                           {status === "cancelled" && (t('cancelled'))}
+                         </button>
+                       ))}
+                     </div>
+                   </div>
+
+                   {/* Bookings List */}
+                   <div className="space-y-3">
+                     {bookings.filter(b => {
+                       const matchesSearch = b.patientName.toLowerCase().includes(bookingSearchQuery.toLowerCase()) ||
+                                             b.patientPhone.includes(bookingSearchQuery);
+                       const matchesStatus = bookingFilterStatus === "all" ? true : b.status === bookingFilterStatus;
+                       return matchesSearch && matchesStatus;
+                     }).length === 0 ? (
+                       <div className="bg-slate-900/20 border border-slate-800 rounded-xl py-12 px-4 text-center">
+                         <Calendar className="w-12 h-12 text-slate-600 mx-auto mb-3 animate-pulse" />
+                         <h5 className="font-bold text-slate-400 text-sm">
+                           {t('noBookingsMatch')}
+                         </h5>
+                         <p className="text-xs text-slate-500 mt-1">
+                           {t('tryChatbotLeft')}
+                         </p>
+                       </div>
+                     ) : (
+                       bookings
+                         .filter(b => {
+                           const matchesSearch = b.patientName.toLowerCase().includes(bookingSearchQuery.toLowerCase()) ||
+                                                 b.patientPhone.includes(bookingSearchQuery);
+                           const matchesStatus = bookingFilterStatus === "all" ? true : b.status === bookingFilterStatus;
+                           return matchesSearch && matchesStatus;
+                         })
+                         .map((b) => {
+                           return (
+                             <motion.div
+                               key={b.id}
+                               initial={{ opacity: 0, y: 10 }}
+                               animate={{ opacity: 1, y: 0 }}
+                               className="bg-slate-900/40 border border-slate-850 rounded-xl p-4 md:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-slate-700 transition-all duration-300 relative group"
+                             >
                               {/* Left / Info Side */}
                               <div className="space-y-2 flex-1">
                                 <div className="flex items-center gap-2 flex-wrap">
@@ -5027,7 +5563,6 @@ function InnerApp() {
                   </div>
                 </motion.div>
               )}
-
               {/* Tab 2: Quick Action Buttons Builder */}
               {activeTab === "buttons" && (
                 <motion.div
@@ -5038,18 +5573,18 @@ function InnerApp() {
                   className="space-y-6"
                 >
                   <div className="border-b border-slate-800 pb-2">
-                    <h4 className="font-bold text-slate-200 text-sm">مُشكل الأزرار السريعة والخيارات التلقائية ⚙️</h4>
-                    <p className="text-xs text-slate-400">قم بإنشاء وتعديل الأزرار التي يراها الزبون في بداية المحادثة. النقر عليها يعطي إجابة فورية ومبرمجة ومضمونة 100% لتوفير وقت المحادثة.</p>
+                    <h4 className="font-bold text-slate-200 text-sm">{t('quickActionsTitle', 'مُشكل الأزرار السريعة والخيارات التلقائية ⚙️')}</h4>
+                    <p className="text-xs text-slate-400">{t('quickActionsDesc', 'قم بإنشاء وتعديل الأزرار التي يراها الزبون في بداية المحادثة. النقر عليها يعطي إجابة فورية ومبرمجة ومضمونة 100% لتوفير وقت المحادثة.')}</p>
                   </div>
 
                   {/* Create New Quick Button */}
                   <form onSubmit={handleAddQuickAction} className="bg-slate-900/60 p-4 rounded-xl border border-slate-800 space-y-3">
-                    <h5 className="text-xs font-bold text-teal-400">إضافة زر خيار سريع جديد</h5>
+                    <h5 className="text-xs font-bold text-teal-400">{t('addNewQuickAction', 'إضافة زر خيار سريع جديد')}</h5>
                     <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
                       <div className="md:col-span-4">
                         <input
                           type="text"
-                          placeholder="عنوان الزر (مثال: 📍 موقع العيادة)"
+                          placeholder={t('quickActionPlaceholderLabel', 'عنوان الزر (مثال: 📍 موقع العيادة)')}
                           value={newButtonLabel}
                           onChange={(e) => setNewButtonLabel(e.target.value)}
                           className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs focus:ring-1 focus:ring-teal-500 focus:outline-none"
@@ -5059,7 +5594,7 @@ function InnerApp() {
                       <div className="md:col-span-6">
                         <input
                           type="text"
-                          placeholder="الرد التلقائي والدقيق للزر عند النقر عليه..."
+                          placeholder={t('quickActionPlaceholderResponse', 'الرد التلقائي والدقيق للزر عند النقر عليه...')}
                           value={newButtonResponse}
                           onChange={(e) => setNewButtonResponse(e.target.value)}
                           className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs focus:ring-1 focus:ring-teal-500 focus:outline-none"
@@ -5072,7 +5607,7 @@ function InnerApp() {
                           className="w-full h-full bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold py-2 rounded-lg text-xs transition-all flex items-center justify-center gap-1 cursor-pointer"
                         >
                           <Plus className="w-3.5 h-3.5" />
-                          <span>إضافة</span>
+                          <span>{t('addBtn', 'إضافة')}</span>
                         </button>
                       </div>
                     </div>
@@ -5080,9 +5615,11 @@ function InnerApp() {
 
                   {/* Active Quick Buttons List */}
                   <div className="space-y-2">
-                    <h5 className="text-xs font-bold text-slate-300">أزرار الخيارات السريعة الفعالة حالياً ({quickActions.length})</h5>
+                    <h5 className="text-xs font-bold text-slate-300">
+                      {t('activeQuickActions', 'أزرار الخيارات السريعة الفعالة حالياً')} ({quickActions.length})
+                    </h5>
                     {quickActions.length === 0 ? (
-                      <p className="text-xs text-slate-500 italic py-4 text-center">لا توجد أزرار سريعة معرفة حالياً. أضف زراً في الأعلى لبناء الخيارات.</p>
+                      <p className="text-xs text-slate-500 italic py-4 text-center">{t('noQuickActions', 'لا توجد أزرار سريعة معرفة حالياً. أضف زراً في الأعلى لبناء الخيارات.')}</p>
                     ) : (
                       <div className="grid grid-cols-1 gap-2 max-h-[300px] overflow-y-auto pr-1">
                         {quickActions.map((action) => (
@@ -5099,7 +5636,7 @@ function InnerApp() {
                             <button
                               onClick={() => handleDeleteQuickAction(action.id)}
                               className="text-rose-400 hover:text-rose-300 p-1.5 hover:bg-rose-500/10 rounded-lg transition-all cursor-pointer"
-                              title="حذف الزر"
+                              title={t('deleteButtonTooltip', 'حذف الزر')}
                             >
                               <Trash className="w-4 h-4" />
                             </button>
@@ -5120,13 +5657,12 @@ function InnerApp() {
                   exit={{ opacity: 0, x: -20 }}
                   className="space-y-8"
                 >
-                  
                   {/* Part A: Services List */}
                   <div className="space-y-4">
                     <div className="border-b border-slate-800 pb-2 flex justify-between items-center">
                       <div>
-                        <h4 className="font-bold text-slate-200 text-sm">جداول الخدمات والأسعار المتاحة 💎</h4>
-                        <p className="text-xs text-slate-400">قائمة الخدمات التي يقدمها الطبيب مع السعر المبرمج ليسهل على البوت الاستعانة بها.</p>
+                        <h4 className="font-bold text-slate-200 text-sm">{t('servicesTableTitle', 'جداول الخدمات والأسعار المتاحة 💎')}</h4>
+                        <p className="text-xs text-slate-400">{t('servicesTableDesc', 'قائمة الخدمات التي يقدمها الطبيب مع السعر المبرمج ليسهل على البوت الاستعانة بها.')}</p>
                       </div>
                     </div>
 
@@ -5135,7 +5671,7 @@ function InnerApp() {
                       <div className="md:col-span-3">
                         <input
                           type="text"
-                          placeholder="اسم الخدمة (مثال: تنظيف وتبييض)"
+                          placeholder={t('serviceNamePlaceholder', 'اسم الخدمة (مثال: تنظيف وتبييض)')}
                           value={newServiceName}
                           onChange={(e) => setNewServiceName(e.target.value)}
                           className="w-full bg-slate-950 border border-slate-700/60 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-teal-500"
@@ -5145,7 +5681,7 @@ function InnerApp() {
                       <div className="md:col-span-5">
                         <input
                           type="text"
-                          placeholder="تفاصيل ووصف الخدمة بدقة للمريض..."
+                          placeholder={t('serviceDescPlaceholder', 'تفاصيل ووصف الخدمة بدقة للمريض...')}
                           value={newServiceDesc}
                           onChange={(e) => setNewServiceDesc(e.target.value)}
                           className="w-full bg-slate-950 border border-slate-700/60 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-teal-500"
@@ -5154,7 +5690,7 @@ function InnerApp() {
                       <div className="md:col-span-2">
                         <input
                           type="text"
-                          placeholder="السعر (مثال: 5000 دج)"
+                          placeholder={t('servicePricePlaceholder', 'السعر (مثال: 5000 دج)')}
                           value={newServicePrice}
                           onChange={(e) => setNewServicePrice(e.target.value)}
                           className="w-full bg-slate-950 border border-slate-700/60 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-teal-500"
@@ -5166,7 +5702,7 @@ function InnerApp() {
                           className="w-full bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold py-2 rounded-lg text-xs transition-all flex items-center justify-center gap-1 cursor-pointer"
                         >
                           <Plus className="w-3.5 h-3.5" />
-                          <span>إضافة خدمة</span>
+                          <span>{t('addServiceBtn', 'إضافة خدمة')}</span>
                         </button>
                       </div>
                     </form>
@@ -5176,16 +5712,16 @@ function InnerApp() {
                       <table className="w-full text-right text-xs">
                         <thead className="bg-slate-900 text-slate-300 border-b border-slate-800 uppercase font-bold">
                           <tr>
-                            <th className="px-4 py-3">الخدمة</th>
-                            <th className="px-4 py-3">الوصف والتفاصيل</th>
-                            <th className="px-4 py-3">السعر</th>
-                            <th className="px-4 py-3 text-center">إجراءات</th>
+                            <th className="px-4 py-3">{t('serviceTableHeaderName', 'الخدمة')}</th>
+                            <th className="px-4 py-3">{t('serviceTableHeaderDesc', 'الوصف والتفاصيل')}</th>
+                            <th className="px-4 py-3">{t('serviceTableHeaderPrice', 'السعر')}</th>
+                            <th className="px-4 py-3 text-center">{t('serviceTableHeaderActions', 'إجراءات')}</th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-800/60 bg-slate-950/20">
                           {services.length === 0 ? (
                             <tr>
-                              <td colSpan={4} className="px-4 py-6 text-center text-slate-500 italic">لا توجد خدمات معرفة في قاعدة البيانات حالياً. استخدم نموذج الاستيراد السريع لتعبئتها دفعة واحدة!</td>
+                              <td colSpan={4} className="px-4 py-6 text-center text-slate-500 italic">{t('noServicesInDb', 'لا توجد خدمات معرفة في قاعدة البيانات حالياً. استخدم نموذج الاستيراد السريع لتعبئتها دفعة واحدة!')}</td>
                             </tr>
                           ) : (
                             services.map((srv) => (
@@ -5212,8 +5748,8 @@ function InnerApp() {
                   {/* Part B: Guidelines & Instructions */}
                   <div className="space-y-4 pt-4 border-t border-slate-800/80">
                     <div>
-                      <h4 className="font-bold text-slate-200 text-sm">الإرشادات والتعليمات الطبية اللازمة 📋</h4>
-                      <p className="text-xs text-slate-400">التعليمات المطلوبة من المريض قبل حضوره للعيادة أو بعد إجراءات طبية محددة ليتلوها الشات بوت بصرامة.</p>
+                      <h4 className="font-bold text-slate-200 text-sm">{t('guidelinesTitle', 'الإرشادات والتعليمات الطبية اللازمة 📋')}</h4>
+                      <p className="text-xs text-slate-400">{t('guidelinesDesc', 'التعليمات المطلوبة من المريض قبل حضوره للعيادة أو بعد إجراءات طبية محددة ليتلوها الشات بوت بصرامة.')}</p>
                     </div>
 
                     {/* Add Guideline inline */}
@@ -5222,7 +5758,7 @@ function InnerApp() {
                         <div className="md:col-span-4">
                           <input
                             type="text"
-                            placeholder="عنوان الإرشاد (مثال: الصيام قبل فحص الدم)"
+                            placeholder={t('guidelineTitlePlaceholder', 'عنوان الإرشاد (مثال: الصيام قبل فحص الدم)')}
                             value={newGuidelineTitle}
                             onChange={(e) => setNewGuidelineTitle(e.target.value)}
                             className="w-full bg-slate-950 border border-slate-700/60 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-teal-500"
@@ -5231,7 +5767,7 @@ function InnerApp() {
                         </div>
                         <div className="md:col-span-8">
                           <textarea
-                            placeholder="اكتب الإرشادات والتعليمات الطبية اللازمة بالتفصيل وبشكل مبسط للمريض هنا..."
+                            placeholder={t('guidelineContentPlaceholder', 'اكتب الإرشادات والتعليمات الطبية اللازمة بالتفصيل وبشكل مبسط للمريض هنا...')}
                             value={newGuidelineContent}
                             onChange={(e) => setNewGuidelineContent(e.target.value)}
                             className="w-full bg-slate-950 border border-slate-700/60 rounded-lg px-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-teal-500 min-h-[50px]"
@@ -5245,14 +5781,14 @@ function InnerApp() {
                           className="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-bold px-4 py-1.5 rounded-lg text-xs transition-all flex items-center gap-1 cursor-pointer"
                         >
                           <Plus className="w-3.5 h-3.5 text-teal-400" />
-                          <span>إضافة تعليمات وإرشادات</span>
+                          <span>{t('addGuidelineBtn', 'إضافة تعليمات وإرشادات')}</span>
                         </button>
                       </div>
                     </form>
 
                     {/* Guidelines Cards Grid */}
                     {guidelines.length === 0 ? (
-                      <p className="text-xs text-slate-500 italic py-4 text-center">لا توجد إرشادات أو تحضيرات مبرمجة حالياً.</p>
+                      <p className="text-xs text-slate-500 italic py-4 text-center">{t('noGuidelinesInDb', 'لا توجد إرشادات أو تحضيرات مبرمجة حالياً.')}</p>
                     ) : (
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[250px] overflow-y-auto pr-1">
                         {guidelines.map((gd) => (
@@ -5278,16 +5814,16 @@ function InnerApp() {
                     <div className="flex justify-between items-center flex-wrap gap-2 text-right" dir={isRtl ? "rtl" : "ltr"}>
                       <div>
                         <h4 className="font-bold text-slate-200 text-sm flex items-center gap-1.5 justify-end">
-                          <span>التعريف الشامل بالعيادة، الخدمات، السيرة الذاتية وأوقات العمل 🏥</span>
+                          <span>{t('comprehensiveIntroTitle', 'التعريف الشامل بالعيادة، الخدمات، السيرة الذاتية وأوقات العمل 🏥')}</span>
                           <Heart className="w-4 h-4 text-rose-500 animate-pulse" />
                         </h4>
-                        <p className="text-xs text-slate-400 mt-1">تعديل وصياغة ملف العيادة الشامل للجزائر بشكل تفاعلي ذكي لمعاينة وضمان ردود دقيقة ومحكمة من البوت.</p>
+                        <p className="text-xs text-slate-400 mt-1">{t('comprehensiveIntroDesc', 'تعديل وصياغة ملف العيادة الشامل للجزائر بشكل تفاعلي ذكي لمعاينة وضمان ردود دقيقة ومحكمة من البوت.')}</p>
                       </div>
                     </div>
 
                     <div className="bg-slate-900/40 p-5 rounded-xl border border-slate-800 space-y-4">
                       <div className="flex justify-between items-center gap-2 flex-wrap" dir={isRtl ? "rtl" : "ltr"}>
-                        <span className="text-xs font-bold text-slate-300">اكتب هنا التعريف التفصيلي لعيادتك:</span>
+                        <span className="text-xs font-bold text-slate-300">{t('writeIntroLabel', 'اكتب هنا التعريف التفصيلي لعيادتك:')}</span>
                         <button
                           type="button"
                           onClick={() => {
@@ -5295,37 +5831,37 @@ function InnerApp() {
 
 ساعات العمل واستقبال المرضى تكون من الأحد إلى الخميس، من الساعة 08:30 صباحاً وحتى الساعة 16:30 مساءً. يوم السبت مخصص للحالات الطارئة والمتابعة الخفيفة من 09:00 صباحاً إلى 13:00 زوالاً، ويوم الجمعة هو يوم العطلة الأسبوعية للعيادة. نسعد دائماً بخدمتكم وتوفير استجابة فورية لاستفساراتكم عبر المساعد الذكي المتاح 24/7 لمرافقة مرضانا وتسهيل حجز المواعيد.`;
                             setClinicInfo(prev => ({ ...prev, notes: suggestedText }));
-                            showNotification("تم تعبئة الفقرة النموذجية المقترحة! يمكنك تعديلها الآن وحفظ التغييرات 💡", "success");
+                            showNotification(t('suggestIntroNotification', "تم تعبئة الفقرة النموذجية المقترحة! يمكنك تعديلها الآن وحفظ التغييرات 💡"), "success");
                           }}
                           className="text-[11px] bg-teal-500/10 hover:bg-teal-500/20 text-teal-300 border border-teal-500/30 px-3 py-1.5 rounded-lg transition-all cursor-pointer font-bold flex items-center gap-1.5"
                         >
                           <Sparkles className="w-3.5 h-3.5" />
-                          <span>💡 اقتراح فقرة نموذجية جاهزة للتعديل</span>
+                          <span>{t('suggestIntroBtn', '💡 اقتراح فقرة نموذجية جاهزة للتعديل')}</span>
                         </button>
                       </div>
 
                       <textarea
                         value={clinicInfo.notes || ""}
                         onChange={(e) => setClinicInfo(prev => ({ ...prev, notes: e.target.value }))}
-                        placeholder="مثال: تلتزم عيادتنا بتقديم خدمات طبية متكاملة... (اضغط على الزر أعلاه لتنزيل مثال جاهز لتعديله فوراً)"
-                        className="w-full bg-slate-950 border border-slate-700/60 rounded-xl px-4 py-3 text-slate-200 text-xs focus:ring-2 focus:ring-teal-500 focus:outline-none min-h-[140px] leading-relaxed text-right"
+                        placeholder={t('introPlaceholder', "مثال: تلتزم عيادتنا بتقديم خدمات طبية متكاملة... (اضغط على الزر أعلاه لتنزيل مثال جاهز لتعديله فوراً)")}
+                        className={`w-full bg-slate-950 border border-slate-700/60 rounded-xl px-4 py-3 text-slate-200 text-xs focus:ring-2 focus:ring-teal-500 focus:outline-none min-h-[140px] leading-relaxed ${isRtl ? "text-right" : "text-left"}`}
                         dir={isRtl ? "rtl" : "ltr"}
                       />
 
                       <div className="flex justify-between items-center gap-4 flex-wrap pt-2 border-t border-slate-850">
                         <div className="text-[10px] text-slate-400 leading-relaxed text-right max-w-lg" dir={isRtl ? "rtl" : "ltr"}>
-                          * يتم استخدام هذه الفقرة مباشرة بواسطة <strong>محرك الذكاء الاصطناعي</strong> للإجابة على المرضى حول خدمات العيادة وأوقات العمل والسيرة الذاتية للطبيب وضمان تقديم معلومات دقيقة ودائمة.
+                          {t('introNoteText', '* يتم استخدام هذه الفقرة مباشرة بواسطة محرك الذكاء الاصطناعي للإجابة على المرضى حول خدمات العيادة وأوقات العمل والسيرة الذاتية للطبيب وضمان تقديم معلومات دقيقة ودائمة.')}
                         </div>
                         <button
                           type="button"
                           onClick={() => {
                             saveToLocalStorage(clinicInfo, dailyStatus, services, guidelines, quickActions);
-                            showNotification("تم حفظ التعريف الشامل للعيادة بنجاح! 💾", "success");
+                            showNotification(t('saveIntroNotification', "تم حفظ التعريف الشامل للعيادة بنجاح! 💾"), "success");
                           }}
                           className="bg-teal-500 hover:bg-teal-400 text-slate-950 font-black px-5 py-2.5 rounded-xl text-xs transition-all flex items-center gap-1.5 cursor-pointer shrink-0 shadow-lg shadow-teal-500/10"
                         >
                           <Save className="w-4 h-4" />
-                          <span>حفظ التعريف الشامل</span>
+                          <span>{t('saveIntroBtn', 'حفظ التعريف الشامل')}</span>
                         </button>
                       </div>
                     </div>
@@ -5343,13 +5879,13 @@ function InnerApp() {
                   className="space-y-6"
                 >
                   <div className="border-b border-slate-800 pb-2">
-                    <h4 className="font-bold text-slate-200 text-sm">استيراد البيانات الذكي والمباشر من إكسل (Excel / CSV) 📊</h4>
-                    <p className="text-xs text-slate-400">بدلاً من الكتابة اليدوية المرهقة، ما عليك سوى نسخ جدولك من Excel ولصقه هنا فوراً! سيتعرف النظام الذكي على الأعمدة تلقائياً ويقوم بتحديث الشات بوت.</p>
+                    <h4 className="font-bold text-slate-200 text-sm">{t('importTitle', 'استيراد البيانات الذكي والمباشر من إكسل (Excel / CSV) 📊')}</h4>
+                    <p className="text-xs text-slate-400">{t('importDesc', 'بدلاً من الكتابة اليدوية المرهقة، ما عليك سوى نسخ جدولك من Excel ولصقه هنا فوراً! سيتعرف النظام الذكي على الأعمدة تلقائياً ويقوم بتحديث الشات بوت.')}</p>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-slate-900/60 p-4 rounded-xl border border-slate-800">
                     <div className="space-y-2">
-                      <span className="text-xs font-bold text-slate-300 block">1. اختر وجهة الاستيراد:</span>
+                      <span className="text-xs font-bold text-slate-300 block">{t('importStep1', '1. اختر وجهة الاستيراد:')}</span>
                       <div className="flex gap-2">
                         <button
                           onClick={() => {
@@ -5362,7 +5898,7 @@ function InnerApp() {
                               : "bg-slate-950 text-slate-400 border border-slate-850 hover:bg-slate-800"
                           }`}
                         >
-                          الخدمات والأسعار
+                          {t('importServicesTarget', 'الخدمات والأسعار')}
                         </button>
                         <button
                           onClick={() => {
@@ -5375,15 +5911,15 @@ function InnerApp() {
                               : "bg-slate-950 text-slate-400 border border-slate-850 hover:bg-slate-800"
                           }`}
                         >
-                          التعليمات والإرشادات
+                          {t('importGuidelinesTarget', 'التعليمات والإرشادات')}
                         </button>
                       </div>
                     </div>
 
                     <div className="md:col-span-2 space-y-1">
-                      <span className="text-xs font-bold text-slate-300 block">2. آلية العمل (بسيطة جداً):</span>
+                      <span className="text-xs font-bold text-slate-300 block">{t('importStep2', '2. آلية العمل (بسيطة جداً):')}</span>
                       <p className="text-xs text-slate-400 leading-relaxed">
-                        افتح ملف الإكسل الخاص بك، ظلل الجدول المطلوب (الاسم، الوصف، السعر)، اضغط <kbd className="bg-slate-850 border border-slate-700 px-1 rounded text-slate-200 text-[10px]">Ctrl+C</kbd> لنسخه، ثم الصقه بالأسفل باستخدام <kbd className="bg-slate-850 border border-slate-700 px-1 rounded text-slate-200 text-[10px]">Ctrl+V</kbd>.
+                        {t('importStep2Desc', 'افتح ملف الإكسل الخاص بك، ظلل الجدول المطلوب (الاسم، الوصف، السعر)، اضغط Ctrl+C لنسخه، ثم الصقه بالأسفل باستخدام Ctrl+V.')}
                       </p>
                     </div>
                   </div>
@@ -5391,7 +5927,7 @@ function InnerApp() {
                   {/* Input area for Excel table paste */}
                   <div className="space-y-2">
                     <div className="flex justify-between items-center">
-                      <label className="text-xs font-bold text-slate-300">الصق الجدول المنسوخ من Excel أو ملف CSV هنا:</label>
+                      <label className="text-xs font-bold text-slate-300">{t('pasteTableLabel', 'الصق الجدول المنسوخ من Excel أو ملف CSV هنا:')}</label>
                       <button
                         onClick={() => {
                           if (importTarget === "services") {
@@ -5399,348 +5935,78 @@ function InnerApp() {
                           } else {
                             setImportTypeText("الموضوع\tالإرشادات والتعليمات\nتحضير فحص الدم الكامل\tيجب الصيام عن الأكل والشرب ما عدا الماء العادي لمدة 8 إلى 12 ساعة كاملة قبل سحب العينة.\nتحضير جلسة التقشير\tيرجى تجنب منتجات الريتينول ومقشرات حمض الساليسيليك قبل الجلسة بـ 5 أيام مع الحرص على ترطيب البشرة.");
                           }
-                          showNotification("تم ملء نموذج لصق توضيحي! يمكنك الضغط على زر الاستيراد لحفظه 📋", "info");
+                          showNotification(t('demoPasteLoadedNotif', "تم ملء نموذج لصق توضيحي! يمكنك الضغط على زر الاستيراد لحفظه 📋"), "info");
                         }}
                         className="text-xs text-teal-400 hover:text-teal-300 flex items-center gap-1 border border-teal-500/20 px-2 py-0.5 rounded bg-teal-500/5 transition-all"
                       >
-                        <Sparkles className="w-3 h-3" />
-                        <span>تحميل نموذج توضيحي للصق</span>
+                        <span>{t('loadDemoPasteBtn', 'تحميل نموذج توضيحي للصق')}</span>
                       </button>
                     </div>
                     <textarea
+                      className="w-full h-24 bg-slate-950 border border-slate-700/60 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-teal-500 font-mono placeholder-slate-700 text-right leading-relaxed"
+                      dir={isRtl ? "rtl" : "ltr"}
+                      placeholder={
+                        importTarget === "services"
+                          ? "الصق جدول الإكسل هنا مباشرة (الاسم، الوصف، السعر)..."
+                          : "الصق جدول الإكسل هنا مباشرة (الموضوع، الإرشادات والتعليمات)..."
+                      }
                       value={importTypeText}
                       onChange={(e) => setImportTypeText(e.target.value)}
-                      placeholder={
-                        importTarget === "services" 
-                          ? "مثال للصق من الإكسل:\nاسم الخدمة [فاصل Tab] تفاصيل الوصف [فاصل Tab] السعر بالدينار\nتبييض الأسنان بالليزر\tتبييض في العيادة في ساعة\t15000 دج\nتنظيف جير كاشف\tتلميع وإزالة ترسبات\t3000 دج"
-                          : "مثال للصق من الإكسل:\nالعنوان [فاصل Tab] تعليمات المريض بالتفصيل\nصيام فحص الدم\tصيام تام 8 ساعات قبل التحليل\nما بعد تبييض الأسنان\tتجنب الشاي والقهوة والتدخين 48 ساعة"
-                      }
-                      className="w-full bg-slate-950 border border-slate-700 rounded-xl p-4 text-slate-200 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-teal-500 min-h-[160px]"
                     />
                   </div>
 
-                  {/* Parse Preview Container */}
+                  {/* Table preview & save */}
                   {importPreview.length > 0 && (
                     <div className="bg-slate-900/80 p-4 rounded-xl border border-slate-700/80 space-y-3">
                       <div className="flex justify-between items-center">
                         <span className="text-xs font-bold text-emerald-400 flex items-center gap-1">
-                          <CheckCircle className="w-4 h-4" /> معاينة البيانات المستخرجة والجاهزة للاستيراد ({importPreview.length} سجل):
+                          <CheckCircle className="w-4 h-4" /> {t('parsedPreviewLabel', 'معاينة البيانات المستخرجة والجاهزة للاستيراد')} ({importPreview.length}):
                         </span>
                         <button
                           onClick={handleCommitImport}
-                          className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-4 py-1.5 rounded-lg text-xs transition-all flex items-center gap-1.5 cursor-pointer"
+                          className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-1.5 px-3 rounded-lg text-xs transition-all flex items-center gap-1 shadow-sm"
                         >
                           <Save className="w-3.5 h-3.5" />
-                          <span>اعتماد وحفظ بقاعدة البيانات</span>
+                          <span>{t('commitImportBtn', 'اعتماد وحفظ بقاعدة البيانات')}</span>
                         </button>
                       </div>
 
-                      <div className="max-h-[180px] overflow-y-auto border border-slate-800 rounded-lg">
-                        <table className="w-full text-right text-[11px]">
+                      <table className="w-full text-right text-xs">
                           <thead className="bg-slate-950 text-slate-400 font-bold border-b border-slate-800">
                             {importTarget === "services" ? (
                               <tr>
-                                <th className="px-3 py-2">الخدمة</th>
-                                <th className="px-3 py-2">الوصف</th>
-                                <th className="px-3 py-2">السعر</th>
+                                <th className="px-3 py-2">{t('serviceTableHeaderName', 'الخدمة')}</th>
+                                <th className="px-3 py-2">{t('serviceTableHeaderDesc', 'الوصف')}</th>
+                                <th className="px-3 py-2">{t('serviceTableHeaderPrice', 'السعر')}</th>
                               </tr>
                             ) : (
                               <tr>
-                                <th className="px-3 py-2">الموضوع</th>
-                                <th className="px-3 py-2">الإرشادات والتعليمات</th>
+                                <th className="px-3 py-2">{t('guidelineTitlePlaceholder', 'الموضوع')}</th>
+                                <th className="px-3 py-2">{t('serviceTableHeaderDesc', 'الإرشادات والتعليمات')}</th>
                               </tr>
                             )}
                           </thead>
-                          <tbody className="divide-y divide-slate-800/50">
+                          <tbody className="divide-y divide-slate-800/60">
                             {importPreview.map((item, idx) => (
-                              <tr key={idx} className="hover:bg-slate-850/40">
+                              <tr key={idx} className="hover:bg-slate-900/40">
                                 {importTarget === "services" ? (
                                   <>
-                                    <td className="px-3 py-2 text-slate-200 font-semibold">{item.name}</td>
-                                    <td className="px-3 py-2 text-slate-400 truncate max-w-xs">{item.description || "—"}</td>
-                                    <td className="px-3 py-2 text-teal-400 font-bold">{item.price}</td>
+                                    <td className="px-3 py-2 text-slate-200">{item.name}</td>
+                                    <td className="px-3 py-2 text-slate-400">{item.description}</td>
+                                    <td className="px-3 py-2 text-teal-400 font-mono">{item.price}</td>
                                   </>
                                 ) : (
                                   <>
-                                    <td className="px-3 py-2 text-slate-200 font-semibold">{item.title}</td>
-                                    <td className="px-3 py-2 text-slate-400 truncate max-w-xs">{item.content}</td>
+                                    <td className="px-3 py-2 text-slate-200 font-bold">{item.topic}</td>
+                                    <td className="px-3 py-2 text-slate-400 whitespace-pre-wrap">{item.instructions}</td>
                                   </>
                                 )}
                               </tr>
                             ))}
                           </tbody>
-                        </table>
-                      </div>
+                      </table>
                     </div>
                   )}
-                </motion.div>
-              )}
-
-              {/* Tab 5: Backup & Data Retention */}
-              {activeTab === "backup" && (
-                <motion.div
-                  key="backup-tab"
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  className="space-y-6"
-                >
-                  <div className="border-b border-slate-800 pb-2">
-                    <h4 className="font-bold text-slate-200 text-sm">إدارة النسخ الاحتياطية وحفظ البيانات 💾</h4>
-                    <p className="text-xs text-slate-400">تأمين كامل لتصميمك وبياناتك من الضياع، مع إمكانية تصديرها واستيرادها في أي وقت.</p>
-                  </div>
-
-                  {/* Anti-Data Loss section */}
-                  <div className="bg-gradient-to-tr from-teal-950/40 to-slate-900/10 p-5 rounded-xl border border-teal-500/20 space-y-4">
-                    <div className="flex items-center gap-2">
-                      <div className="bg-teal-500/10 p-2 rounded-lg text-teal-400">
-                        <Save className="w-5 h-5" />
-                      </div>
-                      <div>
-                        <h5 className="font-bold text-xs text-slate-100">درع حماية البيانات: النسخ الاحتياطي والاستعادة الفورية 🛡️</h5>
-                        <p className="text-[11px] text-slate-400">احمِ كل ما قمت بتصميمه اليوم من خدمات وأسعار وأزرار. قم بتنزيل قاعدة البيانات كملف على جهازك، ويمكنك استعادتها في أي وقت بثوانٍ معدودة وعلى أي متصفح!</p>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
-                      {/* Export Button */}
-                      <button
-                        onClick={handleExportBackup}
-                        className="bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold py-3 px-4 rounded-xl text-xs transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md shadow-teal-500/10"
-                      >
-                        <Download className="w-4 h-4" />
-                        <span>تنزيل نسخة احتياطية كاملة (.json)</span>
-                      </button>
-
-                      {/* Import/Restore Button Container */}
-                      <div className="relative">
-                        <input
-                          type="file"
-                          id="backup-upload-input"
-                          accept=".json"
-                          onChange={handleImportBackup}
-                          className="hidden"
-                        />
-                        <button
-                          onClick={() => document.getElementById("backup-upload-input")?.click()}
-                          className="w-full bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 font-bold py-3 px-4 rounded-xl text-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
-                        >
-                          <Upload className="w-4 h-4 text-teal-400" />
-                          <span>رفع واستعادة نسخة سابقة (.json)</span>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Business Strategy: How to Sell It */}
-                  <div className="bg-slate-900/40 p-5 rounded-xl border border-slate-800 space-y-3">
-                    <h5 className="font-bold text-xs text-teal-400 flex items-center gap-1.5">
-                      <Sparkles className="w-4 h-4 text-teal-400" />
-                      <span>دليلك الذهبي لبيع وتسييل هذا التطبيق للعيادات الطبية 💰</span>
-                    </h5>
-                    <p className="text-[11px] text-slate-400 leading-relaxed">
-                      هذا النموذج يعتبر من أفضل المنتجات المطلوبة للعيادات نظراً لأنه يوفر موظفي خدمة عملاء، ويجيب على الاستفسارات المتكررة بدقة 100%. إليك طريقة بيعه بخطة تجارية ذكية:
-                    </p>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-1">
-                      <div className="bg-slate-950/20 p-3 rounded-lg border border-slate-850/60">
-                        <span className="text-xs font-bold text-slate-200 block mb-1">1. عرض حي وسريع ⚡</span>
-                        <p className="text-[10px] text-slate-400 leading-normal">اصنع قالباً سريعاً باسم عيادة معينة (مثلاً: طبيب العيون المحلي)، افتحه على هاتفك، واذهب لزيارتهم واجعلهم يتحدثون معه مباشرة!</p>
-                      </div>
-                      <div className="bg-slate-950/20 p-3 rounded-lg border border-slate-850/60">
-                        <span className="text-xs font-bold text-slate-200 block mb-1">2. أمان وحصانة طبية 🛡️</span>
-                        <p className="text-[10px] text-slate-400 leading-normal">أكد لهم أن البوت آمن ومحكم تماماً بفضل "نظام الحصر المعرفي" الذي لا يهلوَس أو يعطي وصفات خاطئة، بل يجلب الزبائن للحجز.</p>
-                      </div>
-                      <div className="bg-slate-950/20 p-3 rounded-lg border border-slate-850/60">
-                        <span className="text-xs font-bold text-slate-200 block mb-1">3. اشتراك وإدارة دورية 💸</span>
-                        <p className="text-[10px] text-slate-400 leading-normal">بعهم التطبيق برسم تنصيب أولي، ومبلغ شهري أو سنوي رمزي للتعديلات أو استخدام السيرفر. استخدام ملفات النسخ الاحتياطي يسهل حفظ وإرسال البيانات!</p>
-                      </div>
-                    </div>
-                  </div>
-
-                </motion.div>
-              )}
-
-              {/* Tab 6: Presets Creator & Manager */}
-              {activeTab === "presets" && (
-                <motion.div
-                  key="presets-tab"
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  className="space-y-6"
-                >
-                  <div className="border-b border-slate-800 pb-2">
-                    <h4 className="font-bold text-slate-200 text-sm">صانع ومدير قوالب العيادات المخصصة ⚙️</h4>
-                    <p className="text-xs text-slate-400">ابتكر وصمم قوالب عيادات مخصصة جديدة، أو احفظ تهيئتك الحالية بالكامل كقالب جاهز للاستخدام والتبديل في أي وقت!</p>
-                  </div>
-
-                  {/* Saving Current as Preset */}
-                  <div className="bg-gradient-to-tr from-amber-500/10 to-transparent p-5 rounded-xl border border-amber-500/20 space-y-4">
-                    <div className="flex items-center gap-2.5">
-                      <div className="bg-amber-500/15 p-2 rounded-lg text-amber-400">
-                        <Save className="w-5 h-5" />
-                      </div>
-                      <div>
-                        <h5 className="font-bold text-xs text-amber-300">حفظ الإعدادات الحالية كقالب جديد ⭐</h5>
-                        <p className="text-[11px] text-slate-400">سيتم حفظ الملف الحالي للعيادة والخدمات والإرشادات والأزرار السريعة المدخلة حالياً في قالب مخصص يحمل الاسم والتخصص الذي تحدده.</p>
-                      </div>
-                    </div>
-
-                    <form onSubmit={handleSaveCurrentAsPreset} className="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
-                      <div className="md:col-span-5 space-y-1">
-                        <label className="block text-[10px] text-slate-400 font-medium">اسم القالب الجديد</label>
-                        <input
-                          type="text"
-                          placeholder="مثال: عيادة العيون والليزك التخصصية"
-                          value={newPresetName}
-                          onChange={(e) => setNewPresetName(e.target.value)}
-                          className="w-full bg-slate-950 border border-slate-700/60 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-amber-500"
-                          required
-                          id="new-preset-name"
-                        />
-                      </div>
-                      <div className="md:col-span-4 space-y-1">
-                        <label className="block text-[10px] text-slate-400 font-medium">التخصص</label>
-                        <input
-                          type="text"
-                          placeholder="مثال: جراحة وتصحيح النظر"
-                          value={newPresetSpecialty}
-                          onChange={(e) => setNewPresetSpecialty(e.target.value)}
-                          className="w-full bg-slate-950 border border-slate-700/60 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-amber-500"
-                          id="new-preset-specialty"
-                        />
-                      </div>
-                      <div className="md:col-span-3">
-                        <button
-                          type="submit"
-                          className="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-2 rounded-lg text-xs transition-all flex items-center justify-center gap-1 cursor-pointer"
-                          id="btn-save-preset"
-                        >
-                          <Save className="w-3.5 h-3.5" />
-                          <span>حفظ كقالب جديد</span>
-                        </button>
-                      </div>
-                    </form>
-                  </div>
-
-                  {/* Creating Blank Preset */}
-                  <div className="bg-slate-900/40 p-5 rounded-xl border border-slate-800 space-y-4">
-                    <div className="flex items-center gap-2.5">
-                      <div className="bg-slate-800 p-2 rounded-lg text-slate-300">
-                        <PlusCircle className="w-5 h-5 text-teal-400" />
-                      </div>
-                      <div>
-                        <h5 className="font-bold text-xs text-slate-200">إنشاء قالب فارغ جديد تماماً 🆕</h5>
-                        <p className="text-[11px] text-slate-400">البدء بلوحة فارغة وخالية تماماً لتهيئة عيادة جديدة من الصفر دون الاعتماد على بيانات العيادة الحالية.</p>
-                      </div>
-                    </div>
-
-                    <form onSubmit={handleCreateBlankPreset} className="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
-                      <div className="md:col-span-5 space-y-1">
-                        <label className="block text-[10px] text-slate-400 font-medium">اسم العيادة الجديدة</label>
-                        <input
-                          type="text"
-                          placeholder="مثال: مجمع الشفاء لطب العظام"
-                          value={blankPresetName}
-                          onChange={(e) => setBlankPresetName(e.target.value)}
-                          className="w-full bg-slate-950 border border-slate-700/60 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-teal-500"
-                          required
-                          id="blank-preset-name"
-                        />
-                      </div>
-                      <div className="md:col-span-4 space-y-1">
-                        <label className="block text-[10px] text-slate-400 font-medium">التخصص</label>
-                        <input
-                          type="text"
-                          placeholder="مثال: العلاج الطبيعي وجراحة العظام"
-                          value={blankPresetSpecialty}
-                          onChange={(e) => setBlankPresetSpecialty(e.target.value)}
-                          className="w-full bg-slate-950 border border-slate-700/60 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-teal-500"
-                          id="blank-preset-specialty"
-                        />
-                      </div>
-                      <div className="md:col-span-3">
-                        <button
-                          type="submit"
-                          className="w-full bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold py-2 rounded-lg text-xs transition-all flex items-center justify-center gap-1 cursor-pointer"
-                          id="btn-create-blank"
-                        >
-                          <Plus className="w-3.5 h-3.5" />
-                          <span>إنشاء قالب فارغ</span>
-                        </button>
-                      </div>
-                    </form>
-                  </div>
-
-                  {/* List of Custom Presets with statistics */}
-                  <div className="space-y-3">
-                    <h5 className="text-xs font-bold text-slate-300">قوالبك المخصصة التي قمت بإنشائها ({customPresets.length})</h5>
-                    {customPresets.length === 0 ? (
-                      <div className="text-center py-8 bg-slate-900/20 border border-slate-800/80 rounded-xl" id="no-custom-presets">
-                        <HelpCircle className="w-8 h-8 text-slate-600 mx-auto mb-2" />
-                        <p className="text-xs text-slate-500 italic">لا توجد قوالب مخصصة حالياً. قم بحفظ تهيئتك الحالية كقالب أو أنشئ قالباً فارغاً للبدء!</p>
-                      </div>
-                    ) : (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4" id="custom-presets-grid">
-                        {customPresets.map((preset) => (
-                          <div 
-                            key={preset.id}
-                            className={`p-4 rounded-xl border transition-all flex flex-col justify-between gap-4 ${
-                              selectedPresetId === preset.id
-                                ? "bg-amber-500/5 border-amber-500/40 shadow-lg shadow-amber-500/5"
-                                : "bg-slate-900/60 border-slate-800/80 hover:border-slate-700"
-                            }`}
-                            id={`preset-card-${preset.id}`}
-                          >
-                            <div className="space-y-1.5">
-                              <div className="flex items-center justify-between">
-                                <span className="font-bold text-xs text-slate-200 flex items-center gap-1">
-                                  ⭐ {preset.name}
-                                </span>
-                                {selectedPresetId === preset.id && (
-                                  <span className="bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[9px] px-2 py-0.5 rounded-full font-bold">
-                                    مفعّل حالياً
-                                  </span>
-                                )}
-                              </div>
-                              <p className="text-[11px] text-slate-400">التخصص: {preset.specialty}</p>
-                              
-                              {/* Metadata counts */}
-                              <div className="flex gap-3 pt-2 text-[10px] text-slate-500">
-                                <span>💎 {preset.services?.length || 0} خدمات</span>
-                                <span>📋 {preset.guidelines?.length || 0} إرشادات</span>
-                                <span>🔘 {preset.quickActions?.length || 0} أزرار</span>
-                              </div>
-                            </div>
-
-                            <div className="flex gap-2 border-t border-slate-850 pt-3">
-                              <button
-                                onClick={() => loadPreset(preset)}
-                                className={`flex-1 py-1.5 rounded text-[11px] font-bold transition-all flex items-center justify-center gap-1 cursor-pointer ${
-                                  selectedPresetId === preset.id
-                                    ? "bg-amber-500 text-slate-950 cursor-default"
-                                    : "bg-slate-800 text-slate-200 hover:bg-slate-700"
-                                }`}
-                                disabled={selectedPresetId === preset.id}
-                                id={`btn-load-${preset.id}`}
-                              >
-                                <Check className="w-3.5 h-3.5" />
-                                <span>{selectedPresetId === preset.id ? "القالب المفعّل" : "تفعيل وتحميل القالب"}</span>
-                              </button>
-                              <button
-                                onClick={() => handleDeleteCustomPreset(preset.id)}
-                                className="bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 p-1.5 rounded-lg transition-all cursor-pointer"
-                                title="حذف القالب"
-                                id={`btn-delete-${preset.id}`}
-                              >
-                                <Trash className="w-3.5 h-3.5" />
-                              </button>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
                 </motion.div>
               )}
 
@@ -5755,12 +6021,12 @@ function InnerApp() {
                 >
                   <div className="border-b border-slate-800 pb-2 flex justify-between items-center flex-wrap gap-2">
                     <div className="text-right">
-                      <h4 className="font-bold text-slate-200 text-sm">مراقبة محادثات المرضى وتحليلات الأداء الذكي 📊</h4>
-                      <p className="text-xs text-slate-400">تتبع سجلات المحادثات الحية، قيم رضا المرضى، وتحكم بإعدادات وصمامات أمان الذكاء الاصطناعي.</p>
+                      <h4 className="font-bold text-slate-200 text-sm">{t('conversationsTitle', 'مراقبة محادثات المرضى وتحليلات الأداء الذكي 📊')}</h4>
+                      <p className="text-xs text-slate-400">{t('conversationsDesc', 'تتبع سجلات المحادثات الحية، قيم رضا المرضى، وتحكم بإعدادات وصمامات أمان الذكاء الاصطناعي.')}</p>
                     </div>
                     <div className="flex items-center gap-1.5 bg-teal-500/10 text-teal-400 px-3 py-1.5 rounded-lg border border-teal-500/20 text-xs font-bold">
                       <TrendingUp className="w-4 h-4" />
-                      <span>معدل دقة الذكاء: 98.4%</span>
+                      <span>{t('aiAccuracyBadge', 'معدل دقة الذكاء: 98.4%')}</span>
                     </div>
                   </div>
 
@@ -5769,12 +6035,12 @@ function InnerApp() {
                     {/* Stat Card 1: Total Conversations */}
                     <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-800/80 flex items-center justify-between gap-3 text-right" dir={isRtl ? "rtl" : "ltr"}>
                       <div className="space-y-1">
-                        <span className="text-[10px] text-slate-400 block font-bold">إجمالي المحادثات (اليوم)</span>
+                        <span className="text-[10px] text-slate-400 block font-bold">{t('totalConversationsToday', 'إجمالي المحادثات (اليوم)')}</span>
                         <div className="flex items-baseline gap-2">
                           <span className="text-2xl font-black text-slate-100">42</span>
-                          <span className="text-[10px] text-emerald-400 font-bold">+18% من أمس</span>
+                          <span className="text-[10px] text-emerald-400 font-bold">{t('vsYesterdayPercentage', '+18% من أمس')}</span>
                         </div>
-                        <p className="text-[9px] text-slate-500">معدل استجابة فوري: 100% (0.4 ثانية)</p>
+                        <p className="text-[9px] text-slate-500">{t('responseTimeInstant', 'معدل استجابة فوري: 100% (0.4 ثانية)')}</p>
                       </div>
                       <div className="w-12 h-12 rounded-lg bg-teal-500/10 flex items-center justify-center text-teal-400 shrink-0">
                         <MessageSquare className="w-5 h-5" />
@@ -5784,12 +6050,12 @@ function InnerApp() {
                     {/* Stat Card 2: AI Booking Rate with Circular Progress */}
                     <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-800/80 flex items-center justify-between gap-3 text-right" dir={isRtl ? "rtl" : "ltr"}>
                       <div className="space-y-1">
-                        <span className="text-[10px] text-slate-400 block font-bold">معدل الحجز الذكي الناجح</span>
+                        <span className="text-[10px] text-slate-400 block font-bold">{t('smartBookingSuccessRate', 'معدل الحجز الذكي الناجح')}</span>
                         <div className="flex items-baseline gap-2">
                           <span className="text-2xl font-black text-teal-400">78.5%</span>
-                          <span className="text-[10px] text-slate-400">33 حجز مؤكد</span>
+                          <span className="text-[10px] text-slate-400">{t('confirmedBookingsCount', '33 حجز مؤكد')}</span>
                         </div>
-                        <p className="text-[9px] text-slate-500">تمت بالكامل آلياً عبر محادثة البوت</p>
+                        <p className="text-[9px] text-slate-500">{t('aiBookingDesc', 'تمت بالكامل آلياً عبر محادثة البوت')}</p>
                       </div>
                       <div className="relative w-12 h-12 flex items-center justify-center shrink-0">
                         <svg className="w-12 h-12 transform -rotate-90">
@@ -7749,7 +8015,7 @@ function InnerApp() {
                     <Printer className="w-5 h-5" />
                   </div>
                   <h3 className="text-sm font-bold text-slate-100">
-                    {pdfTranslations[currentLanguage]?.previewTitle}
+                    {t("pdfTranslations.previewTitle")}
                   </h3>
                 </div>
                 <button
@@ -7781,11 +8047,11 @@ function InnerApp() {
                   <div className="flex justify-between items-start border-b-2 border-teal-600 pb-5">
                     {/* Clinic Details */}
                     <div className="space-y-1">
-                      <h4 className="text-lg font-black text-teal-800">{localizeDynamicText(clinicInfo.name, currentLanguage) || pdfTranslations[currentLanguage]?.defaultClinicName}</h4>
-                      <p className="text-xs font-bold text-slate-600">{localizeDynamicText(clinicInfo.specialty, currentLanguage) || pdfTranslations[currentLanguage]?.defaultSpecialty}</p>
+                      <h4 className="text-lg font-black text-teal-800">{localizeDynamicText(clinicInfo.name, currentLanguage) || t("pdfTranslations.defaultClinicName")}</h4>
+                      <p className="text-xs font-bold text-slate-600">{localizeDynamicText(clinicInfo.specialty, currentLanguage) || t("pdfTranslations.defaultSpecialty")}</p>
                       <p className="text-[10px] text-slate-500">
                         {t('supervisionOf')}
-                        {localizeDynamicText(clinicInfo.doctorName || "", currentLanguage) || pdfTranslations[currentLanguage]?.defaultDoctor}
+                        {localizeDynamicText(clinicInfo.doctorName || "", currentLanguage) || t("pdfTranslations.defaultDoctor")}
                       </p>
                       <p className="text-[10px] text-slate-500">
                         {t('phoneLabel')}
@@ -7815,7 +8081,7 @@ function InnerApp() {
                   {/* Main Report Title */}
                   <div className="text-center">
                     <h3 className="text-sm font-black text-slate-800 border-b border-slate-200 pb-1.5 inline-block px-8">
-                      {pdfTranslations[currentLanguage]?.reportTitle}
+                      {t("pdfTranslations.reportTitle")}
                     </h3>
                   </div>
 
@@ -7823,21 +8089,21 @@ function InnerApp() {
                   <div className="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-100 text-xs">
                     <div className="space-y-1.5">
                       <div>
-                        <span className="text-slate-500 block">{pdfTranslations[currentLanguage]?.patientNameLabel}</span>
+                        <span className="text-slate-500 block">{t("pdfTranslations.patientNameLabel")}</span>
                         <strong className="text-slate-800 text-sm">{pdfSession.patientName}</strong>
                       </div>
                       <div>
-                        <span className="text-slate-500 block">{pdfTranslations[currentLanguage]?.contactPhoneLabel}</span>
+                        <span className="text-slate-500 block">{t("pdfTranslations.contactPhoneLabel")}</span>
                         <strong className="text-slate-800 font-mono">{pdfSession.patientPhone}</strong>
                       </div>
                     </div>
                     <div className="space-y-1.5">
                       <div>
-                        <span className="text-slate-500 block">{pdfTranslations[currentLanguage]?.consultationDateLabel}</span>
+                        <span className="text-slate-500 block">{t("pdfTranslations.consultationDateLabel")}</span>
                         <strong className="text-slate-800">{pdfSession.date}</strong>
                       </div>
                       <div>
-                        <span className="text-slate-500 block">{pdfTranslations[currentLanguage]?.consultationTopicLabel}</span>
+                        <span className="text-slate-500 block">{t("pdfTranslations.consultationTopicLabel")}</span>
                         <strong className="text-slate-800">{pdfSession.topic}</strong>
                       </div>
                     </div>
@@ -7846,33 +8112,33 @@ function InnerApp() {
                   {/* Clinical Analytics Center */}
                   <div className="space-y-3">
                     <h5 className={`text-xs font-bold text-slate-800 border-teal-600 ${isRtl ? "border-r-2 pr-2" : "border-l-2 pl-2"}`}>
-                      {pdfTranslations[currentLanguage]?.section1Title}
+                      {t("pdfTranslations.section1Title")}
                     </h5>
                     <div className="grid grid-cols-3 gap-3">
                       <div className="bg-teal-50/50 p-3 rounded-lg border border-teal-100/60">
-                        <span className="text-[10px] text-slate-500 block">{pdfTranslations[currentLanguage]?.satisfactionLevel}</span>
+                        <span className="text-[10px] text-slate-500 block">{t("pdfTranslations.satisfactionLevel")}</span>
                         <strong className="text-xs text-teal-800 block mt-0.5">
-                          {pdfSession.aiSentiment === "satisfied" ? pdfTranslations[currentLanguage]?.satisfiedStatus : pdfTranslations[currentLanguage]?.neutralStatus}
+                          {pdfSession.aiSentiment === "satisfied" ? t("pdfTranslations.satisfiedStatus") : t("pdfTranslations.neutralStatus")}
                         </strong>
                       </div>
                       <div className="bg-amber-50/50 p-3 rounded-lg border border-amber-100/60">
-                        <span className="text-[10px] text-slate-500 block">{pdfTranslations[currentLanguage]?.classificationUrgency}</span>
+                        <span className="text-[10px] text-slate-500 block">{t("pdfTranslations.classificationUrgency")}</span>
                         <strong className="text-xs text-amber-800 block mt-0.5">
-                          {pdfSession.topic.match(/(ألم|وجع|نزيف|خلع|كسر|طوارئ|pain|mal|saignement|fracture|urgence|emergency)/i) ? pdfTranslations[currentLanguage]?.urgentStatus : pdfTranslations[currentLanguage]?.normalStatus}
+                          {pdfSession.topic.match(/(ألم|وجع|نزيف|خلع|كسر|طوارئ|pain|mal|saignement|fracture|urgence|emergency)/i) ? t("pdfTranslations.urgentStatus") : t("pdfTranslations.normalStatus")}
                         </strong>
                       </div>
                       <div className="bg-slate-50 p-3 rounded-lg border border-slate-200/60">
-                        <span className="text-[10px] text-slate-500 block">{pdfTranslations[currentLanguage]?.safetyCommitment}</span>
-                        <strong className="text-xs text-slate-800 block mt-0.5">{pdfTranslations[currentLanguage]?.safetyPassed}</strong>
+                        <span className="text-[10px] text-slate-500 block">{t("pdfTranslations.safetyCommitment")}</span>
+                        <strong className="text-xs text-slate-800 block mt-0.5">{t("pdfTranslations.safetyPassed")}</strong>
                       </div>
                     </div>
 
                     <div className="bg-slate-50 p-3 rounded-lg border border-slate-100 text-[11px] leading-relaxed text-slate-700">
-                      <span className="font-bold text-slate-800 block mb-1">{pdfTranslations[currentLanguage]?.recommendationSummary}</span>
+                      <span className="font-bold text-slate-800 block mb-1">{t("pdfTranslations.recommendationSummary")}</span>
                       {pdfSession.topic.match(/(ألم|وجع|نزيف|خلع|كسر|طوارئ|pain|mal|saignement|fracture|urgence|emergency)/i) ? (
-                        <span>{pdfTranslations[currentLanguage]?.urgentRecommendation}</span>
+                        <span>{t("pdfTranslations.urgentRecommendation")}</span>
                       ) : (
-                        <span>{pdfTranslations[currentLanguage]?.normalRecommendation}</span>
+                        <span>{t("pdfTranslations.normalRecommendation")}</span>
                       )}
                     </div>
                   </div>
@@ -7880,14 +8146,14 @@ function InnerApp() {
                   {/* Complete Chat Transcript Logs */}
                   <div className="space-y-3">
                     <h5 className={`text-xs font-bold text-slate-800 border-teal-600 ${isRtl ? "border-r-2 pr-2" : "border-l-2 pl-2"}`}>
-                      {pdfTranslations[currentLanguage]?.section2Title}
+                      {t("pdfTranslations.section2Title")}
                     </h5>
                     
                     <div className="border border-slate-200 rounded-xl overflow-hidden text-[10px]">
                       {/* Table Header */}
                       <div className="grid grid-cols-12 bg-slate-100 text-slate-700 font-bold p-2.5 border-b border-slate-200">
-                        <div className="col-span-3">{pdfTranslations[currentLanguage]?.senderLabel}</div>
-                        <div className="col-span-9">{pdfTranslations[currentLanguage]?.messageContentLabel}</div>
+                        <div className="col-span-3">{t("pdfTranslations.senderLabel")}</div>
+                        <div className="col-span-9">{t("pdfTranslations.messageContentLabel")}</div>
                       </div>
 
                       {/* Messages Rows */}
@@ -7904,7 +8170,7 @@ function InnerApp() {
                             >
                               <div className="col-span-3 font-bold text-slate-700 flex flex-col gap-0.5">
                                 <span className={isDoc ? "text-amber-700" : isUser ? "text-slate-800" : "text-teal-700"}>
-                                  {isUser ? pdfTranslations[currentLanguage]?.patient : isDoc ? pdfTranslations[currentLanguage]?.doctor : pdfTranslations[currentLanguage]?.assistant}
+                                  {isUser ? t("pdfTranslations.patient") : isDoc ? t("pdfTranslations.doctor") : t("pdfTranslations.assistant")}
                                 </span>
                                 <span className="text-[8px] text-slate-400 font-normal font-mono">
                                   {pdfSession.date.split(" ")[1] || "Active"}
@@ -7924,9 +8190,9 @@ function InnerApp() {
                   <div className="pt-4 border-t border-slate-200 grid grid-cols-12 gap-4 text-xs">
                     {/* Disclaimer */}
                     <div className="col-span-7 text-[9px] text-slate-500 leading-relaxed space-y-1">
-                      <strong className="text-slate-700 block">{pdfTranslations[currentLanguage]?.disclaimerTitle}</strong>
+                      <strong className="text-slate-700 block">{t("pdfTranslations.disclaimerTitle")}</strong>
                       <p>
-                        {pdfTranslations[currentLanguage]?.disclaimerText}
+                        {t("pdfTranslations.disclaimerText")}
                       </p>
                     </div>
 
@@ -7941,15 +8207,15 @@ function InnerApp() {
                           </div>
                           <span className="absolute text-[5px] font-bold text-teal-600/50 bottom-0.5">2026 OFFICIAL</span>
                         </div>
-                        <span className="text-[8px] text-slate-400 mt-1">{pdfTranslations[currentLanguage]?.officialStamp}</span>
+                        <span className="text-[8px] text-slate-400 mt-1">{t("pdfTranslations.officialStamp")}</span>
                       </div>
 
                       {/* Doctor Signature */}
                       <div className="text-center space-y-3 shrink-0">
-                        <span className="text-[10px] text-slate-400 block">{pdfTranslations[currentLanguage]?.doctorSignatureLabel}</span>
+                        <span className="text-[10px] text-slate-400 block">{t("pdfTranslations.doctorSignatureLabel")}</span>
                         <div className="font-mono text-slate-800 text-xs italic border-b border-slate-300 pb-1 px-2 font-bold select-none transform rotate-[-2deg]">
                           {t('drPrefix')}
-                          {clinicInfo.doctorName || pdfTranslations[currentLanguage]?.defaultDoctor}
+                          {clinicInfo.doctorName || t("pdfTranslations.defaultDoctor")}
                         </div>
                         <span className="text-[9px] text-slate-500 font-mono">{new Date().toLocaleDateString(currentLanguage === 'ar' ? 'ar-EG' : currentLanguage === 'fr' ? 'fr-FR' : 'en-US')}</span>
                       </div>
@@ -7969,19 +8235,19 @@ function InnerApp() {
                   }}
                   className="bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-bold px-4 py-2 rounded-xl transition-all cursor-pointer"
                 >
-                  {pdfTranslations[currentLanguage]?.closePreview}
+                  {t("pdfTranslations.closePreview")}
                 </button>
 
                 <div className="flex gap-2">
                   <button
                     onClick={() => {
-                      const textToCopy = `[${pdfTranslations[currentLanguage]?.reportTitle} - ${clinicInfo.name || "Clinic"}]
+                      const textToCopy = `[${t("pdfTranslations.reportTitle")} - ${clinicInfo.name || "Clinic"}]
 REPORT REF: REP-2026-${pdfSession.id.toUpperCase()}
 Patient: ${pdfSession.patientName}
 Phone: ${pdfSession.patientPhone}
 Topic: ${pdfSession.topic}
 Date: ${pdfSession.date}
-Satisfaction: ${pdfSession.aiSentiment === "satisfied" ? pdfTranslations[currentLanguage]?.satisfiedStatus : pdfTranslations[currentLanguage]?.neutralStatus}
+Satisfaction: ${pdfSession.aiSentiment === "satisfied" ? t("pdfTranslations.satisfiedStatus") : t("pdfTranslations.neutralStatus")}
 
 [Transcript]:
 ${pdfSession.messages.map(m => `- ${m.sender === "user" ? "Patient" : m.sender === "doctor" ? "Doctor" : "Assistant"}: ${m.text}`).join("\n")}
@@ -7991,7 +8257,7 @@ ${pdfSession.messages.map(m => `- ${m.sender === "user" ? "Patient" : m.sender =
                     }}
                     className="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold px-4 py-2 rounded-xl transition-all cursor-pointer border border-slate-700"
                   >
-                    {pdfTranslations[currentLanguage]?.copyFullText}
+                    {t("pdfTranslations.copyFullText")}
                   </button>
 
                   <button
@@ -8003,7 +8269,7 @@ ${pdfSession.messages.map(m => `- ${m.sender === "user" ? "Patient" : m.sender =
                     className="bg-teal-500 hover:bg-teal-400 text-slate-950 text-xs font-bold px-5 py-2.5 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 shadow-md shadow-teal-500/10"
                   >
                     <Printer className="w-4 h-4" />
-                    <span>{pdfTranslations[currentLanguage]?.downloadPrintPdf}</span>
+                    <span>{t("pdfTranslations.downloadPrintPdf")}</span>
                   </button>
                 </div>
               </div>
@@ -8022,11 +8288,11 @@ ${pdfSession.messages.map(m => `- ${m.sender === "user" ? "Patient" : m.sender =
             <div className="flex justify-between items-start border-b-2 border-teal-600 pb-5">
               {/* Clinic Details */}
               <div className="space-y-1">
-                <h4 className="text-xl font-black text-teal-800">{localizeDynamicText(clinicInfo.name, currentLanguage) || pdfTranslations[currentLanguage]?.defaultClinicName}</h4>
-                <p className="text-sm font-bold text-slate-600">{localizeDynamicText(clinicInfo.specialty, currentLanguage) || pdfTranslations[currentLanguage]?.defaultSpecialty}</p>
+                <h4 className="text-xl font-black text-teal-800">{localizeDynamicText(clinicInfo.name, currentLanguage) || t("pdfTranslations.defaultClinicName")}</h4>
+                <p className="text-sm font-bold text-slate-600">{localizeDynamicText(clinicInfo.specialty, currentLanguage) || t("pdfTranslations.defaultSpecialty")}</p>
                 <p className="text-xs text-slate-500">
                   {t('supervisionOf')}
-                  {localizeDynamicText(clinicInfo.doctorName || "", currentLanguage) || pdfTranslations[currentLanguage]?.defaultDoctor}
+                  {localizeDynamicText(clinicInfo.doctorName || "", currentLanguage) || t("pdfTranslations.defaultDoctor")}
                 </p>
                 <p className="text-xs text-slate-500">
                   {t('phoneLabel')}
@@ -8056,7 +8322,7 @@ ${pdfSession.messages.map(m => `- ${m.sender === "user" ? "Patient" : m.sender =
             {/* Main Report Title */}
             <div className="text-center pt-2">
               <h3 className="text-lg font-black text-slate-800 border-b border-slate-200 pb-2 inline-block px-12">
-                {pdfTranslations[currentLanguage]?.reportTitle}
+                {t("pdfTranslations.reportTitle")}
               </h3>
             </div>
 
@@ -8064,21 +8330,21 @@ ${pdfSession.messages.map(m => `- ${m.sender === "user" ? "Patient" : m.sender =
             <div className="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-150 text-xs">
               <div className="space-y-1.5">
                 <div>
-                  <span className="text-slate-500 block">{pdfTranslations[currentLanguage]?.patientNameLabel}</span>
+                  <span className="text-slate-500 block">{t("pdfTranslations.patientNameLabel")}</span>
                   <strong className="text-slate-800 text-sm">{pdfSession.patientName}</strong>
                 </div>
                 <div>
-                  <span className="text-slate-500 block">{pdfTranslations[currentLanguage]?.contactPhoneLabel}</span>
+                  <span className="text-slate-500 block">{t("pdfTranslations.contactPhoneLabel")}</span>
                   <strong className="text-slate-800 font-mono">{pdfSession.patientPhone}</strong>
                 </div>
               </div>
               <div className="space-y-1.5">
                 <div>
-                  <span className="text-slate-500 block">{pdfTranslations[currentLanguage]?.consultationDateLabel}</span>
+                  <span className="text-slate-500 block">{t("pdfTranslations.consultationDateLabel")}</span>
                   <strong className="text-slate-800">{pdfSession.date}</strong>
                 </div>
                 <div>
-                  <span className="text-slate-500 block">{pdfTranslations[currentLanguage]?.consultationTopicLabel}</span>
+                  <span className="text-slate-500 block">{t("pdfTranslations.consultationTopicLabel")}</span>
                   <strong className="text-slate-800">{pdfSession.topic}</strong>
                 </div>
               </div>
@@ -8087,33 +8353,33 @@ ${pdfSession.messages.map(m => `- ${m.sender === "user" ? "Patient" : m.sender =
             {/* Clinical Analytics Center */}
             <div className="space-y-3">
               <h5 className={`text-sm font-bold text-slate-800 border-teal-600 ${isRtl ? "border-r-2 pr-2" : "border-l-2 pl-2"}`}>
-                {pdfTranslations[currentLanguage]?.section1Title}
+                {t("pdfTranslations.section1Title")}
               </h5>
               <div className="grid grid-cols-3 gap-3">
                 <div className="bg-teal-50/50 p-3 rounded-lg border border-teal-100/60">
-                  <span className="text-[10px] text-slate-500 block">{pdfTranslations[currentLanguage]?.satisfactionLevel}</span>
+                  <span className="text-[10px] text-slate-500 block">{t("pdfTranslations.satisfactionLevel")}</span>
                   <strong className="text-xs text-teal-800 block mt-0.5">
-                    {pdfSession.aiSentiment === "satisfied" ? pdfTranslations[currentLanguage]?.satisfiedStatus : pdfTranslations[currentLanguage]?.neutralStatus}
+                    {pdfSession.aiSentiment === "satisfied" ? t("pdfTranslations.satisfiedStatus") : t("pdfTranslations.neutralStatus")}
                   </strong>
                 </div>
                 <div className="bg-amber-50/50 p-3 rounded-lg border border-amber-100/60">
-                  <span className="text-[10px] text-slate-500 block">{pdfTranslations[currentLanguage]?.classificationUrgency}</span>
+                  <span className="text-[10px] text-slate-500 block">{t("pdfTranslations.classificationUrgency")}</span>
                   <strong className="text-xs text-amber-800 block mt-0.5">
-                    {pdfSession.topic.match(/(ألم|وجع|نزيف|خلع|كسر|طوارئ|pain|mal|saignement|fracture|urgence|emergency)/i) ? pdfTranslations[currentLanguage]?.urgentStatus : pdfTranslations[currentLanguage]?.normalStatus}
+                    {pdfSession.topic.match(/(ألم|وجع|نزيف|خلع|كسر|طوارئ|pain|mal|saignement|fracture|urgence|emergency)/i) ? t("pdfTranslations.urgentStatus") : t("pdfTranslations.normalStatus")}
                   </strong>
                 </div>
                 <div className="bg-slate-50 p-3 rounded-lg border border-slate-200/60">
-                  <span className="text-[10px] text-slate-500 block">{pdfTranslations[currentLanguage]?.safetyCommitment}</span>
-                  <strong className="text-xs text-slate-800 block mt-0.5">{pdfTranslations[currentLanguage]?.safetyPassed}</strong>
+                  <span className="text-[10px] text-slate-500 block">{t("pdfTranslations.safetyCommitment")}</span>
+                  <strong className="text-xs text-slate-800 block mt-0.5">{t("pdfTranslations.safetyPassed")}</strong>
                 </div>
               </div>
 
               <div className="bg-slate-50 p-3 rounded-lg border border-slate-100 text-xs leading-relaxed text-slate-700">
-                <span className="font-bold text-slate-800 block mb-1">{pdfTranslations[currentLanguage]?.recommendationSummary}</span>
+                <span className="font-bold text-slate-800 block mb-1">{t("pdfTranslations.recommendationSummary")}</span>
                 {pdfSession.topic.match(/(ألم|وجع|نزيف|خلع|كسر|طوارئ|pain|mal|saignement|fracture|urgence|emergency)/i) ? (
-                  <span>{pdfTranslations[currentLanguage]?.urgentRecommendation}</span>
+                  <span>{t("pdfTranslations.urgentRecommendation")}</span>
                 ) : (
-                  <span>{pdfTranslations[currentLanguage]?.normalRecommendation}</span>
+                  <span>{t("pdfTranslations.normalRecommendation")}</span>
                 )}
               </div>
             </div>
@@ -8121,14 +8387,14 @@ ${pdfSession.messages.map(m => `- ${m.sender === "user" ? "Patient" : m.sender =
             {/* Complete Chat Transcript Logs */}
             <div className="space-y-3">
               <h5 className={`text-sm font-bold text-slate-800 border-teal-600 ${isRtl ? "border-r-2 pr-2" : "border-l-2 pl-2"}`}>
-                {pdfTranslations[currentLanguage]?.section2TitlePrint}
+                {t("pdfTranslations.section2TitlePrint")}
               </h5>
               
               <div className="border border-slate-200 rounded-xl overflow-hidden text-xs">
                 {/* Table Header */}
                 <div className="grid grid-cols-12 bg-slate-100 text-slate-700 font-bold p-2.5 border-b border-slate-200">
-                  <div className="col-span-3">{pdfTranslations[currentLanguage]?.senderLabel}</div>
-                  <div className="col-span-9">{pdfTranslations[currentLanguage]?.messageContentLabel}</div>
+                  <div className="col-span-3">{t("pdfTranslations.senderLabel")}</div>
+                  <div className="col-span-9">{t("pdfTranslations.messageContentLabel")}</div>
                 </div>
 
                 {/* Messages Rows */}
@@ -8145,7 +8411,7 @@ ${pdfSession.messages.map(m => `- ${m.sender === "user" ? "Patient" : m.sender =
                       >
                         <div className="col-span-3 font-bold text-slate-700 flex flex-col gap-0.5">
                           <span className={isDoc ? "text-amber-700" : isUser ? "text-slate-800" : "text-teal-700"}>
-                            {isUser ? pdfTranslations[currentLanguage]?.patient : isDoc ? pdfTranslations[currentLanguage]?.doctor : pdfTranslations[currentLanguage]?.assistant}
+                            {isUser ? t("pdfTranslations.patient") : isDoc ? t("pdfTranslations.doctor") : t("pdfTranslations.assistant")}
                           </span>
                           <span className="text-[10px] text-slate-400 font-normal font-mono">
                             {pdfSession.date.split(" ")[1] || "Active"}
@@ -8165,9 +8431,9 @@ ${pdfSession.messages.map(m => `- ${m.sender === "user" ? "Patient" : m.sender =
             <div className="pt-6 border-t border-slate-200 grid grid-cols-12 gap-4 text-xs">
               {/* Disclaimer */}
               <div className="col-span-7 text-[10px] text-slate-500 leading-relaxed space-y-1">
-                <strong className="text-slate-700 block">{pdfTranslations[currentLanguage]?.disclaimerTitle}</strong>
+                <strong className="text-slate-700 block">{t("pdfTranslations.disclaimerTitle")}</strong>
                 <p>
-                  {pdfTranslations[currentLanguage]?.disclaimerText}
+                  {t("pdfTranslations.disclaimerText")}
                 </p>
               </div>
 
@@ -8181,15 +8447,15 @@ ${pdfSession.messages.map(m => `- ${m.sender === "user" ? "Patient" : m.sender =
                       <span className="text-[5px] font-black mt-0.5">APPROVED</span>
                     </div>
                   </div>
-                  <span className="text-[8px] text-slate-400 mt-1">{pdfTranslations[currentLanguage]?.officialStamp}</span>
+                  <span className="text-[8px] text-slate-400 mt-1">{t("pdfTranslations.officialStamp")}</span>
                 </div>
 
                 {/* Doctor Signature */}
                 <div className="text-center space-y-2 shrink-0">
-                  <span className="text-[10px] text-slate-400 block">{pdfTranslations[currentLanguage]?.doctorSignatureLabel}</span>
+                  <span className="text-[10px] text-slate-400 block">{t("pdfTranslations.doctorSignatureLabel")}</span>
                   <div className="font-mono text-slate-800 text-sm italic border-b border-slate-300 pb-1 px-4 font-bold">
                     {t('drPrefix')}
-                    {clinicInfo.doctorName || pdfTranslations[currentLanguage]?.defaultDoctor}
+                    {clinicInfo.doctorName || t("pdfTranslations.defaultDoctor")}
                   </div>
                   <span className="text-[9px] text-slate-500 font-mono">{new Date().toLocaleDateString(currentLanguage === 'ar' ? 'ar-EG' : currentLanguage === 'fr' ? 'fr-FR' : 'en-US')}</span>
                 </div>

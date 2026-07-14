@@ -637,7 +637,7 @@ export default function SaasPortal({
 
   // Patient Portal Search & Discovery States
   const [patientSearch, setPatientSearch] = useState("");
-  const [selectedSpecialty, setSelectedSpecialty] = useState("الكل");
+  const [selectedSpecialtyIndex, setSelectedSpecialtyIndex] = useState(0);
   const [maxDistance, setMaxDistance] = useState(15); // max distance filter in km
   const [sortBy, setSortBy] = useState<"distance" | "name">("distance");
 
@@ -749,6 +749,29 @@ export default function SaasPortal({
   const [cardNumber, setCardNumber] = useState("");
   const [cardExpiry, setCardExpiry] = useState("");
   const [cardCvv, setCardCvv] = useState("");
+
+  const getPreseededDoctorName = (email: string) => {
+    if (email === "doctor.dental@shafi.ai") {
+      return currentLanguage === "en" 
+        ? "Dr. Mohamed Benyoussef - Dental Clinic" 
+        : currentLanguage === "fr"
+        ? "Dr. Mohamed Benyoussef - Clinique Dentaire"
+        : "د. محمد بن يوسف - عيادة الأسنان";
+    } else if (email === "doctor.general@shafi.ai") {
+      return currentLanguage === "en"
+        ? "Dr. Sara Hamideche - General Medicine"
+        : currentLanguage === "fr"
+        ? "Dr. Sara Hamideche - Médecine Générale"
+        : "د. سارة حميدش - الطب العام";
+    } else if (email === "doctor.appointments@shafi.ai") {
+      return currentLanguage === "en"
+        ? "Dr. Khaled Belaidi - Booking Coordinator"
+        : currentLanguage === "fr"
+        ? "Dr. Khaled Belaidi - Coordinateur de Réservations"
+        : "د. خالد بلعيدي - منسق الحجوزات";
+    }
+    return "";
+  };
   const [isPaying, setIsPaying] = useState(false);
   const [paySuccess, setPaySuccess] = useState(false);
   const [cardType, setCardType] = useState<"edahabia" | "cib" | "visa">("edahabia");
@@ -1558,17 +1581,17 @@ export default function SaasPortal({
                 {/* Specialties Pill Filter */}
                 <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-850">
                   <span className="text-[10px] text-slate-400 font-bold">{t.filterSpecialtyLabel}</span>
-                  {dirSpecialties.map((spec) => (
+                  {dirSpecialties.map((spec, index) => (
                     <button
                       key={spec}
-                      onClick={() => setSelectedSpecialty(spec)}
+                      onClick={() => setSelectedSpecialtyIndex(index)}
                       className={`text-[10px] font-bold px-3.5 py-1.5 rounded-full transition-all cursor-pointer border ${
-                        selectedSpecialty === spec || (selectedSpecialty === "الكل" && (spec === "الكل" || spec === "All" || spec === "Tout"))
+                        selectedSpecialtyIndex === index
                           ? "bg-teal-500/10 text-teal-400 border-teal-500/30 font-black"
                           : "bg-slate-950 text-slate-400 border-slate-800 hover:text-slate-200"
                       }`}
                     >
-                      {spec === "الكل" || spec === "All" || spec === "Tout" ? t.allSpecialties : spec.split("،")[0].split("&")[0].split(" - ")[0]}
+                      {index === 0 ? t.allSpecialties : spec.split("،")[0].split("&")[0].split(" - ")[0]}
                     </button>
                   ))}
                 </div>
@@ -1587,7 +1610,7 @@ export default function SaasPortal({
                     t.specialty.toLowerCase().includes(term) ||
                     t.address.toLowerCase().includes(term);
 
-                  const selectedIndex = dirSpecialties.indexOf(selectedSpecialty);
+                  const selectedIndex = selectedSpecialtyIndex;
                   let matchesSpec = true;
                   if (selectedIndex === 1) {
                     matchesSpec = t.specialty.toLowerCase().includes("أسنان") || 
@@ -1794,7 +1817,7 @@ export default function SaasPortal({
                     >
                       <div className="flex items-center gap-2">
                         <span className={`inline-block w-2.5 h-2.5 rounded-full bg-gradient-to-tr ${doc.color}`} />
-                        <span className="font-bold">{doc.name}</span>
+                        <span className="font-bold">{getPreseededDoctorName(doc.email)}</span>
                       </div>
                       <span className="text-slate-500 font-mono text-[9px]">{doc.email} (pass: 123)</span>
                     </button>
